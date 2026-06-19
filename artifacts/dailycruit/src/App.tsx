@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-type NavPage = "home" | "search" | "applications" | "chat" | "profile";
+type NavPage = "home" | "search" | "applications" | "chat" | "profile" | "settings";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -751,6 +751,7 @@ function ProfileDropdown({ onClose, onNavigate }: { onClose: () => void; onNavig
             className="profile-dd-item"
             onClick={() => {
               if (item.label === "Profile") { onNavigate("profile"); onClose(); }
+              if (item.label === "Settings") { onNavigate("settings"); onClose(); }
             }}
           >
             <span className="profile-dd-item-icon">{item.icon}</span>
@@ -921,6 +922,212 @@ function HomePage({ onCreateJob }: { onCreateJob: () => void }) {
         <JobDetailSidebar job={selectedJob} onClose={() => setSelectedJob(null)} />
       )}
     </>
+  );
+}
+
+// ─── Settings Page ────────────────────────────────────────────────────────────
+
+function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
+  return (
+    <div
+      className={`toggle-switch${on ? " toggle-on" : ""}`}
+      onClick={onChange}
+      role="switch"
+      aria-checked={on}
+      tabIndex={0}
+      onKeyDown={(e) => e.key === " " && onChange()}
+    >
+      <div className="toggle-track" />
+      <div className="toggle-thumb" />
+    </div>
+  );
+}
+
+function SettingsPage({ onBack }: { onBack: () => void }) {
+  const [webNotif, setWebNotif] = useState(false);
+  const [emailNotif, setEmailNotif] = useState(true);
+  const [mobileNotif, setMobileNotif] = useState(false);
+  const [hideSearch, setHideSearch] = useState(false);
+
+  return (
+    <main className="main-content settings-main">
+      {/* Header row */}
+      <div className="settings-header-row">
+        <button className="settings-back-btn" onClick={onBack}>← Back</button>
+        <div className="settings-title-group">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          <h2 className="settings-title">Settings</h2>
+        </div>
+      </div>
+
+      {/* Account */}
+      <div className="settings-card">
+        <div className="settings-section-header">Account</div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Account Type</span>
+            <span className="settings-row-desc">Switch between Job Seeker, Recruiter, or Gigsman. Your previous data is retained for 60 days after switching.</span>
+          </div>
+          <div className="settings-row-control">
+            <span className="account-type-badge">Job Seeker</span>
+            <button className="settings-btn settings-btn-black">Change</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Language & Region */}
+      <div className="settings-card">
+        <div className="settings-section-header">Language &amp; Region</div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Language</span>
+            <span className="settings-row-desc">Interface display language</span>
+          </div>
+          <div className="settings-row-control">
+            <select className="settings-select">
+              <option>English</option>
+              <option>French</option>
+              <option>German</option>
+              <option>Spanish</option>
+            </select>
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Region</span>
+            <span className="settings-row-desc">Affects job listings and local content</span>
+          </div>
+          <div className="settings-row-control">
+            <select className="settings-select">
+              <option>Europe</option>
+              <option>North America</option>
+              <option>Asia Pacific</option>
+              <option>Middle East</option>
+            </select>
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Time Zone</span>
+            <span className="settings-row-desc">Used for scheduling and deadlines</span>
+          </div>
+          <div className="settings-row-control">
+            <select className="settings-select">
+              <option value="">Select Time Zone</option>
+              <option>UTC+0 London</option>
+              <option>UTC+1 Paris</option>
+              <option>UTC+2 Athens</option>
+              <option>UTC+5:30 Mumbai</option>
+              <option>UTC-5 New York</option>
+              <option>UTC-8 Los Angeles</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Notifications */}
+      <div className="settings-card">
+        <div className="settings-section-header">Notifications</div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Web Notifications</span>
+            <span className="settings-row-desc">Receive alerts directly in your browser</span>
+          </div>
+          <div className="settings-row-control">
+            <Toggle on={webNotif} onChange={() => setWebNotif((v) => !v)} />
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Email Notifications</span>
+            <span className="settings-row-desc">Updates and activity sent to your email</span>
+          </div>
+          <div className="settings-row-control">
+            <Toggle on={emailNotif} onChange={() => setEmailNotif((v) => !v)} />
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Mobile Notifications</span>
+            <span className="settings-row-desc">Push notifications on your mobile device</span>
+          </div>
+          <div className="settings-row-control">
+            <Toggle on={mobileNotif} onChange={() => setMobileNotif((v) => !v)} />
+          </div>
+        </div>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="settings-card">
+        <div className="settings-section-header danger-header">Danger Zone</div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Export my data</span>
+            <span className="settings-row-desc">Download a copy of all your personal data, activity, and content stored on this platform.</span>
+          </div>
+          <div className="settings-row-control">
+            <button className="settings-btn">Export</button>
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Revoke all active sessions</span>
+            <span className="settings-row-desc">Sign out from all devices immediately. You'll need to log in again everywhere.</span>
+          </div>
+          <div className="settings-row-control">
+            <button className="settings-btn">Revoke</button>
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Delete all personal data</span>
+            <span className="settings-row-desc">Permanently remove your personal information while keeping your account active. This cannot be undone.</span>
+          </div>
+          <div className="settings-row-control">
+            <button className="settings-btn settings-btn-red">Delete data</button>
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Remove profile from search</span>
+            <span className="settings-row-desc">Your profile won't appear in recruiter or employer searches. You can still use the platform normally.</span>
+          </div>
+          <div className="settings-row-control">
+            <Toggle on={hideSearch} onChange={() => setHideSearch((v) => !v)} />
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Reset feed &amp; preferences</span>
+            <span className="settings-row-desc">Clear your personalized feed, saved filters, and interest history. Your account and content won't be affected.</span>
+          </div>
+          <div className="settings-row-control">
+            <button className="settings-btn">Reset</button>
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Deactivate account</span>
+            <span className="settings-row-desc">Temporarily hide your profile and pause all activity. Your data is preserved and you can reactivate at any time by logging back in.</span>
+          </div>
+          <div className="settings-row-control">
+            <button className="settings-btn settings-btn-red">Deactivate</button>
+          </div>
+        </div>
+        <div className="settings-row">
+          <div className="settings-row-text">
+            <span className="settings-row-title">Delete account</span>
+            <span className="settings-row-desc">Permanently delete your account and all associated data. A 15-day grace period applies — you can cancel within that window.</span>
+          </div>
+          <div className="settings-row-control">
+            <button className="settings-btn settings-btn-red-solid">Delete account</button>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
 
@@ -1303,6 +1510,9 @@ export default function App() {
       )}
       {activePage === "profile" && (
         <ProfilePage onBack={() => setActivePage("home")} />
+      )}
+      {activePage === "settings" && (
+        <SettingsPage onBack={() => setActivePage("home")} />
       )}
 
       {showNotifications && (
