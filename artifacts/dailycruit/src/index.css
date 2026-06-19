@@ -1082,6 +1082,152 @@ body {
   font-size: 14px;
 }
 
+/* ─── Preferences Tab ────────────────────────────────────────────────────── */
+
+.pref-card {
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  padding: 4px 0 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.pref-section {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pref-divider {
+  height: 1px;
+  background: #F3F4F6;
+  margin: 0;
+}
+
+.pref-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Pill buttons */
+.pref-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pref-pill {
+  padding: 7px 16px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 999px;
+  background: #F9FAFB;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.pref-pill:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+}
+
+.pref-pill-active {
+  background: #F0FDF4;
+  border-color: #22C55E;
+  color: #16A34A;
+  font-weight: 600;
+}
+
+.pref-pill-active:hover {
+  background: #DCFCE7;
+  border-color: #16A34A;
+}
+
+/* Input grid */
+.pref-inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.pref-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pref-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.pref-input {
+  padding: 9px 12px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #111827;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.pref-input::placeholder {
+  color: #9CA3AF;
+}
+
+.pref-input:focus {
+  border-color: #22C55E;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+}
+
+.pref-sublabel {
+  font-size: 11px;
+  color: #9CA3AF;
+  margin-top: -2px;
+}
+
+/* Save button row */
+.pref-actions {
+  padding: 16px 24px 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pref-save-btn {
+  padding: 9px 24px;
+  background: #22C55E;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.1s ease;
+}
+
+.pref-save-btn:hover {
+  background: #16A34A;
+}
+
+.pref-save-btn:active {
+  transform: scale(0.97);
+}
+
+.pref-save-saved {
+  background: #16A34A;
+}
+
 /* ─── Home page ───────────────────────────────────────────────────────────── */
 
 .home-main {

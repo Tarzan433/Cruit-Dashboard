@@ -1,0 +1,46 @@
+Create the "Preferences" tab view frontend component for my job portal application based on the provided UI layout. 
+
+Tech Stack Constraints:
+- Use only standard HTML5 semantic elements, vanilla CSS3, and vanilla JavaScript (ES6+).
+- Do not use Tailwind, React, or heavy external UI frameworks. Keep it lightweight so it runs easily in VS Code and integrates cleanly with Firebase Firestore later.
+
+UI Layout & Structure to Build (Preferences View):
+Keep the existing profile header card and alert banner from before, but update the tab navigation and main content area below it:
+
+1. Tab Navigation Bar Update:
+   - The horizontal tab menu now has the "Preferences" tab active.
+   - The active state must show green text and a solid green underline spanning the width of the "Preferences" tab. "General" and "Achievements" should look inactive.
+
+2. Main Content Card (Preferences Form):
+   Inside a single white wrapper card, arrange the following input rows stacked vertically:
+
+   - Row 1: "Work mode" Section
+     - Title label: "Work mode" (bold, clean font).
+     - Pill choices below it: "Remote", "Hybrid", and "On-site". Styled as light grey rounded pill buttons with subtle borders. 
+
+   - Row 2: "Contract type" Section
+     - Title label: "Contract type" (bold).
+     - Pill choices below it: "Full-time", "Part-time", "Gig", "Internship", and "Contract". Styled identical to the Work Mode pills.
+
+   - Row 3: Grid Inputs (2 Columns)
+     - Column 1 (Left): 
+       - Input field labeled "Target roles". Placeholder text: "Full-stack, Backend, Tech lead". 
+       - Add a tiny, muted sub-label text directly below this input field reading "Comma separated".
+     - Column 2 (Right): 
+       - Input field labeled "Preferred locations". Placeholder text: "Remote EU, Italy".
+     - Both input boxes should have rounded borders and light gray placeholder text.
+
+   - Row 4: Grid Inputs (2 Columns)
+     - Column 1 (Left): 
+       - Input field labeled "Salary range". Placeholder text: "40k - 65k EUR".
+     - Column 2 (Right): 
+       - Input field labeled "Seniority". Placeholder text: "Mid / Senior".
+     - Both input boxes should match the design styles of Row 3.
+
+3. Action Button:
+   - At the bottom right corner of the form, add a solid green, pill-shaped button that reads "Save preferences" with white text.
+
+Specific Interaction Logic (JavaScript):
+- Pill Selection: Add basic JS logic so that when a user clicks a pill button (e.g., in "Work mode" or "Contract type"), it toggles an active state class. Active pills should look visually distinct (e.g., a colored border or slightly darker background).
+
+Please provide the structured HTML, clean modular CSS styling for the form rows, input elements, and active states, and the minimal JS logic for handling the pill selections.

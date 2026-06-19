@@ -924,6 +924,134 @@ function HomePage({ onCreateJob }: { onCreateJob: () => void }) {
   );
 }
 
+// ─── Preferences Tab ──────────────────────────────────────────────────────────
+
+function PreferencesTab() {
+  const workModes = ["Remote", "Hybrid", "On-site"];
+  const contractTypes = ["Full-time", "Part-time", "Gig", "Internship", "Contract"];
+
+  const [selectedWorkModes, setSelectedWorkModes] = useState<Set<string>>(new Set());
+  const [selectedContracts, setSelectedContracts] = useState<Set<string>>(new Set());
+  const [targetRoles, setTargetRoles] = useState("");
+  const [preferredLocations, setPreferredLocations] = useState("");
+  const [salaryRange, setSalaryRange] = useState("");
+  const [seniority, setSeniority] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  function toggle(set: Set<string>, setFn: (s: Set<string>) => void, val: string) {
+    const next = new Set(set);
+    next.has(val) ? next.delete(val) : next.add(val);
+    setFn(next);
+  }
+
+  function handleSave() {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
+
+  return (
+    <div className="pref-card">
+      {/* Work mode */}
+      <div className="pref-section">
+        <span className="pref-section-title">Work mode</span>
+        <div className="pref-pills">
+          {workModes.map((m) => (
+            <button
+              key={m}
+              className={`pref-pill${selectedWorkModes.has(m) ? " pref-pill-active" : ""}`}
+              onClick={() => toggle(selectedWorkModes, setSelectedWorkModes, m)}
+            >
+              {m}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="pref-divider" />
+
+      {/* Contract type */}
+      <div className="pref-section">
+        <span className="pref-section-title">Contract type</span>
+        <div className="pref-pills">
+          {contractTypes.map((c) => (
+            <button
+              key={c}
+              className={`pref-pill${selectedContracts.has(c) ? " pref-pill-active" : ""}`}
+              onClick={() => toggle(selectedContracts, setSelectedContracts, c)}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="pref-divider" />
+
+      {/* Row 1: Target roles + Preferred locations */}
+      <div className="pref-section">
+        <div className="pref-inputs-grid">
+          <div className="pref-field">
+            <label className="pref-label">Target roles</label>
+            <input
+              className="pref-input"
+              type="text"
+              placeholder="Full-stack, Backend, Tech lead"
+              value={targetRoles}
+              onChange={(e) => setTargetRoles(e.target.value)}
+            />
+            <span className="pref-sublabel">Comma separated</span>
+          </div>
+          <div className="pref-field">
+            <label className="pref-label">Preferred locations</label>
+            <input
+              className="pref-input"
+              type="text"
+              placeholder="Remote EU, Italy"
+              value={preferredLocations}
+              onChange={(e) => setPreferredLocations(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="pref-divider" />
+
+      {/* Row 2: Salary range + Seniority */}
+      <div className="pref-section">
+        <div className="pref-inputs-grid">
+          <div className="pref-field">
+            <label className="pref-label">Salary range</label>
+            <input
+              className="pref-input"
+              type="text"
+              placeholder="40k - 65k EUR"
+              value={salaryRange}
+              onChange={(e) => setSalaryRange(e.target.value)}
+            />
+          </div>
+          <div className="pref-field">
+            <label className="pref-label">Seniority</label>
+            <input
+              className="pref-input"
+              type="text"
+              placeholder="Mid / Senior"
+              value={seniority}
+              onChange={(e) => setSeniority(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Save button */}
+      <div className="pref-actions">
+        <button className={`pref-save-btn${saved ? " pref-save-saved" : ""}`} onClick={handleSave}>
+          {saved ? "✓ Saved!" : "Save preferences"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Profile Page ─────────────────────────────────────────────────────────────
 
 type ProfileTab = "general" | "preferences" | "achievements";
@@ -1057,9 +1185,7 @@ function ProfilePage({ onBack }: { onBack: () => void }) {
       )}
 
       {activeTab === "preferences" && (
-        <div className="profile-placeholder-tab">
-          <p>Preferences settings coming soon.</p>
-        </div>
+        <PreferencesTab />
       )}
       {activeTab === "achievements" && (
         <div className="profile-placeholder-tab">
