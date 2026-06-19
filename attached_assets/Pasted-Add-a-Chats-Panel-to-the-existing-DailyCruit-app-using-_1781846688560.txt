@@ -1,0 +1,129 @@
+Add a Chats Panel to the existing DailyCruit app using 
+HTML, CSS, and vanilla JavaScript only. No React, No frameworks.
+
+When the chat bubble icon in the top-right navbar is clicked,
+it opens a full chat layout as described below.
+
+---
+
+## LAYOUT STRUCTURE
+Two-column layout side by side:
+- LEFT COLUMN: Chat list panel (fixed width ~460px)
+- RIGHT COLUMN: Chat window area (takes remaining width)
+- This replaces the main page content area when chat is opened
+- Navbar stays visible at top as usual
+
+---
+
+## LEFT PANEL — CHAT LIST
+
+### Header
+- Solid green background: #22C55E
+- Full width of left panel
+- Top-left: white back arrow (←) icon — clicking goes back to Home
+- Next to it: white bold text "Chats" (~20px)
+- Bottom of header has a white curved/rounded bottom edge 
+  (border-radius on bottom corners: 20px)
+- No search bar needed
+
+### Chat List Body
+- White background below the green header
+- Scrollable list of chat items
+- Each chat item contains:
+  LEFT: Dark green circular avatar (40px) with white initial letter
+  CENTER (stacked vertically):
+    - Row 1: Bold contact name (left) + timestamp (right, gray ~12px)
+    - Row 2: Job tag pill (green text, light green background, 
+              small briefcase icon before text) 
+              + "RECRUITER" badge (right side, light blue 
+              background, blue-gray text, small caps, 
+              border-radius: 4px)
+    - Row 3: Last message preview (gray, ~13px, truncated)
+  - Divider line between each chat item (1px, #F3F4F6)
+  - Padding: 14px 16px per item
+  - Hover: light gray background #F9FAFB
+
+### Empty State (when no chats exist yet)
+- Centered in the left panel below the header
+- Gray chat bubble icon (SVG, ~48px)
+- Bold text: "No chats yet"
+- Subtitle: "When you message a recruiter or applicant, 
+             it will appear here."
+- Text color: #6B7280, font-size: 14px
+
+---
+
+## RIGHT PANEL — CHAT WINDOW
+
+### Default State (no chat selected)
+- Light gray background: #F0F2F5
+- Centered content:
+  - Rounded pill container with gray text: "Select a chat"
+  - Background: #E5E7EB, border-radius: 999px
+  - Padding: 10px 24px, font-size: 14px, color: #6B7280
+
+### When a chat is selected (click on left panel item)
+Show a full chat window with:
+
+TOP BAR:
+- White background, border-bottom: 1px solid #E5E7EB
+- Left: avatar circle + contact name (bold) + 
+  job tag below name (small green text)
+- Right: phone icon, video icon, info icon (gray, 20px each)
+- Height: 64px, padding: 0 20px
+
+MESSAGE AREA:
+- Background: #F0F2F5
+- Scrollable vertically
+- Messages aligned:
+  - Received messages: LEFT side, white bubble, 
+    gray text, border-radius: 0 12px 12px 12px
+  - Sent messages: RIGHT side, green bubble (#22C55E), 
+    white text, border-radius: 12px 0 12px 12px
+- Timestamp below each message (tiny gray text, ~11px)
+- Padding: 16px
+
+INPUT BAR (bottom of right panel):
+- White background, border-top: 1px solid #E5E7EB
+- Left: paperclip icon (attachment, gray)
+- Center: rounded text input, placeholder: "Type a message..."
+  - border-radius: 999px, border: 1px solid #E5E7EB
+  - background: #F9FAFB, padding: 10px 16px, flex: 1
+- Right: green send button (circle, #22C55E, white arrow icon ➤)
+  - size: 40px, border-radius: 50%
+- Height of bar: 68px, padding: 0 16px
+- Pressing Enter or clicking send adds message to chat window
+
+---
+
+## SIDEBAR (LEFT EDGE) — Optional
+- Thin left sidebar (48px wide) with icon-only navigation
+- Icons (gray): Home, Search, Chat (active = green), Applications
+- Useful for future navigation, keep it minimal
+
+---
+
+## INTERACTIONS
+- Clicking chat bubble icon in navbar opens the Chats page
+- Clicking a chat item in left panel opens that chat in right panel
+- Clicking back arrow (←) in green header returns to Home page
+- Send button and Enter key send messages (appended to chat window)
+- New messages appear at bottom of chat window, auto-scroll down
+- Chat items in left panel update with latest message preview 
+  and timestamp when a new message is sent
+
+---
+
+## STYLING DETAILS
+- Language: HTML, CSS, vanilla JavaScript ONLY
+- No React, no npm, no frameworks
+- Font: Inter or system sans-serif
+- Green: #22C55E
+- Background: #F0F2F5
+- White panels: #FFFFFF
+- Borders: #E5E7EB
+- Avatar background: #166534 (dark green)
+- Avatar text: white
+- RECRUITER badge: background #DBEAFE, color #3B82F6
+- Job tag pill: background #DCFCE7, color #16A34A
+- All in one HTML file with <style> and <script> tags
