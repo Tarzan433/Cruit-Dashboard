@@ -925,6 +925,88 @@ function HomePage({ onCreateJob }: { onCreateJob: () => void }) {
   );
 }
 
+// ─── Account Type Modal ───────────────────────────────────────────────────────
+
+type AccountType = "jobseeker" | "recruiter" | "gigsman";
+
+const ACCOUNT_TYPES: { id: AccountType; title: string; desc: string; icon: string }[] = [
+  {
+    id: "jobseeker",
+    title: "Job Seeker",
+    desc: "Find and apply to jobs perfectly matched for you",
+    icon: "🧑‍💼",
+  },
+  {
+    id: "recruiter",
+    title: "Recruiter",
+    desc: "Professional dashboard to post jobs & hire talent",
+    icon: "🏢",
+  },
+  {
+    id: "gigsman",
+    title: "Gigsman",
+    desc: "Search gigs & post flexible one-time work",
+    icon: "⚡",
+  },
+];
+
+function AccountTypeModal({
+  current,
+  onSelect,
+  onClose,
+}: {
+  current: AccountType;
+  onSelect: (t: AccountType) => void;
+  onClose: () => void;
+}) {
+  const [selected, setSelected] = useState<AccountType>(current);
+
+  return (
+    <div className="acct-modal-overlay" onMouseDown={onClose}>
+      <div className="acct-modal-card" onMouseDown={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="acct-modal-header">
+          <span className="acct-modal-title">Change account type</span>
+          <span className="acct-modal-subtitle">Previous data is retained for 60 days after switching</span>
+        </div>
+
+        {/* Cards grid */}
+        <div className="acct-cards-grid">
+          {ACCOUNT_TYPES.map((t) => {
+            const isActive = selected === t.id;
+            return (
+              <div
+                key={t.id}
+                className={`acct-type-card${isActive ? " acct-type-active" : ""}`}
+                onClick={() => setSelected(t.id)}
+              >
+                {isActive && <span className="acct-current-badge">CURRENT</span>}
+                <div className="acct-card-icon">{t.icon}</div>
+                <span className={`acct-card-title${isActive ? " acct-card-title-active" : ""}`}>{t.title}</span>
+                <span className="acct-card-desc">{t.desc}</span>
+                <div className="acct-dot-row">
+                  {isActive && <span className="acct-dot" />}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Footer actions */}
+        <div className="acct-modal-footer">
+          <button className="acct-cancel-btn" onClick={onClose}>Cancel</button>
+          <button
+            className="acct-confirm-btn"
+            onClick={() => { onSelect(selected); onClose(); }}
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Settings Page ────────────────────────────────────────────────────────────
 
 function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
@@ -948,6 +1030,14 @@ function SettingsPage({ onBack }: { onBack: () => void }) {
   const [emailNotif, setEmailNotif] = useState(true);
   const [mobileNotif, setMobileNotif] = useState(false);
   const [hideSearch, setHideSearch] = useState(false);
+  const [accountType, setAccountType] = useState<AccountType>("jobseeker");
+  const [showAcctModal, setShowAcctModal] = useState(false);
+
+  const acctLabel: Record<AccountType, string> = {
+    jobseeker: "Job Seeker",
+    recruiter: "Recruiter",
+    gigsman: "Gigsman",
+  };
 
   return (
     <main className="main-content settings-main">
@@ -972,8 +1062,8 @@ function SettingsPage({ onBack }: { onBack: () => void }) {
             <span className="settings-row-desc">Switch between Job Seeker, Recruiter, or Gigsman. Your previous data is retained for 60 days after switching.</span>
           </div>
           <div className="settings-row-control">
-            <span className="account-type-badge">Job Seeker</span>
-            <button className="settings-btn settings-btn-black">Change</button>
+            <span className="account-type-badge">{acctLabel[accountType]}</span>
+            <button className="settings-btn settings-btn-black" onClick={() => setShowAcctModal(true)}>Change</button>
           </div>
         </div>
       </div>
@@ -1127,6 +1217,13 @@ function SettingsPage({ onBack }: { onBack: () => void }) {
           </div>
         </div>
       </div>
+      {showAcctModal && (
+        <AccountTypeModal
+          current={accountType}
+          onSelect={(t) => setAccountType(t)}
+          onClose={() => setShowAcctModal(false)}
+        />
+      )}
     </main>
   );
 }

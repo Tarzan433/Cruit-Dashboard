@@ -1082,6 +1082,188 @@ body {
   font-size: 14px;
 }
 
+/* ─── Account Type Modal ─────────────────────────────────────────────────── */
+
+.acct-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(17, 24, 39, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.acct-modal-card {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 640px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modal-in 0.18s ease;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.acct-modal-header {
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid #F3F4F6;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.acct-modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.acct-modal-subtitle {
+  font-size: 12px;
+  color: #9CA3AF;
+}
+
+/* Cards grid */
+.acct-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding: 22px 24px;
+}
+
+.acct-type-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 14px 14px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-height: 170px;
+}
+
+.acct-type-card:hover {
+  border-color: #A7F3D0;
+  box-shadow: 0 2px 12px rgba(34, 197, 94, 0.1);
+}
+
+.acct-type-active {
+  border: 2px dashed #22C55E;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.08);
+}
+
+.acct-current-badge {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111827;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 0 0 8px 8px;
+}
+
+.acct-card-icon {
+  font-size: 32px;
+  line-height: 1;
+  margin-top: 8px;
+}
+
+.acct-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+}
+
+.acct-card-title-active {
+  color: #16A34A;
+}
+
+.acct-card-desc {
+  font-size: 12px;
+  color: #9CA3AF;
+  text-align: center;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.acct-dot-row {
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.acct-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22C55E;
+}
+
+/* Footer */
+.acct-modal-footer {
+  padding: 16px 24px 20px;
+  border-top: 1px solid #F3F4F6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.acct-cancel-btn {
+  padding: 9px 20px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.acct-cancel-btn:hover {
+  background: #F9FAFB;
+}
+
+.acct-confirm-btn {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 8px;
+  background: #22C55E;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.acct-confirm-btn:hover {
+  background: #16A34A;
+}
+
 /* ─── Settings Page ──────────────────────────────────────────────────────── */
 
 .settings-main {
