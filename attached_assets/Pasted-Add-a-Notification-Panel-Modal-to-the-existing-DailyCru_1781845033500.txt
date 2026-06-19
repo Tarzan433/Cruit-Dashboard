@@ -1,0 +1,87 @@
+Add a Notification Panel Modal to the existing DailyCruit app.
+When the bell icon (🔔) in the navbar is clicked, it opens a 
+centered modal/popup overlay exactly as described below.
+
+---
+
+## TRIGGER
+- The bell icon in the top-right navbar opens this notification panel
+- Clicking the bell toggles the modal open/closed
+- Clicking the X button or outside the modal closes it
+
+---
+
+## OVERLAY (BACKGROUND)
+- When modal is open, the entire page behind it gets a 
+  semi-transparent dark overlay: rgba(0, 0, 0, 0.4)
+- Page content behind is dimmed/grayed out but still visible
+- Overlay covers the full viewport including navbar
+
+---
+
+## MODAL CONTAINER
+- White background: #FFFFFF
+- Rounded corners: border-radius: 16px
+- Width: ~460px, auto height
+- Centered on screen (position: fixed, top: 50%, left: 50%, transform: translate(-50%, -50%))
+- Box shadow: 0 8px 32px rgba(0,0,0,0.15)
+- No visible border
+
+---
+
+## MODAL HEADER
+- Left side:
+  - Small bell icon (outline style, ~20px, dark gray)
+  - Next to it: Bold text "Notifications" (~16px, #111827)
+  - Below that: Smaller gray text "0 unread" (~13px, #6B7280)
+- Right side:
+  - An X close button (gray, ~18px)
+  - Clicking X closes the modal
+- Header has a subtle bottom border: 1px solid #F3F4F6
+
+---
+
+## MODAL BODY (EMPTY STATE)
+- Vertically and horizontally centered content
+- Large gold/yellow bell emoji or SVG icon: 🔔
+  - Size: ~52px
+  - Color: golden yellow #F59E0B or use emoji directly
+- Bold text below: "No notifications yet"
+  - Font: ~15px, semi-bold, #111827
+- Subtitle text (gray, centered, 2 lines):
+  "Messages, application status and account updates will appear here."
+  - Font: ~13px, color: #6B7280
+  - Max-width: ~300px, text-align: center
+- Padding: 40px 32px
+
+---
+
+## MODAL FOOTER
+- No footer needed (no buttons at bottom)
+
+---
+
+## ANIMATIONS
+- Modal fades in smoothly when opened (CSS transition: opacity 0.2s ease)
+- Overlay fades in at same time
+- Modal slides up slightly on open: transform translateY from 10px to 0
+
+---
+
+## INTERACTIONS
+- Bell icon in navbar: clicking opens the modal
+- X button: closes the modal
+- Clicking anywhere on the dark overlay: closes the modal
+- Pressing Escape key: closes the modal
+
+---
+
+## STYLING DETAILS
+- Font: Inter or system sans-serif
+- Modal background: white
+- Overlay: rgba(0,0,0,0.4)
+- Bell icon in header: gray outline (#374151)
+- Gold bell emoji in body: 🔔 or SVG with color #F59E0B
+- Border-radius: 16px
+- No scrollbar inside modal for empty state
+- Z-index: modal at 1000, overlay at 999
