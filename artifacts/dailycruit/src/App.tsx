@@ -358,20 +358,28 @@ function HomePage({ onCreateJob }: { onCreateJob: () => void }) {
 
 // ─── Applications Page ────────────────────────────────────────────────────────
 
-function ApplicationsPage() {
+function ApplicationsPage({ onExplore }: { onExplore: () => void }) {
   return (
     <main className="main-content">
       <div className="empty-state">
-        <svg className="empty-icon" viewBox="0 0 80 80" fill="none">
-          <rect x="14" y="10" width="52" height="60" rx="4" stroke="#D1D5DB" strokeWidth="3" />
-          <line x1="24" y1="28" x2="56" y2="28" stroke="#D1D5DB" strokeWidth="3" strokeLinecap="round" />
-          <line x1="24" y1="40" x2="56" y2="40" stroke="#D1D5DB" strokeWidth="3" strokeLinecap="round" />
-          <line x1="24" y1="52" x2="44" y2="52" stroke="#D1D5DB" strokeWidth="3" strokeLinecap="round" />
+        <svg
+          className="empty-icon apps-icon"
+          viewBox="0 0 56 56"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect x="8" y="4" width="36" height="48" rx="4" stroke="#D1D5DB" strokeWidth="2.5" />
+          <line x1="16" y1="18" x2="36" y2="18" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="16" y1="27" x2="36" y2="27" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="16" y1="36" x2="28" y2="36" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
         </svg>
         <h1 className="empty-title">No applications yet</h1>
         <p className="empty-subtitle">
-          Jobs you apply to will appear here. Start exploring open roles.
+          Start exploring opportunities and send your first application.
         </p>
+        <button className="explore-btn" onClick={onExplore}>
+          Explore jobs →
+        </button>
       </div>
     </main>
   );
@@ -431,7 +439,9 @@ export default function App() {
           <SearchJobsPage />
         </main>
       )}
-      {activePage === "applications" && <ApplicationsPage />}
+      {activePage === "applications" && (
+        <ApplicationsPage onExplore={() => setActivePage("search")} />
+      )}
 
       {showModal && (
         <Modal

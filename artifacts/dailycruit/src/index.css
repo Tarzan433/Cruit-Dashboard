@@ -626,11 +626,45 @@ body {
   background: #16A34A;
 }
 
-/* Active "Search jobs" nav link — green variant */
-.nav-link[data-page="search"].active {
+/* Active "Search jobs" and "My Applications" nav links — green variant */
+.nav-link[data-page="search"].active,
+.nav-link[data-page="applications"].active {
   background: #F0FDF4;
   color: #16A34A;
   box-shadow: 0 0 0 1.5px #22C55E inset;
+}
+
+/* Apps page icon sizing */
+.empty-icon.apps-icon {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 20px;
+}
+
+/* Explore jobs CTA button */
+.explore-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 28px;
+  background: #22C55E;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 1px 4px rgba(34, 197, 94, 0.3);
+}
+
+.explore-btn:hover {
+  background: #16A34A;
+}
+
+.explore-btn:active {
+  transform: scale(0.98);
 }
 
 /* ─── Responsive ──────────────────────────────────────────────────────────── */

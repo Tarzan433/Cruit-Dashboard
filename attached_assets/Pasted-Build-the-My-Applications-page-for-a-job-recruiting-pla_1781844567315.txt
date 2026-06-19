@@ -1,0 +1,71 @@
+Build the "My Applications" page for a job recruiting platform called 
+"DailyCruit" using HTML, CSS, and vanilla JavaScript (or React).
+This shares the same navbar as the other pages in the app.
+
+---
+
+## NAVBAR (same as other pages)
+- Fixed top navbar, white background, subtle bottom shadow/border
+- Left: Small green briefcase/box icon + bold text "DAILYCRUIT"
+- Center: Pill-shaped nav container with 3 links:
+    - 🏠 Home
+    - 📄 Search jobs
+    - 📋 My Applications  ← ACTIVE (green border + green text + green icon)
+  - Active tab has a green outlined pill background and green colored text
+- Right side: Chat bubble icon, Bell icon, Purple circle avatar "T" + green dot
+
+---
+
+## MAIN CONTENT AREA
+- Full viewport height, light gray-blue background: #F0F2F5
+- Content vertically and horizontally centered on the page
+
+---
+
+## EMPTY STATE (centered on page)
+- A large gray document/file icon (outlined, not filled)
+  - Looks like a page with lines on it (📄 style SVG icon)
+  - Color: light gray #C0C0C0 or #D1D5DB
+  - Size: ~56px x 56px
+- Bold heading below icon: "No applications yet"
+  - Font: semi-bold, ~20px, dark color #111827
+- Subtitle text (gray, centered, 2 lines):
+  "Start exploring opportunities and send your first application."
+  - Font: ~14px, gray color #6B7280
+  - Max-width: ~320px, centered
+- Green CTA button below: "Explore jobs →"
+  - Pill shape (border-radius: 999px)
+  - Background: #22C55E (bright green)
+  - Text: white, bold, ~14px
+  - Has a right arrow → after the text
+  - Padding: 12px 28px
+  - Hover: slightly darker green #16A34A
+
+---
+
+## SPACING & LAYOUT
+- Icon → heading gap: 16px
+- Heading → subtitle gap: 8px
+- Subtitle → button gap: 20px
+- All elements stacked vertically, centered (flexbox column, align-center)
+
+---
+
+## INTERACTIONS
+- "Explore jobs →" button navigates to the Search Jobs page 
+  (or scrolls/routes to it)
+- Active nav link "My Applications" is highlighted in green
+- Hover effects on nav links and button
+
+---
+
+## STYLING DETAILS
+- Font: Inter or system sans-serif
+- Primary green: #22C55E
+- Hover green: #16A34A
+- Page background: #F0F2F5
+- Navbar background: white
+- Empty state icon color: #D1D5DB (light gray)
+- Heading color: #111827
+- Subtitle color: #6B7280
+- Button: border-radius 999px, no border, white text
