@@ -1,0 +1,40 @@
+Create a profile page frontend component for my job portal app based on the provided UI layout. 
+
+Tech Stack Constraints:
+- Use only standard HTML5, semantic tags, vanilla CSS3, and vanilla JavaScript (ES6+).
+- Do not use Tailwind, React, or heavy UI frameworks. Keep it lightweight so I can easily run it in VS Code and tie it into Firebase authentication/Firestore later.
+- Use standard SVG icons or a simple CDN link (like FontAwesome) for UI icons (e.g., back arrow, edit pencil).
+
+UI Layout & Structure to Build:
+
+1. Top Header Navigation:
+   - A simple layout containing a "< Back" button styled as a rounded pill.
+
+2. Alert Banner ("Your profile is not complete"):
+   - A prominent amber/light-orange background banner with a dashed or thin border.
+   - Text on the left: "Your profile is not complete" (bold) and "Complete your profile to improve visibility and get better matches." underneath.
+   - A solid orange/yellow rounded action button on the right that reads "Complete now".
+
+3. Main Profile Header Card:
+   - Left side: Large circular profile avatar placeholder (showing a "T" on a solid background).
+   - Info block next to avatar: Name ("Tarzan"), handle ("@legend"), an interactive "+ Add headline" link text in green, and metadata line ("karnataka  •  t8857352@gmail.com") followed by a light green rounded pill badge saying "Job Seeker".
+   - Right side: A profile completion tracker featuring a text label "Profile completion — 88%", a green horizontal progress bar, a small amber pill badge that says "Missing: Headline", and a clear "Edit profile" button below it with a pencil icon.
+
+4. Tab Navigation Bar:
+   - A horizontal tab menu container featuring "General", "Preferences", and "Achievements". 
+   - The "General" tab should have an active state indicated by green text and a solid green underline spanning the tab width.
+
+5. Content Grid Section (Two Columns):
+   - Left Column (Main Card):
+     - "About" section: Title text with a description area below containing text ("sales guy i can even sell yo veggies ****").
+     - "Skills" section: Title text with a green pill container for tags (e.g., "porgrammers").
+     - "Account Meta" section: Text fields for "Account type: Job Seeker", "Member since: Mar 2026", and "Reputation: 0".
+   - Right Column (Stats Grid):
+     - A 2x2 grid structure containing 4 individual mini-cards for dashboard metrics:
+       1. "Applied" (Value: 0)
+       2. "Responses" (Value: 0)
+       3. "Interviews" (Value: 0)
+       4. "Offers" (Value: 0)
+     - Each card should have a very soft grey background with small muted text for labels and large bold numbers for values.
+
+Please provide the structural HTML, clean separated CSS styling for all containers, states, and borders, and any minimal JavaScript needed to manage active tab switching.

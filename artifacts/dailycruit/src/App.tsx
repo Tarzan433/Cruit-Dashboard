@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-type NavPage = "home" | "search" | "applications" | "chat";
+type NavPage = "home" | "search" | "applications" | "chat" | "profile";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -723,7 +723,7 @@ const DD_MENU_ITEMS = [
   { icon: "📲", label: "Install App", badge: { text: "new", color: "green" } },
 ];
 
-function ProfileDropdown({ onClose }: { onClose: () => void }) {
+function ProfileDropdown({ onClose, onNavigate }: { onClose: () => void; onNavigate: (page: NavPage) => void }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -746,7 +746,13 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
       <div className="profile-dd-divider" />
       <ul className="profile-dd-list">
         {DD_MENU_ITEMS.map((item) => (
-          <li key={item.label} className="profile-dd-item">
+          <li
+            key={item.label}
+            className="profile-dd-item"
+            onClick={() => {
+              if (item.label === "Profile") { onNavigate("profile"); onClose(); }
+            }}
+          >
             <span className="profile-dd-item-icon">{item.icon}</span>
             <span className="profile-dd-item-label">{item.label}</span>
             {item.badge && (
@@ -918,6 +924,152 @@ function HomePage({ onCreateJob }: { onCreateJob: () => void }) {
   );
 }
 
+// ─── Profile Page ─────────────────────────────────────────────────────────────
+
+type ProfileTab = "general" | "preferences" | "achievements";
+
+function ProfilePage({ onBack }: { onBack: () => void }) {
+  const [activeTab, setActiveTab] = useState<ProfileTab>("general");
+  const [showBanner, setShowBanner] = useState(true);
+
+  const tabs: { id: ProfileTab; label: string }[] = [
+    { id: "general", label: "General" },
+    { id: "preferences", label: "Preferences" },
+    { id: "achievements", label: "Achievements" },
+  ];
+
+  const stats = [
+    { label: "Applied", value: 0 },
+    { label: "Responses", value: 0 },
+    { label: "Interviews", value: 0 },
+    { label: "Offers", value: 0 },
+  ];
+
+  return (
+    <main className="main-content profile-main">
+      {/* Back */}
+      <button className="profile-back-btn" onClick={onBack}>
+        ← Back
+      </button>
+
+      {/* Alert banner */}
+      {showBanner && (
+        <div className="profile-alert-banner">
+          <div className="alert-text">
+            <strong>Your profile is not complete</strong>
+            <span>Complete your profile to improve visibility and get better matches.</span>
+          </div>
+          <button className="alert-complete-btn" onClick={() => setShowBanner(false)}>
+            Complete now
+          </button>
+        </div>
+      )}
+
+      {/* Profile header card */}
+      <div className="profile-header-card">
+        <div className="profile-header-left">
+          <div className="profile-avatar-lg">T</div>
+          <div className="profile-info-block">
+            <h2 className="profile-name">Tarzan</h2>
+            <span className="profile-handle">@legend</span>
+            <button className="profile-add-headline">+ Add headline</button>
+            <div className="profile-meta-line">
+              <span>karnataka</span>
+              <span className="meta-dot">•</span>
+              <span>t8857352@gmail.com</span>
+            </div>
+            <span className="profile-seeker-badge">Job Seeker</span>
+          </div>
+        </div>
+
+        <div className="profile-header-right">
+          <div className="completion-label-row">
+            <span className="completion-label">Profile completion</span>
+            <span className="completion-pct">88%</span>
+          </div>
+          <div className="completion-bar-track">
+            <div className="completion-bar-fill" style={{ width: "88%" }} />
+          </div>
+          <span className="completion-missing">⚠ Missing: Headline</span>
+          <button className="profile-edit-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            Edit profile
+          </button>
+        </div>
+      </div>
+
+      {/* Tab nav */}
+      <div className="profile-tab-nav">
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            className={`profile-tab-btn${activeTab === t.id ? " profile-tab-active" : ""}`}
+            onClick={() => setActiveTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* General tab */}
+      {activeTab === "general" && (
+        <div className="profile-content-grid">
+          {/* Left column */}
+          <div className="profile-main-card">
+            <section className="profile-section">
+              <h4 className="section-title">About</h4>
+              <p className="section-body">sales guy i can even sell yo veggies ****</p>
+            </section>
+            <div className="section-divider" />
+            <section className="profile-section">
+              <h4 className="section-title">Skills</h4>
+              <div className="skills-list">
+                <span className="skill-tag">porgrammers</span>
+                <span className="skill-tag">+ Add skill</span>
+              </div>
+            </section>
+            <div className="section-divider" />
+            <section className="profile-section">
+              <h4 className="section-title">Account Meta</h4>
+              <ul className="account-meta-list">
+                <li><span className="meta-key">Account type</span><span className="meta-val">Job Seeker</span></li>
+                <li><span className="meta-key">Member since</span><span className="meta-val">Mar 2026</span></li>
+                <li><span className="meta-key">Reputation</span><span className="meta-val">0</span></li>
+              </ul>
+            </section>
+          </div>
+
+          {/* Right column: stats 2×2 */}
+          <div className="profile-stats-col">
+            <div className="stats-grid">
+              {stats.map((s) => (
+                <div key={s.label} className="stat-card">
+                  <span className="stat-value">{s.value}</span>
+                  <span className="stat-label">{s.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "preferences" && (
+        <div className="profile-placeholder-tab">
+          <p>Preferences settings coming soon.</p>
+        </div>
+      )}
+      {activeTab === "achievements" && (
+        <div className="profile-placeholder-tab">
+          <p>Achievements coming soon.</p>
+        </div>
+      )}
+    </main>
+  );
+}
+
 // ─── Applications Page ────────────────────────────────────────────────────────
 
 function ApplicationsPage({ onExplore }: { onExplore: () => void }) {
@@ -999,7 +1151,10 @@ export default function App() {
             >T</div>
             <span className="online-dot" />
             {showProfileMenu && (
-              <ProfileDropdown onClose={() => setShowProfileMenu(false)} />
+              <ProfileDropdown
+                onClose={() => setShowProfileMenu(false)}
+                onNavigate={(page) => { setActivePage(page); setShowProfileMenu(false); }}
+              />
             )}
           </div>
         </div>
@@ -1019,6 +1174,9 @@ export default function App() {
       )}
       {activePage === "chat" && (
         <ChatPage onBack={() => setActivePage("home")} />
+      )}
+      {activePage === "profile" && (
+        <ProfilePage onBack={() => setActivePage("home")} />
       )}
 
       {showNotifications && (
