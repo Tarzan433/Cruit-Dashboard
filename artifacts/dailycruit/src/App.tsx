@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-type NavPage = "home" | "search" | "applications" | "chat" | "profile" | "settings";
+type NavPage = "home" | "search" | "applications" | "jobposts" | "chat" | "profile" | "settings";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -997,7 +997,7 @@ function AccountTypeModal({
           <button className="acct-cancel-btn" onClick={onClose}>Cancel</button>
           <button
             className="acct-confirm-btn"
-            onClick={() => { onSelect(selected); onClose(); }}
+            onClick={() => { onSelect(selected); setTimeout(onClose, 300); }}
           >
             Confirm
           </button>
@@ -1025,12 +1025,19 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
   );
 }
 
-function SettingsPage({ onBack }: { onBack: () => void }) {
+function SettingsPage({
+  onBack,
+  accountType,
+  onAccountTypeChange,
+}: {
+  onBack: () => void;
+  accountType: AccountType;
+  onAccountTypeChange: (t: AccountType) => void;
+}) {
   const [webNotif, setWebNotif] = useState(false);
   const [emailNotif, setEmailNotif] = useState(true);
   const [mobileNotif, setMobileNotif] = useState(false);
   const [hideSearch, setHideSearch] = useState(false);
-  const [accountType, setAccountType] = useState<AccountType>("jobseeker");
   const [showAcctModal, setShowAcctModal] = useState(false);
 
   const acctLabel: Record<AccountType, string> = {
@@ -1220,7 +1227,7 @@ function SettingsPage({ onBack }: { onBack: () => void }) {
       {showAcctModal && (
         <AccountTypeModal
           current={accountType}
-          onSelect={(t) => setAccountType(t)}
+          onSelect={(t) => onAccountTypeChange(t)}
           onClose={() => setShowAcctModal(false)}
         />
       )}
@@ -1529,6 +1536,21 @@ function ApplicationsPage({ onExplore }: { onExplore: () => void }) {
   );
 }
 
+// ─── Job Posts Page (Recruiter) ───────────────────────────────────────────────
+
+function JobPostsPage() {
+  return (
+    <main className="main-content">
+      <div className="empty-state">
+        <div style={{ fontSize: 48, marginBottom: 12 }}>🏢</div>
+        <h3 className="empty-title">No job posts yet</h3>
+        <p className="empty-desc">You're in Recruiter mode. Create your first job post to start finding talent.</p>
+        <button className="explore-btn" style={{ marginTop: 12 }}>+ Create job post</button>
+      </div>
+    </main>
+  );
+}
+
 // ─── Root App ─────────────────────────────────────────────────────────────────
 
 export default function App() {
@@ -1536,11 +1558,24 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [accountType, setAccountType] = useState<AccountType>("jobseeker");
+
+  function handleAccountTypeChange(t: AccountType) {
+    setAccountType(t);
+    // If switching away from jobseeker while on applications, or away from
+    // recruiter while on jobposts, redirect to home to avoid orphaned pages.
+    if (t !== "jobseeker" && activePage === "applications") setActivePage("home");
+    if (t === "jobseeker" && activePage === "jobposts") setActivePage("home");
+  }
+
+  const isRecruiter = accountType === "recruiter";
 
   const navItems: { id: NavPage; icon: string; label: string }[] = [
     { id: "home", icon: "🏠", label: "Home" },
     { id: "search", icon: "📄", label: "Search jobs" },
-    { id: "applications", icon: "📋", label: "My Applications" },
+    isRecruiter
+      ? { id: "jobposts", icon: "🏢", label: "Job Posts" }
+      : { id: "applications", icon: "📋", label: "My Applications" },
   ];
 
   return (
@@ -1608,8 +1643,15 @@ export default function App() {
       {activePage === "profile" && (
         <ProfilePage onBack={() => setActivePage("home")} />
       )}
+      {activePage === "jobposts" && (
+        <JobPostsPage />
+      )}
       {activePage === "settings" && (
-        <SettingsPage onBack={() => setActivePage("home")} />
+        <SettingsPage
+          onBack={() => setActivePage("home")}
+          accountType={accountType}
+          onAccountTypeChange={handleAccountTypeChange}
+        />
       )}
 
       {showNotifications && (
