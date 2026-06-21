@@ -1367,7 +1367,12 @@ function PreferencesTab() {
 
 type ProfileTab = "general" | "preferences" | "achievements";
 
-function ProfilePage({ onBack }: { onBack: () => void }) {
+function ProfilePage({ onBack, accountType }: { onBack: () => void; accountType: AccountType }) {
+  const acctLabel: Record<AccountType, string> = {
+    jobseeker: "Job Seeker",
+    recruiter: "Recruiter",
+    gigsman: "Gigsman",
+  };
   const [activeTab, setActiveTab] = useState<ProfileTab>("general");
   const [showBanner, setShowBanner] = useState(true);
 
@@ -1474,7 +1479,7 @@ function ProfilePage({ onBack }: { onBack: () => void }) {
             <section className="profile-section">
               <h4 className="section-title">Account Meta</h4>
               <ul className="account-meta-list">
-                <li><span className="meta-key">Account type</span><span className="meta-val">Job Seeker</span></li>
+                <li><span className="meta-key">Account type</span><span className="meta-val">{acctLabel[accountType]}</span></li>
                 <li><span className="meta-key">Member since</span><span className="meta-val">Mar 2026</span></li>
                 <li><span className="meta-key">Reputation</span><span className="meta-val">0</span></li>
               </ul>
@@ -1761,7 +1766,7 @@ export default function App() {
         <ChatPage onBack={() => setActivePage("home")} />
       )}
       {activePage === "profile" && (
-        <ProfilePage onBack={() => setActivePage("home")} />
+        <ProfilePage onBack={() => setActivePage("home")} accountType={accountType} />
       )}
       {activePage === "jobposts" && (
         <JobPostsPage />
