@@ -1,0 +1,33 @@
+Implement a frontend state-switching dashboard layout transition using only vanilla HTML5, vanilla CSS3, and vanilla JavaScript (ES6+). No frameworks like React or Tailwind allowed.
+
+Context:
+I am building a job portal app that has two distinct roles: "Job Seeker" and "Recruiter". I need to hide the job seeker main dashboard panel completely and display the recruiter dashboard panel instead when the user switches their account type to Recruiter inside the settings modal.
+
+UI Layout & Components to Build (Recruiter Dashboard Panel):
+Create a main container panel for the Recruiter view that remains hidden by default and displays when the recruiter state is active. It must feature the following grid system and cards:
+
+1. Top Welcome Card:
+   - Text: "Welcome back, Tarzan! 👋" followed by a small subtitle "Here's an overview of your activity".
+   - Button: A solid green pill button on the bottom left of this card labeled "+ New Post".
+
+2. Top Row Metrics Row (3 Small Cards alongside the Welcome Card):
+   - Card 1 ("Total Views"): Displays a green eye icon, a large bold counter "0", and sub-text "Across all posts".
+   - Card 2 ("Total Posts"): Displays a green postcard/document icon, a large bold counter "0", and three smaller inline column stats underneath: "0 Active", "0 Draft", and "0 Archived".
+   - Card 3 ("Applications"): Displays a green mail/envelope icon, a large bold counter "0", and sub-text "Recent received".
+
+3. Middle Grid Section (Two Main Column Containers):
+   - Left Column Card ("Recent Applications"): Header displays the title and a green right-aligned link text "See all →". The body area is a grey panel containing an empty mail state icon and text reading "No applications yet".
+   - Right Column Card ("Top Posts"): Header displays the title and a green right-aligned link text "See all →". The body area is a grey panel containing an empty document state icon and text reading "No posts yet".
+
+4. Bottom Layout Card ("Recent Chats"):
+   - Aligned underneath the right column card. Header displays "Recent Chats" and a green link text "See all →".
+   - Body contains a vertical list of 3 interactive list-item rows. Each row features:
+     - A dark green circular avatar icon with a white letter "M".
+     - Text content detailing the contact name "Muhammed Faris" and a secondary muted status line "No messages yet".
+     - A subtle right-facing arrow ("→") aligned to the far right edge of the row container.
+
+JavaScript State Toggle Logic:
+- Create an overall wrapper container for the original Job Seeker Home content (e.g., id="job-seeker-dashboard") and a separate wrapper container for this new Recruiter Home content (e.g., id="recruiter-dashboard").
+- Write vanilla JS event handling so that when the "Recruiter" selection is submitted from the modal, the script applies an active/inactive class or directly modifies display attributes (`display: none` vs `display: block/grid`) to switch the entire dashboard viewport seamlessly.
+
+Please provide the modular HTML structures, the CSS rules defining the card shapes, flexbox alignments, and grid spacing layouts, and the JS visibility switching logic.
