@@ -1,3 +1,10 @@
+
+// ─── Imports ─────────────────────────────────────────────────────────────────
+
+import { useState } from "react";
+import { CreateJobPostWizard } from "../components/CreateJobPostWizard";
+
+
 // ─── Recruiter Home Page ──────────────────────────────────────────────────────
 
 const REC_CHATS = [
@@ -117,14 +124,23 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
 
 // ─── Job Posts Page (Recruiter) ───────────────────────────────────────────────
 
+
 export function JobPostsPage() {
+  const [showWizard, setShowWizard] = useState(false);
+
+  if (showWizard) {
+    return <CreateJobPostWizard onBack={() => setShowWizard(false)} />;
+  }
+
   return (
     <main className="main-content">
       <div className="empty-state">
         <div style={{ fontSize: 48, marginBottom: 12 }}>🏢</div>
         <h3 className="empty-title">No job posts yet</h3>
         <p className="empty-desc">You're in Recruiter mode. Create your first job post to start finding talent.</p>
-        <button className="explore-btn" style={{ marginTop: 12 }}>+ Create job post</button>
+        <button className="explore-btn" style={{ marginTop: 12 }} onClick={() => setShowWizard(true)}>
+          + Create job post
+        </button>
       </div>
     </main>
   );

@@ -1,0 +1,398 @@
+// ─── CreateJobPostWizard.tsx ──────────────────────────────────────────────────
+import { useState } from "react";
+
+// The 6 steps shown in the progress bar
+const STEPS = ["Type", "Details", "Location", "Terms", "Requirements", "Review"];
+
+// The two job-type options on step 1
+type JobType = "standard" | "mappin" | null;
+
+interface Props {
+  onBack: () => void; // called when user clicks "← Job Posts"
+}
+
+export function CreateJobPostWizard({ onBack }: Props) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [selectedType, setSelectedType] = useState<JobType>(null);
+
+// Add state for Step 2 data
+const [title, setTitle] = useState("");
+const [description, setDescription] = useState("");
+const [isRemote, setIsRemote] = useState(false);
+const [tags, setTags] = useState<string[]>([]);
+const [tagInput, setTagInput] = useState("");
+const [showErrors, setShowErrors] = useState(false);
+
+//Continue button logic
+  function handleContinue() {
+  if (currentStep === 1) {
+    if (!title.trim() || !description.trim()) {
+      setShowErrors(true);
+      return;
+    }
+    setShowErrors(false);
+  }
+  if (currentStep < STEPS.length - 1) {
+    setCurrentStep((s) => s + 1);
+  }
+}
+
+function handleAddTag() {
+  const t = tagInput.trim();
+  if (t && !tags.includes(t)) {
+    setTags((prev) => [...prev, t]);
+  }
+  setTagInput("");
+}
+
+  return (
+    <main className="main-content" style={{ background: "#f1f3f7", minHeight: "100vh", padding: "28px 32px" }}>
+
+      {/* ── Back link ── */}
+      <button
+        onClick={onBack}
+        style={{
+          display: "flex", alignItems: "center", gap: 6,
+          background: "none", border: "none", cursor: "pointer",
+          color: "#4B5563", fontSize: 14, fontWeight: 500, marginBottom: 20,
+        }}
+      >
+        ← Job Posts
+      </button>
+
+      {/* ── Page header ── */}
+      <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
+        <div style={{
+          width: 44, height: 44, borderRadius: 12,
+          background: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
+          </svg>
+        </div>
+        <div>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 2 }}>
+            YOU'RE CREATING
+          </p>
+          <h2 style={{ fontSize: 20, fontWeight: 800, color: "#111827", margin: 0 }}>New Job Post</h2>
+        </div>
+      </div>
+
+      {/* ── Step progress bar ── */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 0, marginBottom: 36, maxWidth: 560 }}>
+        {STEPS.map((label, i) => {
+          const isDone = i < currentStep;
+          const isActive = i === currentStep;
+          return (
+            <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1 }}>
+              {/* circle + connecting line row */}
+              <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+                {/* left line */}
+                {i > 0 && (
+                  <div style={{
+                    flex: 1, height: 2,
+                    background: isDone || isActive ? "#22c55e" : "#E5E7EB",
+                    transition: "background 0.3s",
+                  }} />
+                )}
+                {/* circle */}
+                <div style={{
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: isActive || isDone ? "#22c55e" : "#E5E7EB",
+                  color: isActive || isDone ? "#fff" : "#9CA3AF",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 12, fontWeight: 700, flexShrink: 0,
+                  transition: "background 0.3s",
+                }}>
+                  {isDone ? "✓" : i + 1}
+                </div>
+                {/* right line */}
+                {i < STEPS.length - 1 && (
+                  <div style={{
+                    flex: 1, height: 2,
+                    background: isDone ? "#22c55e" : "#E5E7EB",
+                    transition: "background 0.3s",
+                  }} />
+                )}
+              </div>
+              {/* label */}
+              <span style={{
+                marginTop: 6, fontSize: 11, fontWeight: isActive ? 700 : 500,
+                color: isActive ? "#111827" : "#9CA3AF",
+              }}>
+                {label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Step content ── */}
+      <div style={{ maxWidth: 560 }}>
+
+        {/* STEP 1 — Type */}
+        {currentStep === 0 && (
+          <>
+            <h3 style={{ fontSize: 20, fontWeight: 800, color: "#111827", marginBottom: 6 }}>
+              What type of job post?
+            </h3>
+            <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 20 }}>
+              Choose how candidates will find this job
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 28 }}>
+              {/* Standard option */}
+              <button
+                onClick={() => setSelectedType("standard")}
+                style={{
+                  border: selectedType === "standard" ? "2px solid #22c55e" : "2px solid #E5E7EB",
+                  background: selectedType === "standard" ? "#f0fdf4" : "#fff",
+                  borderRadius: 12, padding: "18px 16px", textAlign: "left",
+                  cursor: "pointer", transition: "all 0.15s",
+                }}
+              >
+                <div style={{
+                  width: 32, height: 32, borderRadius: 8, background: "#dcfce7",
+                  display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10,
+                }}>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+                    <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+                  </svg>
+                </div>
+                <p style={{ fontWeight: 700, fontSize: 14, color: "#22c55e", marginBottom: 4 }}>Standard</p>
+                <p style={{ fontSize: 12, color: "#6B7280", lineHeight: 1.5, margin: 0 }}>
+                  Appears in the jobs feed with text location
+                </p>
+              </button>
+            
+
+              {/* Map Pin option */}
+              <button
+                onClick={() => setSelectedType("mappin")}
+                style={{
+                  border: selectedType === "mappin" ? "2px solid #22c55e" : "2px solid #E5E7EB",
+                  background: selectedType === "mappin" ? "#f0fdf4" : "#fff",
+                  borderRadius: 12, padding: "18px 16px", textAlign: "left",
+                  cursor: "pointer", transition: "all 0.15s",
+                }}
+              >
+                <div style={{
+                  width: 32, height: 32, borderRadius: 8, background: "#f3f4f6",
+                  display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10,
+                }}>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <p style={{ fontWeight: 700, fontSize: 14, color: "#111827", marginBottom: 4 }}>Map Pin</p>
+                <p style={{ fontSize: 12, color: "#6B7280", lineHeight: 1.5, margin: 0 }}>
+                  Pinned on the map — visible to nearby candidates
+                </p>
+              </button>
+            </div>
+          </>
+        )}
+
+
+        {/* STEP 2 — Job Details */}
+{currentStep === 1 && (
+  <div>
+    <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 24 }}>
+      Job Details
+    </h3>
+
+    {/* Job Title */}
+    <div style={{ marginBottom: 20 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+        Job Title *
+      </label>
+      <input
+        type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="e.g. Senior Barista"
+        style={{
+          width: "100%", padding: "12px 14px", fontSize: 14,
+          border: showErrors && !title.trim() ? "1.5px solid #ef4444" : "1.5px solid #E5E7EB",
+          borderRadius: 10, outline: "none", background: "#fff",
+          transition: "border 0.15s",
+          boxSizing: "border-box",
+        }}
+        onFocus={(e) => e.target.style.borderColor = "#22c55e"}
+        onBlur={(e) => e.target.style.borderColor = showErrors && !title.trim() ? "#ef4444" : "#E5E7EB"}
+      />
+      {showErrors && !title.trim() && (
+        <p style={{ color: "#ef4444", fontSize: 12, marginTop: 5 }}>Title is required</p>
+      )}
+    </div>
+
+    {/* Description */}
+    <div style={{ marginBottom: 20 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+        Description *
+      </label>
+      <textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="Describe the role, responsibilities and expectations..."
+        rows={5}
+        style={{
+          width: "100%", padding: "12px 14px", fontSize: 14,
+          border: showErrors && !description.trim() ? "1.5px solid #ef4444" : "1.5px solid #E5E7EB",
+          borderRadius: 10, outline: "none", background: "#fff", resize: "vertical",
+          fontFamily: "inherit", transition: "border 0.15s",
+          boxSizing: "border-box",
+        }}
+        onFocus={(e) => e.target.style.borderColor = "#22c55e"}
+        onBlur={(e) => e.target.style.borderColor = showErrors && !description.trim() ? "#ef4444" : "#E5E7EB"}
+      />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
+        {showErrors && !description.trim()
+          ? <p style={{ color: "#ef4444", fontSize: 12, margin: 0 }}>Description is required</p>
+          : <span />
+        }
+        <span style={{ fontSize: 11, color: "#9CA3AF", marginLeft: "auto" }}>
+          {description.length} chars
+        </span>
+      </div>
+    </div>
+
+    {/* Remote Job Toggle */}
+    <div style={{
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10,
+      padding: "14px 16px", marginBottom: 20,
+    }}>
+      <div>
+        <p style={{ fontWeight: 600, fontSize: 14, color: "#111827", margin: 0 }}>Remote Job</p>
+        <p style={{ fontSize: 12, color: "#6B7280", margin: "2px 0 0" }}>Skip location step if fully remote</p>
+      </div>
+      <button
+        onClick={() => setIsRemote((v) => !v)}
+        style={{
+          width: 44, height: 24, borderRadius: 999, border: "none",
+          background: isRemote ? "#22c55e" : "#D1D5DB",
+          cursor: "pointer", position: "relative", transition: "background 0.2s",
+          flexShrink: 0,
+        }}
+      >
+        <span style={{
+          position: "absolute", top: 3,
+          left: isRemote ? 23 : 3,
+          width: 18, height: 18, borderRadius: "50%",
+          background: "#fff", transition: "left 0.2s",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+        }} />
+      </button>
+    </div>
+
+    {/* Tags */}
+    <div style={{ marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+        Tags
+      </label>
+      <div style={{ display: "flex", gap: 8 }}>
+        <input
+          type="text"
+          value={tagInput}
+          onChange={(e) => setTagInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleAddTag()}
+          placeholder="e.g. barista, coffee, hospital"
+          style={{
+            flex: 1, padding: "11px 14px", fontSize: 14,
+            border: "1.5px solid #E5E7EB", borderRadius: 10,
+            outline: "none", fontFamily: "inherit",
+          }}
+          onFocus={(e) => e.target.style.borderColor = "#22c55e"}
+          onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
+        />
+        <button
+          onClick={handleAddTag}
+          style={{
+            padding: "11px 20px", background: "#111827", color: "#fff",
+            border: "none", borderRadius: 10, fontWeight: 700,
+            fontSize: 14, cursor: "pointer",
+          }}
+        >
+          Add
+        </button>
+      </div>
+      {/* Tag chips */}
+      {tags.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
+          {tags.map((tag) => (
+            <span key={tag} style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              background: "#f0fdf4", border: "1px solid #bbf7d0",
+              color: "#15803d", fontSize: 12, fontWeight: 600,
+              padding: "4px 10px", borderRadius: 999,
+            }}>
+              {tag}
+              <button
+                onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
+                style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "#15803d", fontSize: 14, lineHeight: 1, padding: 0,
+                }}
+              >×</button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+{/* STEP 3–5 — Placeholder */}
+{currentStep > 1 && currentStep < STEPS.length - 1 && (
+  <div style={{ background: "#fff", borderRadius: 12, padding: 32, border: "1px solid #E5E7EB" }}>
+    <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
+      {STEPS[currentStep]}
+    </h3>
+    <p style={{ color: "#6B7280", fontSize: 14 }}>This step is coming soon.</p>
+  </div>
+)}
+
+        {/* STEP 6 — Review placeholder */}
+        {currentStep === STEPS.length - 1 && (
+          <div style={{ background: "#fff", borderRadius: 12, padding: 32, border: "1px solid #E5E7EB" }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 8 }}>Review & Publish</h3>
+            <p style={{ color: "#6B7280", fontSize: 14 }}>Review your job post before publishing.</p>
+          </div>
+        )}
+
+        {/* ── Continue button ── */}
+       <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
+  {currentStep > 0 && (
+    <button
+      onClick={() => setCurrentStep((s) => s - 1)}
+      style={{
+        flex: 1, padding: "14px 0", background: "#fff",
+        color: "#374151", border: "1.5px solid #E5E7EB",
+        borderRadius: 999, fontSize: 15, fontWeight: 700, cursor: "pointer",
+      }}
+    >
+      Back
+    </button>
+  )}
+  <button
+    onClick={handleContinue}
+    disabled={currentStep === 0 && selectedType === null}
+    style={{
+      flex: 2, padding: "14px 0",
+      background: currentStep === 0 && selectedType === null ? "#86efac" : "#22c55e",
+      color: "#fff", border: "none", borderRadius: 999,
+      fontSize: 15, fontWeight: 700,
+      cursor: currentStep === 0 && selectedType === null ? "not-allowed" : "pointer",
+      transition: "background 0.15s",
+    }}
+  >
+    {currentStep === STEPS.length - 1 ? "Publish Job Post" : "Continue"}
+  </button>
+</div>
+    </div> {/* closes Step content div */}
+
+</main>
+);
+}  
