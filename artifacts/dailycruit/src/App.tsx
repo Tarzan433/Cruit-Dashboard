@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import HomePage from "./pages/HomePage";
 import { RecruiterHomePage, JobPostsPage } from "./pages/RecruiterHomePage";
+import { Switch, Route, useLocation } from "wouter";
 
 type NavPage = "home" | "search" | "applications" | "jobposts" | "chat" | "profile" | "settings";
 
@@ -81,9 +82,9 @@ function FilterIcon() {
   );
 }
 
-function BriefcaseIcon() {
+function BriefcaseIcon({ size = 16 }: { size?: number }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="2" y="7" width="20" height="14" rx="2" />
       <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
       <line x1="12" y1="12" x2="12" y2="17" />
@@ -92,18 +93,19 @@ function BriefcaseIcon() {
   );
 }
 
-function MapPinIcon() {
+function MapPinIcon({ size = 16 }: { size?: number }) {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" />
       <circle cx="12" cy="10" r="3" />
     </svg>
   );
 }
 
-function ClockIcon() {
+
+function ClockIcon({ size = 13 }: { size?: number }) {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="9" />
       <polyline points="12 7 12 12 15 15" />
     </svg>
@@ -527,15 +529,21 @@ function JobCard({ job }: { job: typeof MOCK_JOBS[0] }) {
         </button>
       </div>
       <div className="job-tags">
-        <span className="job-tag">
-          <MapPinIcon /> {job.location}
-        </span>
-        <span className="job-tag">
-          <BriefcaseIcon style={{ width: 13, height: 13 }} /> {job.type}
-        </span>
+       
+<span className="job-tag">
+  <MapPinIcon size={13} /> {job.location}
+</span>
+<span className="job-tag">
+  <BriefcaseIcon size={13} /> {job.type}
+</span>
+<span className="job-tag salary">
+  {job.salary}
+</span>
+       
         <span className="job-tag salary">
           {job.salary}
         </span>
+
       </div>
       <div className="job-footer">
         <span className="job-posted">
@@ -1322,19 +1330,32 @@ function ApplicationsPage({ onExplore }: { onExplore: () => void }) {
 // ─── Root App ─────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const [activePage, setActivePage] = useState<NavPage>("home");
+  const [location, navigate] = useLocation();
+
   const [showModal, setShowModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [accountType, setAccountType] = useState<AccountType>("jobseeker");
 
   function handleAccountTypeChange(t: AccountType) {
-    setAccountType(t);
-    // If switching away from jobseeker while on applications, or away from
-    // recruiter while on jobposts, redirect to home to avoid orphaned pages.
-    if (t !== "jobseeker" && activePage === "applications") setActivePage("home");
-    if (t === "jobseeker" && activePage === "jobposts") setActivePage("home");
+  setAccountType(t);
+
+  // If the user is on a seeker-only page and switches to recruiter
+  if (
+    t === "recruiter" &&
+    location.startsWith("/seeker/")
+  ) {
+    navigate("/recruiter/home");
   }
+
+  // If the user is on a recruiter-only page and switches to jobseeker
+  if (
+    t === "jobseeker" &&
+    location.startsWith("/recruiter/")
+  ) {
+    navigate("/seeker/home");
+  }
+}
 
   const isRecruiter = accountType === "recruiter";
 
@@ -1357,12 +1378,97 @@ export default function App() {
 
         <div className="nav-pill">
           {navItems.map((item) => (
+
             <button
               key={item.id}
-              className={`nav-link${activePage === item.id ? " active" : ""}`}
+
+
+             className={`nav-link${
+  (item.id === "home" &&
+    (location === "/seeker/home" ||
+     location === "/recruiter/home")) ||
+
+  (item.id === "search" &&
+    location === "/seeker/search") ||
+
+  (item.id === "applications" &&
+    location === "/seeker/applications") ||
+
+  (item.id === "jobposts" &&
+    location === "/recruiter/jobposts")
+
+    ? " active"
+    : ""
+}`}
               data-page={item.id}
-              onClick={() => setActivePage(item.id)}
-            >
+              onClick={() => {
+  switch (item.id) {
+    case "home":
+      navigate(
+        isRecruiter
+          ? "/recruiter/home"
+          : "/seeker/home"
+      );
+      break;
+
+    case "search":
+      navigate("/seeker/search");
+      break;
+
+    case "applications":
+      navigate("/seeker/applications");
+      break;
+
+    case "jobposts":
+      navigate("/recruiter/jobposts");
+      break;
+  
+      case "chat":
+  navigate(
+    isRecruiter
+      ? "/recruiter/chat"
+      : "/seeker/chat"
+  );
+  break;
+
+      case "profile":
+  navigate(
+    isRecruiter
+      ? "/recruiter/profile"
+      : "/seeker/profile"
+  );
+  break;
+
+      case "settings":
+  navigate(
+    isRecruiter
+      ? "/recruiter/settings"
+      : "/seeker/settings"
+  );
+  break;
+  }
+
+
+<Route path="/seeker/chat">
+  <ChatPage onBack={() => navigate("/seeker/home")} />
+</Route>
+
+<Route path="/seeker/profile">
+  <ProfilePage
+    onBack={() => navigate("/seeker/home")}
+    accountType={accountType}
+  />
+</Route>
+
+<Route path="/seeker/settings">
+  <SettingsPage
+    onBack={() => navigate("/seeker/home")}
+    accountType={accountType}
+    onAccountTypeChange={handleAccountTypeChange}
+  />
+</Route>
+            }} >
+
               <span className="nav-icon">{item.icon}</span>
               <span className="nav-label">{item.label}</span>
             </button>
@@ -1371,10 +1477,27 @@ export default function App() {
 
         <div className="navbar-right">
           <button
-            className={`icon-btn${activePage === "chat" ? " chat-active" : ""}`}
-            title="Messages"
-            onClick={() => setActivePage(activePage === "chat" ? "home" : "chat")}
-          ><ChatIcon /></button>
+  className={`icon-btn${
+    location === "/seeker/chat" ||
+    location === "/recruiter/chat"
+      ? " chat-active"
+      : ""
+  }`}
+  title="Messages"
+  onClick={() =>
+    navigate(
+      isRecruiter
+        ? "/recruiter/chat"
+        : "/seeker/chat"
+    )
+  }
+>
+  <ChatIcon />
+</button>
+
+
+
+
           <button className="icon-btn" title="Notifications" onClick={() => setShowNotifications((v) => !v)}><BellIcon /></button>
           <div className="avatar-wrapper profile-dropdown-wrapper" title="Profile">
             <div
@@ -1384,46 +1507,111 @@ export default function App() {
             >T</div>
             <span className="online-dot" />
             {showProfileMenu && (
-              <ProfileDropdown
-                onClose={() => setShowProfileMenu(false)}
-                onNavigate={(page) => { setActivePage(page); setShowProfileMenu(false); }}
-              />
+             <ProfileDropdown
+  onClose={() => setShowProfileMenu(false)}
+  onNavigate={(page) => {
+    switch (page) {
+      case "profile":
+        navigate(
+          isRecruiter
+            ? "/recruiter/profile"
+            : "/seeker/profile"
+        );
+        break;
+
+      case "settings":
+        navigate(
+          isRecruiter
+            ? "/recruiter/settings"
+            : "/seeker/settings"
+        );
+        break;
+
+      case "home":
+        navigate(
+          isRecruiter
+            ? "/recruiter/home"
+            : "/seeker/home"
+        );
+        break;
+    }
+
+    setShowProfileMenu(false);
+  }}
+/>
             )}
           </div>
         </div>
       </nav>
 
       {/* Pages */}
-      {activePage === "home" && !isRecruiter && (
-        <HomePage onCreateJob={() => setShowModal(true)} />
-      )}
-      {activePage === "home" && isRecruiter && (
-        <RecruiterHomePage onCreatePost={() => setActivePage("jobposts")} />
-      )}
-      {activePage === "search" && (
-        <main className="main-content search-main">
-          <SearchJobsPage />
-        </main>
-      )}
-      {activePage === "applications" && (
-        <ApplicationsPage onExplore={() => setActivePage("search")} />
-      )}
-      {activePage === "chat" && (
-        <ChatPage onBack={() => setActivePage("home")} />
-      )}
-      {activePage === "profile" && (
-        <ProfilePage onBack={() => setActivePage("home")} accountType={accountType} />
-      )}
-      {activePage === "jobposts" && (
-        <JobPostsPage />
-      )}
-      {activePage === "settings" && (
-        <SettingsPage
-          onBack={() => setActivePage("home")}
-          accountType={accountType}
-          onAccountTypeChange={handleAccountTypeChange}
-        />
-      )}
+ <Switch>
+  {/* Seeker */}
+  <Route path="/seeker/home">
+    <HomePage onCreateJob={() => setShowModal(true)} />
+  </Route>
+
+  <Route path="/seeker/search">
+    <SearchJobsPage />
+  </Route>
+
+  <Route path="/seeker/applications">
+    <ApplicationsPage onExplore={() => navigate("/seeker/search")} />
+  </Route>
+
+  <Route path="/seeker/chat">
+    <ChatPage onBack={() => navigate("/seeker/home")} />
+  </Route>
+
+  <Route path="/seeker/profile">
+    <ProfilePage
+      onBack={() => navigate("/seeker/home")}
+      accountType={accountType}
+    />
+  </Route>
+
+  <Route path="/seeker/settings">
+    <SettingsPage
+      onBack={() => navigate("/seeker/home")}
+      accountType={accountType}
+      onAccountTypeChange={handleAccountTypeChange}
+    />
+  </Route>
+
+  {/* Recruiter */}
+  <Route path="/recruiter/home">
+    <RecruiterHomePage
+      onCreatePost={() => navigate("/recruiter/jobposts")}
+    />
+  </Route>
+
+  <Route path="/recruiter/jobposts">
+    <JobPostsPage />
+  </Route>
+
+  <Route path="/recruiter/chat">
+    <ChatPage onBack={() => navigate("/recruiter/home")} />
+  </Route>
+
+  <Route path="/recruiter/profile">
+    <ProfilePage
+      onBack={() => navigate("/recruiter/home")}
+      accountType={accountType}
+    />
+  </Route>
+
+  <Route path="/recruiter/settings">
+    <SettingsPage
+      onBack={() => navigate("/recruiter/home")}
+      accountType={accountType}
+      onAccountTypeChange={handleAccountTypeChange}
+    />
+  </Route>
+</Switch>
+
+    
+     
+      
 
       {showNotifications && (
         <NotificationsModal onClose={() => setShowNotifications(false)} />
