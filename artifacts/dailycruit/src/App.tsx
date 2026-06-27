@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import HomePage from "./pages/HomePage";
 import { RecruiterHomePage, JobPostsPage } from "./pages/RecruiterHomePage";
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route, Redirect, useLocation } from "wouter";
 
 type NavPage = "home" | "search" | "applications" | "jobposts" | "chat" | "profile" | "settings";
 
@@ -1338,24 +1338,16 @@ export default function App() {
   const [accountType, setAccountType] = useState<AccountType>("jobseeker");
 
   function handleAccountTypeChange(t: AccountType) {
-  setAccountType(t);
-
-  // If the user is on a seeker-only page and switches to recruiter
-  if (
-    t === "recruiter" &&
-    location.startsWith("/seeker/")
-  ) {
-    navigate("/recruiter/home");
+    setAccountType(t);
+    // Switch to recruiter default page if currently on a seeker-only route
+    if (t === "recruiter" && location.startsWith("/seeker/")) {
+      navigate("/recruiter/home");
+    }
+    // Switch to seeker default page if currently on a recruiter-only route
+    if (t === "jobseeker" && location.startsWith("/recruiter/")) {
+      navigate("/seeker/home");
+    }
   }
-
-  // If the user is on a recruiter-only page and switches to jobseeker
-  if (
-    t === "jobseeker" &&
-    location.startsWith("/recruiter/")
-  ) {
-    navigate("/seeker/home");
-  }
-}
 
   const isRecruiter = accountType === "recruiter";
 
@@ -1366,6 +1358,56 @@ export default function App() {
       ? { id: "jobposts", icon: "🏢", label: "Job Posts" }
       : { id: "applications", icon: "📋", label: "My Applications" },
   ];
+
+  function isNavActive(id: NavPage): boolean {
+    switch (id) {
+      case "home":
+        return location === "/seeker/home" || location === "/recruiter/home";
+      case "search":
+        return location === "/seeker/search";
+      case "applications":
+        return location === "/seeker/applications";
+      case "jobposts":
+        return location === "/recruiter/jobposts";
+      case "chat":
+        return location === "/seeker/chat" || location === "/recruiter/chat";
+      case "profile":
+        return location === "/seeker/profile" || location === "/recruiter/profile";
+      case "settings":
+        return location === "/seeker/settings" || location === "/recruiter/settings";
+      default:
+        return false;
+    }
+  }
+
+  function handleNavClick(id: NavPage) {
+    switch (id) {
+      case "home":
+        navigate(isRecruiter ? "/recruiter/home" : "/seeker/home");
+        break;
+      case "search":
+        navigate("/seeker/search");
+        break;
+      case "applications":
+        navigate("/seeker/applications");
+        break;
+      case "jobposts":
+        navigate("/recruiter/jobposts");
+        break;
+      case "chat":
+        navigate(isRecruiter ? "/recruiter/chat" : "/seeker/chat");
+        break;
+      case "profile":
+        navigate(isRecruiter ? "/recruiter/profile" : "/seeker/profile");
+        break;
+      case "settings":
+        navigate(isRecruiter ? "/recruiter/settings" : "/seeker/settings");
+        break;
+    }
+  }
+
+  const isChatActive =
+    location === "/seeker/chat" || location === "/recruiter/chat";
 
   return (
     <>
@@ -1378,97 +1420,12 @@ export default function App() {
 
         <div className="nav-pill">
           {navItems.map((item) => (
-
             <button
               key={item.id}
-
-
-             className={`nav-link${
-  (item.id === "home" &&
-    (location === "/seeker/home" ||
-     location === "/recruiter/home")) ||
-
-  (item.id === "search" &&
-    location === "/seeker/search") ||
-
-  (item.id === "applications" &&
-    location === "/seeker/applications") ||
-
-  (item.id === "jobposts" &&
-    location === "/recruiter/jobposts")
-
-    ? " active"
-    : ""
-}`}
+              className={`nav-link${isNavActive(item.id) ? " active" : ""}`}
               data-page={item.id}
-              onClick={() => {
-  switch (item.id) {
-    case "home":
-      navigate(
-        isRecruiter
-          ? "/recruiter/home"
-          : "/seeker/home"
-      );
-      break;
-
-    case "search":
-      navigate("/seeker/search");
-      break;
-
-    case "applications":
-      navigate("/seeker/applications");
-      break;
-
-    case "jobposts":
-      navigate("/recruiter/jobposts");
-      break;
-  
-      case "chat":
-  navigate(
-    isRecruiter
-      ? "/recruiter/chat"
-      : "/seeker/chat"
-  );
-  break;
-
-      case "profile":
-  navigate(
-    isRecruiter
-      ? "/recruiter/profile"
-      : "/seeker/profile"
-  );
-  break;
-
-      case "settings":
-  navigate(
-    isRecruiter
-      ? "/recruiter/settings"
-      : "/seeker/settings"
-  );
-  break;
-  }
-
-
-<Route path="/seeker/chat">
-  <ChatPage onBack={() => navigate("/seeker/home")} />
-</Route>
-
-<Route path="/seeker/profile">
-  <ProfilePage
-    onBack={() => navigate("/seeker/home")}
-    accountType={accountType}
-  />
-</Route>
-
-<Route path="/seeker/settings">
-  <SettingsPage
-    onBack={() => navigate("/seeker/home")}
-    accountType={accountType}
-    onAccountTypeChange={handleAccountTypeChange}
-  />
-</Route>
-            }} >
-
+              onClick={() => handleNavClick(item.id)}
+            >
               <span className="nav-icon">{item.icon}</span>
               <span className="nav-label">{item.label}</span>
             </button>
@@ -1477,141 +1434,117 @@ export default function App() {
 
         <div className="navbar-right">
           <button
-  className={`icon-btn${
-    location === "/seeker/chat" ||
-    location === "/recruiter/chat"
-      ? " chat-active"
-      : ""
-  }`}
-  title="Messages"
-  onClick={() =>
-    navigate(
-      isRecruiter
-        ? "/recruiter/chat"
-        : "/seeker/chat"
-    )
-  }
->
-  <ChatIcon />
-</button>
+            className={`icon-btn${isChatActive ? " chat-active" : ""}`}
+            title="Messages"
+            onClick={() =>
+              navigate(isRecruiter ? "/recruiter/chat" : "/seeker/chat")
+            }
+          >
+            <ChatIcon />
+          </button>
 
+          <button
+            className="icon-btn"
+            title="Notifications"
+            onClick={() => setShowNotifications((v) => !v)}
+          >
+            <BellIcon />
+          </button>
 
-
-
-          <button className="icon-btn" title="Notifications" onClick={() => setShowNotifications((v) => !v)}><BellIcon /></button>
           <div className="avatar-wrapper profile-dropdown-wrapper" title="Profile">
             <div
               className="avatar"
               onClick={() => setShowProfileMenu((v) => !v)}
               style={{ cursor: "pointer" }}
-            >T</div>
+            >
+              T
+            </div>
             <span className="online-dot" />
             {showProfileMenu && (
-             <ProfileDropdown
-  onClose={() => setShowProfileMenu(false)}
-  onNavigate={(page) => {
-    switch (page) {
-      case "profile":
-        navigate(
-          isRecruiter
-            ? "/recruiter/profile"
-            : "/seeker/profile"
-        );
-        break;
-
-      case "settings":
-        navigate(
-          isRecruiter
-            ? "/recruiter/settings"
-            : "/seeker/settings"
-        );
-        break;
-
-      case "home":
-        navigate(
-          isRecruiter
-            ? "/recruiter/home"
-            : "/seeker/home"
-        );
-        break;
-    }
-
-    setShowProfileMenu(false);
-  }}
-/>
+              <ProfileDropdown
+                onClose={() => setShowProfileMenu(false)}
+                onNavigate={(page) => {
+                  switch (page) {
+                    case "profile":
+                      navigate(isRecruiter ? "/recruiter/profile" : "/seeker/profile");
+                      break;
+                    case "settings":
+                      navigate(isRecruiter ? "/recruiter/settings" : "/seeker/settings");
+                      break;
+                    case "home":
+                      navigate(isRecruiter ? "/recruiter/home" : "/seeker/home");
+                      break;
+                  }
+                  setShowProfileMenu(false);
+                }}
+              />
             )}
           </div>
         </div>
       </nav>
 
-      {/* Pages */}
- <Switch>
-  {/* Seeker */}
-  <Route path="/seeker/home">
-    <HomePage onCreateJob={() => setShowModal(true)} />
-  </Route>
+      {/* Route-based page rendering */}
+      <Switch>
+        {/* Root redirect */}
+        <Route path="/">
+          <Redirect to={isRecruiter ? "/recruiter/home" : "/seeker/home"} />
+        </Route>
 
-  <Route path="/seeker/search">
-    <SearchJobsPage />
-  </Route>
+        {/* Seeker routes */}
+        <Route path="/seeker/home">
+          <HomePage onCreateJob={() => setShowModal(true)} />
+        </Route>
+        <Route path="/seeker/search">
+          <SearchJobsPage />
+        </Route>
+        <Route path="/seeker/applications">
+          <ApplicationsPage onExplore={() => navigate("/seeker/search")} />
+        </Route>
+        <Route path="/seeker/chat">
+          <ChatPage onBack={() => navigate("/seeker/home")} />
+        </Route>
+        <Route path="/seeker/profile">
+          <ProfilePage
+            onBack={() => navigate("/seeker/home")}
+            accountType={accountType}
+          />
+        </Route>
+        <Route path="/seeker/settings">
+          <SettingsPage
+            onBack={() => navigate("/seeker/home")}
+            accountType={accountType}
+            onAccountTypeChange={handleAccountTypeChange}
+          />
+        </Route>
 
-  <Route path="/seeker/applications">
-    <ApplicationsPage onExplore={() => navigate("/seeker/search")} />
-  </Route>
+        {/* Recruiter routes */}
+        <Route path="/recruiter/home">
+          <RecruiterHomePage
+            onCreatePost={() => navigate("/recruiter/jobposts")}
+          />
+        </Route>
+        <Route path="/recruiter/jobposts">
+          <JobPostsPage />
+        </Route>
+        <Route path="/recruiter/chat">
+          <ChatPage onBack={() => navigate("/recruiter/home")} />
+        </Route>
+        <Route path="/recruiter/profile">
+          <ProfilePage
+            onBack={() => navigate("/recruiter/home")}
+            accountType={accountType}
+          />
+        </Route>
+        <Route path="/recruiter/settings">
+          <SettingsPage
+            onBack={() => navigate("/recruiter/home")}
+            accountType={accountType}
+            onAccountTypeChange={handleAccountTypeChange}
+          />
+        </Route>
+      </Switch>
 
-  <Route path="/seeker/chat">
-    <ChatPage onBack={() => navigate("/seeker/home")} />
-  </Route>
 
-  <Route path="/seeker/profile">
-    <ProfilePage
-      onBack={() => navigate("/seeker/home")}
-      accountType={accountType}
-    />
-  </Route>
-
-  <Route path="/seeker/settings">
-    <SettingsPage
-      onBack={() => navigate("/seeker/home")}
-      accountType={accountType}
-      onAccountTypeChange={handleAccountTypeChange}
-    />
-  </Route>
-
-  {/* Recruiter */}
-  <Route path="/recruiter/home">
-    <RecruiterHomePage
-      onCreatePost={() => navigate("/recruiter/jobposts")}
-    />
-  </Route>
-
-  <Route path="/recruiter/jobposts">
-    <JobPostsPage />
-  </Route>
-
-  <Route path="/recruiter/chat">
-    <ChatPage onBack={() => navigate("/recruiter/home")} />
-  </Route>
-
-  <Route path="/recruiter/profile">
-    <ProfilePage
-      onBack={() => navigate("/recruiter/home")}
-      accountType={accountType}
-    />
-  </Route>
-
-  <Route path="/recruiter/settings">
-    <SettingsPage
-      onBack={() => navigate("/recruiter/home")}
-      accountType={accountType}
-      onAccountTypeChange={handleAccountTypeChange}
-    />
-  </Route>
-</Switch>
-
-    
-     
-      
 
       {showNotifications && (
         <NotificationsModal onClose={() => setShowNotifications(false)} />
