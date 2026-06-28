@@ -7,13 +7,26 @@ const STEPS = ["Type", "Details", "Location", "Terms", "Requirements", "Review"]
 // The two job-type options on step 1
 type JobType = "standard" | "mappin" | null;
 
+export interface PublishedJob {
+  id: string;
+  title: string;
+  location: string;
+  salary: string;
+  commitment: string;
+  status: "Active" | "Paused";
+  views: number;
+  applicants: number;
+  postedDate: string;
+}
+
 interface Props {
-  onBack: () => void; // called when user clicks "← Job Posts"
+  onBack: () => void;
+  onPublish: (job: PublishedJob) => void;
 }
 
 type WorkType = "remote" | "hybrid" | "onsite";
 
-export function CreateJobPostWizard({ onBack }: Props) {
+export function CreateJobPostWizard({ onBack, onPublish }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedType, setSelectedType] = useState<JobType>(null);
 
@@ -974,7 +987,22 @@ function handleAddTag() {
                 Your job is now live and visible to candidates.
               </p>
               <button
-                onClick={onBack}
+                onClick={() => {
+                  const today = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                  onPublish({
+                    id: Date.now().toString(),
+                    title: title || "Untitled Job",
+                    location: [city, country].filter(Boolean).join(", ") || workType,
+                    salary: salaryMin || salaryMax
+                      ? `€${salaryMin}${salaryMax ? `–€${salaryMax}` : ""}${salaryType ? ` / ${salaryType}` : ""}`
+                      : "—",
+                    commitment: commitment || "—",
+                    status: "Active",
+                    views: 0,
+                    applicants: 0,
+                    postedDate: today,
+                  });
+                }}
                 style={{
                   display: "block", width: "100%", padding: "13px 0",
                   background: "#22c55e", color: "#fff", border: "none",
@@ -982,7 +1010,7 @@ function handleAddTag() {
                   marginBottom: 14,
                 }}
               >
-                View Job Post
+                Go to My Jobs
               </button>
               <button
                 onClick={() => {

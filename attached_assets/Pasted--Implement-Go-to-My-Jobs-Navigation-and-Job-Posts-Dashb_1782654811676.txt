@@ -1,0 +1,274 @@
+# Implement "Go to My Jobs" Navigation and Job Posts Dashboard Integration
+
+## Objective
+
+Improve the job publishing flow so that after a recruiter successfully publishes a job, clicking **"Go to My Jobs"** navigates to the existing **Job Posts dashboard** and immediately displays the newly published job.
+
+---
+
+## Existing Behavior
+
+Currently:
+
+* After publishing a job, a success screen appears.
+* Clicking **"Go to My Jobs"** does not correctly navigate to or update the Job Posts page.
+
+---
+
+# Required Changes
+
+## 1. Navigation
+
+When the recruiter clicks:
+
+```text
+Go to My Jobs
+```
+
+navigate using the existing **Wouter routing system** to:
+
+```text
+/job-posts
+```
+
+(or the existing route currently used by the Job Posts navigation tab).
+
+Do NOT use:
+
+* window.location
+* page refreshes
+* show/hide navigation
+* full page reloads
+
+Use existing Wouter navigation patterns only.
+
+---
+
+## 2. Persist Published Jobs
+
+When a job is successfully published:
+
+* Save the complete job object to the application's existing job storage/state.
+* The newly published job must appear immediately inside the Job Posts dashboard.
+* Existing jobs must remain intact.
+* Newly created jobs should be appended to the list.
+
+Reuse the existing state management pattern already used by the application.
+
+Do NOT create duplicate storage systems.
+
+---
+
+## 3. Job Posts Dashboard UI
+
+The Job Posts page should display published jobs in a professional dashboard table similar to the provided design.
+
+Maintain the current application styling while improving the UI.
+
+Required columns:
+
+| Column     | Description         |
+| ---------- | ------------------- |
+| Job        | Job title           |
+| Status     | Active/Paused badge |
+| Views      | View count          |
+| Applicants | Applicant count     |
+| Posted     | Publish date        |
+| Actions    | Action icons        |
+
+---
+
+## 4. Newly Published Job Data
+
+Each newly published job should include:
+
+```ts
+{
+  id,
+  title,
+  companyName,
+  location,
+  salary,
+  commitment,
+  status: "Active",
+  views: 0,
+  applicants: 0,
+  postedDate: currentDate
+}
+```
+
+Default values:
+
+```text
+status = Active
+views = 0
+applicants = 0
+```
+
+---
+
+## 5. Table Design Requirements
+
+Create a clean modern table.
+
+### Header Row
+
+Display:
+
+```text
+JOB
+STATUS
+VIEWS
+APPLICANTS
+POSTED
+ACTIONS
+```
+
+Header styling:
+
+```css
+font-size: 14px;
+font-weight: 600;
+color: #6b7280;
+text-transform: uppercase;
+```
+
+---
+
+## 6. Status Badge
+
+Default published jobs should display:
+
+```text
+● Active
+```
+
+Badge styling:
+
+```css
+background: #f0fdf4;
+color: #16a34a;
+border: 1px solid #bbf7d0;
+border-radius: 999px;
+padding: 8px 16px;
+```
+
+---
+
+## 7. Actions Column
+
+Display action icons:
+
+* View job
+* Edit job
+* Share job
+
+Icons should include hover effects.
+
+Example:
+
+```text
+👁 View
+✏ Edit
+🔗 Share
+```
+
+or existing icon library equivalents.
+
+---
+
+## 8. Page Header
+
+Keep the existing:
+
+```text
+Job Posts
+```
+
+header.
+
+Below it show:
+
+```text
+X posts
+```
+
+where X is dynamically calculated.
+
+Example:
+
+```text
+3 posts
+```
+
+---
+
+## 9. Create Job Post Button
+
+Keep the existing green:
+
+```text
++ Create Job Post
+```
+
+button.
+
+Do not modify its functionality.
+
+---
+
+## 10. Empty State
+
+If no jobs exist, display:
+
+```text
+No job posts yet.
+Create your first job post to start hiring.
+```
+
+with a centered Create Job Post button.
+
+---
+
+## 11. Data Flow Requirements
+
+After clicking:
+
+```text
+Publish
+```
+
+Flow should be:
+
+```text
+Publish Job
+→ Save Job
+→ Show Success Screen
+→ User clicks "Go to My Jobs"
+→ Navigate to Job Posts page
+→ Newly published job is immediately visible
+```
+
+No refresh should be required.
+
+---
+
+# Critical Constraints
+
+* Do NOT rewrite the application.
+* Do NOT modify unrelated pages.
+* Preserve existing navbar and layout.
+* Preserve existing Wouter routing architecture.
+* Reuse existing components where possible.
+* Do not introduce show/hide navigation.
+* Do not break existing functionality.
+* Ensure there are no TypeScript or lint errors.
+
+After implementation, verify:
+
+1. Publish works.
+2. Job is saved.
+3. "Go to My Jobs" navigates correctly.
+4. Newly published job appears instantly.
+5. Existing jobs are preserved.
+6. No page refresh is required.
