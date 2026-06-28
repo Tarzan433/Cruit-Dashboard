@@ -569,22 +569,19 @@ function SearchJobsPage() {
   return (
     <div className="search-page">
       {/* Search bar */}
-      <div className="search-bar-wrapper">
-        <div className="search-bar">
-          <span className="search-bar-icon">
-            <SearchIcon size={18} />
-          </span>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search by role, company or location..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            autoFocus
-          />
-        </div>
+      <div className="search-input-container">
+        <span className="search-icon-left">
+          <SearchIcon size={18} />
+        </span>
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search by role, company or location..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
         <button
-          className="filter-icon-btn"
+          className="search-filter-btn"
           title="Advanced filters"
           onClick={() => setShowFilterModal(true)}
         >
