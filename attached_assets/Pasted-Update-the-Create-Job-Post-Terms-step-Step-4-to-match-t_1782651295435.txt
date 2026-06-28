@@ -1,0 +1,66 @@
+Update the "Create Job Post - Terms" step (Step 4) to match the design and add improvements:
+
+**STEP PROGRESS BAR:**
+- Steps 1 (Type), 2 (Details), 3 (Location) show green filled circles with white checkmark ✓
+- Step 4 (Terms) shows green filled circle with number "4" in white (current step)
+- Steps 5 (Requirements) and 6 (Review) show empty gray circles with gray numbers
+- Thin connecting line: green between completed steps, gray for upcoming
+- Step labels below each circle in 11px text — gray for future steps, dark for done/current
+
+**JOB TERMS FORM:**
+
+Section heading: "Job Terms" in bold ~22px, margin-bottom 20px
+
+Row 1 — Two fields side by side:
+- Left: label "SALARY" (uppercase, 11px, muted gray)
+  Input: placeholder "e.g. 15", white bg, gray border, border-radius 8px, height 44px
+- Right: label "SALARY TYPE *" (uppercase, 11px, muted gray, red asterisk)
+  Dropdown select: default option "Select...", white bg, gray border, border-radius 8px, 
+  height 44px, with a dropdown arrow icon on the right
+  Options to include: Hourly, Daily, Weekly, Monthly, Yearly, Fixed
+
+IMPROVEMENT — Add a second salary field for range:
+- Add a "TO" label/divider between two salary inputs so user can enter min–max range
+  e.g. [ 15 ] — to — [ 30 ] side by side, with currency symbol prefix inside input (€ or $)
+
+Row 2 — Commitment selector:
+- Label: "COMMITMENT *" (uppercase, 11px, muted gray, red asterisk)
+- Three pill/chip toggle buttons in a row: "full-time" | "part-time" | "one-time"
+- Default: none selected (all gray border, white bg)
+- Selected state: green border (#22c55e), light green background (#f0fdf4), green text
+- Border-radius: 999px (pill shape), padding: 8px 20px
+
+IMPROVEMENTS TO ADD:
+- Add "BENEFITS" multi-select chip row below Commitment:
+  Label: "BENEFITS" (uppercase, muted)
+  Chips (toggleable, multi-select): Health Insurance | Remote Work | Flexible Hours | 
+  Stock Options | Paid Leave | Bonus
+  Selected style: green bg, white text; Unselected: gray border, white bg
+
+- Add "START DATE" field below Benefits:
+  Label: "START DATE" (uppercase, muted)
+  Date input or text input with placeholder "e.g. Immediately or 2024-09-01"
+  Full width, same input styling as other fields
+
+- Add "CONTRACT DURATION" field (optional):
+  Label: "CONTRACT DURATION" (uppercase, muted)  
+  Dropdown: Permanent | 3 months | 6 months | 1 year | Project-based
+  Half width, placed beside Start Date
+
+**BUTTONS (bottom):**
+- "Back" — white bg, gray border, border-radius 999px, padding 12px 28px
+- "Continue" — green bg (#22c55e), white bold text, border-radius 999px, padding 12px 60px
+- Back on left, Continue on right, with gap between them
+
+**STYLING:**
+- All labels: uppercase, 11px, font-weight 600, color #6b7280
+- Input focus: green border (#22c55e) 
+- Required asterisk (*): red color
+- Card: centered, max-width 400px, white bg, no heavy shadow
+- Page background: light gray (#f0f2f5)
+
+**Do NOT change:**
+- Navbar
+- Progress bar style from previous steps
+- The "← Job Posts" back link and "YOU'RE CREATING / New Job Post" header
+- Green brand color (#22c55e)
