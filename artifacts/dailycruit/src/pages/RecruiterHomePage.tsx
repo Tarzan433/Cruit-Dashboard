@@ -124,7 +124,7 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
 
 // ─── Job Posts Page (Recruiter) ───────────────────────────────────────────────
 
-const JOBS_KEY = "dailycruit_published_jobs";
+const JOBS_KEY = "dailycruit_jobs";
 
 function loadJobs(): PublishedJob[] {
   try {

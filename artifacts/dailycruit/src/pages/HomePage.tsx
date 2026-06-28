@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { PublishedJob } from "../components/CreateJobPostWizard";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -13,6 +14,36 @@ export type HomeJob = {
   views: number;
   bullets: string[];
 };
+
+// ─── Shared jobs loader ────────────────────────────────────────────────────────
+
+function loadSharedJobs(): HomeJob[] {
+  try {
+    const raw = localStorage.getItem("dailycruit_jobs");
+    if (!raw) return [];
+    const jobs = JSON.parse(raw) as PublishedJob[];
+    return jobs
+      .filter((j) => j.status === "Active")
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map((j) => ({
+        id: j.createdAt,
+        title: j.title,
+        tags: [j.commitment, j.workMode].filter((t) => t && t !== "—" && t !== "onsite" && t !== "remote" && t !== "hybrid").concat(
+          j.workMode === "remote" ? ["Remote"] : j.workMode === "hybrid" ? ["Hybrid"] : ["On-site"]
+        ),
+        description: j.description,
+        location: j.location || j.workMode,
+        date: j.postedDate,
+        salary: j.salary,
+        views: j.views,
+        bullets: j.skills.length > 0
+          ? j.skills.map((s) => `Skill required: ${s}`)
+          : ["Apply now to learn more about this opportunity."],
+      }));
+  } catch {
+    return [];
+  }
+}
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -187,12 +218,20 @@ type HomeFilter = "new" | "expiring" | "nearme";
 export default function HomePage({ onCreateJob }: { onCreateJob: () => void }) {
   const [activeFilter, setActiveFilter] = useState<HomeFilter>("new");
   const [selectedJob, setSelectedJob] = useState<HomeJob | null>(null);
+  const [sharedJobs, setSharedJobs] = useState<HomeJob[]>([]);
+
+  useEffect(() => {
+    setSharedJobs(loadSharedJobs());
+  }, []);
 
   const filters: { id: HomeFilter; label: string }[] = [
     { id: "new", label: "New" },
     { id: "expiring", label: "Expiring" },
     { id: "nearme", label: "Near me" },
   ];
+
+  // Recruiter-published jobs first (newest), then static mock jobs
+  const allJobs: HomeJob[] = [...sharedJobs, ...HOME_JOBS];
 
   return (
     <>
@@ -221,9 +260,16 @@ export default function HomePage({ onCreateJob }: { onCreateJob: () => void }) {
         </div>
 
         <div className="home-job-list">
-          {HOME_JOBS.map((job) => (
-            <HomeJobCard key={job.id} job={job} onClick={() => setSelectedJob(job)} />
-          ))}
+          {allJobs.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "48px 0", color: "#6B7280" }}>
+              <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No jobs available yet.</p>
+              <p style={{ fontSize: 14 }}>Check back later for new opportunities.</p>
+            </div>
+          ) : (
+            allJobs.map((job) => (
+              <HomeJobCard key={job.id} job={job} onClick={() => setSelectedJob(job)} />
+            ))
+          )}
         </div>
       </main>
 

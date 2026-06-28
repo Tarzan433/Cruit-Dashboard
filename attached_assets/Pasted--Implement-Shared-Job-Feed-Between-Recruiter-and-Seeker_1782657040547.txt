@@ -1,0 +1,199 @@
+# Implement Shared Job Feed Between Recruiter and Seeker Modes
+
+## Objective
+
+Create a shared jobs storage system so that every job published by recruiters automatically appears in the Seeker Home feed.
+
+Only recruiters can publish jobs.
+
+---
+
+## Current Problem
+
+Currently, jobs created in Recruiter mode are not automatically available in Seeker mode.
+
+We need a single shared jobs source that both modes use.
+
+---
+
+# Requirements
+
+## 1. Create Shared Jobs Storage
+
+Implement a centralized jobs storage system.
+
+Requirements:
+
+* All published recruiter jobs must be stored in one shared jobs collection/array.
+* Reuse existing state management patterns if available.
+* Do not create duplicate job storage systems.
+
+The jobs storage should become the single source of truth.
+
+Example job object:
+
+```ts id="p5bg7u"
+{
+  id: string,
+  recruiterId: string,
+  title: string,
+  companyName: string,
+  description: string,
+  location: string,
+  salary: number,
+  salaryType: string,
+  commitment: string,
+  workMode: string,
+  skills: string[],
+  status: "active",
+  views: 0,
+  applicants: 0,
+  postedDate: string,
+  createdAt: number
+}
+```
+
+---
+
+## 2. Persist Jobs Using localStorage
+
+When a recruiter publishes a job:
+
+* Append the job to shared storage.
+* Save the updated jobs array to localStorage.
+
+Storage key:
+
+```text id="ie2wb0"
+dailycruit_jobs
+```
+
+On application startup:
+
+* Load jobs from localStorage.
+* Initialize the shared jobs state.
+
+Jobs must remain available after browser refresh.
+
+Existing jobs must never be deleted when new jobs are published.
+
+---
+
+## 3. Recruiter Publish Flow
+
+Modify the existing publish action.
+
+Current flow:
+
+```text id="jvjlwm"
+Fill form
+→ Publish
+→ Success screen
+```
+
+New flow:
+
+```text id="wr1x5f"
+Fill form
+→ Publish
+→ Create job object
+→ Save to shared jobs storage
+→ Persist to localStorage
+→ Show success screen
+```
+
+Do not change the existing UI.
+
+---
+
+## 4. Seeker Home Feed
+
+Update Seeker Home page.
+
+When Seeker Home loads:
+
+* Read all jobs from shared storage/localStorage.
+* Filter only active jobs.
+* Display every published recruiter job.
+
+Example:
+
+```js id="lvh75z"
+const activeJobs = jobs.filter(
+  job => job.status === "active"
+);
+```
+
+Render all active jobs in the existing job feed UI.
+
+Newest jobs should appear first.
+
+Sort by:
+
+```text id="pq6b2x"
+createdAt descending
+```
+
+---
+
+## 5. Job Card Data
+
+Display:
+
+* Job title
+* Company name
+* Location
+* Salary + salary type
+* Commitment type
+* Work mode
+* Posted date
+* Skills (if available)
+
+Reuse existing JobCard components where possible.
+
+Do not redesign the current UI unless necessary.
+
+---
+
+## 6. Empty State
+
+If no jobs exist:
+
+Display:
+
+```text id="m5n1o9"
+No jobs available yet.
+Check back later for new opportunities.
+```
+
+---
+
+## 7. Data Rules
+
+* Only Recruiter mode can create or publish jobs.
+* Seeker mode is read-only.
+* Seekers cannot edit or delete jobs.
+* Recruiters continue managing jobs from Recruiter mode only.
+
+---
+
+# Critical Constraints
+
+* Preserve existing Wouter routing.
+* Do not rewrite the application.
+* Do not modify unrelated pages.
+* Reuse existing components and state where possible.
+* Preserve all existing functionality.
+* Do not introduce duplicate storage logic.
+* Do not use show/hide navigation.
+* Ensure there are no TypeScript or lint errors.
+
+After implementation verify:
+
+1. Recruiter publishes a job.
+2. Job is saved to localStorage.
+3. Refreshing the app does not remove jobs.
+4. Seeker Home displays all published jobs.
+5. Multiple published jobs appear correctly.
+6. New jobs appear at the top of the feed.
+7. Existing functionality remains intact.

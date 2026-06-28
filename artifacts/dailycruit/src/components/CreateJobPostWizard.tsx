@@ -10,13 +10,18 @@ type JobType = "standard" | "mappin" | null;
 export interface PublishedJob {
   id: string;
   title: string;
+  companyName: string;
+  description: string;
   location: string;
   salary: string;
   commitment: string;
+  workMode: string;
+  skills: string[];
   status: "Active" | "Paused";
   views: number;
   applicants: number;
   postedDate: string;
+  createdAt: number;
 }
 
 interface Props {
@@ -988,19 +993,25 @@ function handleAddTag() {
               </p>
               <button
                 onClick={() => {
-                  const today = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                  const now = Date.now();
+                  const today = new Date(now).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
                   onPublish({
-                    id: Date.now().toString(),
+                    id: now.toString(),
                     title: title || "Untitled Job",
+                    companyName: "Your Company",
+                    description: description || "An exciting opportunity posted on DailyCruit.",
                     location: [city, country].filter(Boolean).join(", ") || workType,
                     salary: salaryMin || salaryMax
                       ? `€${salaryMin}${salaryMax ? `–€${salaryMax}` : ""}${salaryType ? ` / ${salaryType}` : ""}`
                       : "—",
                     commitment: commitment || "—",
+                    workMode: workType,
+                    skills: [...skills],
                     status: "Active",
                     views: 0,
                     applicants: 0,
                     postedDate: today,
+                    createdAt: now,
                   });
                 }}
                 style={{
