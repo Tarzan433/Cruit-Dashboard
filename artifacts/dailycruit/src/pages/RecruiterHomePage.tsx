@@ -124,12 +124,35 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
 
 // ─── Job Posts Page (Recruiter) ───────────────────────────────────────────────
 
+const JOBS_KEY = "dailycruit_published_jobs";
+
+function loadJobs(): PublishedJob[] {
+  try {
+    const raw = localStorage.getItem(JOBS_KEY);
+    return raw ? (JSON.parse(raw) as PublishedJob[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveJobs(jobs: PublishedJob[]) {
+  try {
+    localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
+  } catch {
+    // ignore quota errors
+  }
+}
+
 export function JobPostsPage() {
   const [showWizard, setShowWizard] = useState(false);
-  const [jobs, setJobs] = useState<PublishedJob[]>([]);
+  const [jobs, setJobs] = useState<PublishedJob[]>(loadJobs);
 
   function handlePublish(job: PublishedJob) {
-    setJobs((prev) => [job, ...prev]);
+    setJobs((prev) => {
+      const next = [job, ...prev];
+      saveJobs(next);
+      return next;
+    });
     setShowWizard(false);
   }
 
