@@ -41,6 +41,15 @@ export function CreateJobPostWizard({ onBack }: Props) {
   const [startDate, setStartDate] = useState("");
   const [contractDuration, setContractDuration] = useState("");
 
+  // Step 5 — Requirements state
+  const [skills, setSkills] = useState<string[]>([]);
+  const [skillInput, setSkillInput] = useState("");
+  const [experienceLevel, setExperienceLevel] = useState<string | null>(null);
+  const [education, setEducation] = useState("");
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [languageInput, setLanguageInput] = useState("");
+  const [certifications, setCertifications] = useState("");
+
 //Continue button logic
   function handleContinue() {
   if (currentStep === 1) {
@@ -102,7 +111,7 @@ function handleAddTag() {
           const isDone = i < currentStep;
           const isActive = i === currentStep;
           return (
-            <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1 }}>
+            <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, minWidth: 60 }}>
               {/* circle + connecting line row */}
               <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
                 {/* left line */}
@@ -135,8 +144,9 @@ function handleAddTag() {
               </div>
               {/* label */}
               <span style={{
-                marginTop: 6, fontSize: 11, fontWeight: isActive ? 700 : 500,
+                marginTop: 4, fontSize: 11, fontWeight: isActive ? 700 : 500,
                 color: isActive ? "#111827" : "#9CA3AF",
+                textAlign: "center", whiteSpace: "nowrap",
               }}>
                 {label}
               </span>
@@ -743,13 +753,204 @@ function handleAddTag() {
   </div>
 )}
 
-{/* STEP 5 — Placeholder */}
+{/* STEP 5 — Requirements */}
 {currentStep === 4 && (
-  <div style={{ background: "#fff", borderRadius: 12, padding: 32, border: "1px solid #E5E7EB" }}>
-    <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
-      {STEPS[currentStep]}
-    </h3>
-    <p style={{ color: "#6B7280", fontSize: 14 }}>This step is coming soon.</p>
+  <div>
+    <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 4 }}>Requirements</h3>
+    <p style={{ fontSize: 13, color: "#9CA3AF", fontStyle: "italic", marginBottom: 24, marginTop: 0 }}>
+      All optional — you can skip this step
+    </p>
+
+    {/* Skills */}
+    <div style={{ marginBottom: 20 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+        SKILLS REQUIRED
+      </label>
+      <div style={{ display: "flex", gap: 8 }}>
+        <input
+          type="text"
+          value={skillInput}
+          onChange={(e) => setSkillInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const t = skillInput.trim();
+              if (t && !skills.includes(t)) setSkills((p) => [...p, t]);
+              setSkillInput("");
+            }
+          }}
+          placeholder="e.g. React, Photoshop, Excel..."
+          style={{
+            flex: 1, height: 44, padding: "0 14px", fontSize: 14,
+            border: "1px solid #E5E7EB", borderRadius: 8,
+            outline: "none", background: "#fff", fontFamily: "inherit",
+            transition: "border-color 0.15s", boxSizing: "border-box",
+          }}
+          onFocus={(e) => e.target.style.borderColor = "#22c55e"}
+          onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
+        />
+        <button
+          onClick={() => {
+            const t = skillInput.trim();
+            if (t && !skills.includes(t)) setSkills((p) => [...p, t]);
+            setSkillInput("");
+          }}
+          style={{
+            padding: "0 18px", height: 44, background: "#111827", color: "#fff",
+            border: "none", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer",
+          }}
+        >Add</button>
+      </div>
+      {skills.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 10 }}>
+          {skills.map((s) => (
+            <span key={s} style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              background: "#22c55e", color: "#fff",
+              fontSize: 12, fontWeight: 600, padding: "4px 10px", borderRadius: 999,
+            }}>
+              {s}
+              <button onClick={() => setSkills((p) => p.filter((x) => x !== s))}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 14, lineHeight: 1, padding: 0 }}>×</button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {/* Experience Level */}
+    <div style={{ marginBottom: 20 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 10 }}>
+        EXPERIENCE LEVEL
+      </label>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {["Internship", "Junior", "Mid-level", "Senior"].map((lvl) => {
+          const active = experienceLevel === lvl;
+          return (
+            <button
+              key={lvl}
+              onClick={() => setExperienceLevel(active ? null : lvl)}
+              style={{
+                padding: "8px 18px", fontSize: 13, fontWeight: 600,
+                borderRadius: 999, cursor: "pointer",
+                border: active ? "none" : "1.5px solid #E5E7EB",
+                background: active ? "#22c55e" : "#fff",
+                color: active ? "#fff" : "#6B7280",
+                transition: "all 0.15s",
+              }}
+            >{lvl}</button>
+          );
+        })}
+      </div>
+    </div>
+
+    {/* Education */}
+    <div style={{ marginBottom: 20 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+        EDUCATION
+      </label>
+      <div style={{ position: "relative" }}>
+        <select
+          value={education}
+          onChange={(e) => setEducation(e.target.value)}
+          style={{
+            width: "100%", height: 44, padding: "0 36px 0 14px", fontSize: 14,
+            border: "1px solid #E5E7EB", borderRadius: 8,
+            outline: "none", background: "#fff", fontFamily: "inherit",
+            appearance: "none", cursor: "pointer",
+            color: education ? "#111827" : "#9CA3AF",
+            boxSizing: "border-box", transition: "border-color 0.15s",
+          }}
+          onFocus={(e) => e.target.style.borderColor = "#22c55e"}
+          onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
+        >
+          <option value="">Any</option>
+          <option value="highschool">High School</option>
+          <option value="bachelor">Bachelor's Degree</option>
+          <option value="master">Master's Degree</option>
+          <option value="phd">PhD</option>
+        </select>
+        <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </div>
+    </div>
+
+    {/* Languages */}
+    <div style={{ marginBottom: 20 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+        LANGUAGES
+      </label>
+      <div style={{ display: "flex", gap: 8 }}>
+        <input
+          type="text"
+          value={languageInput}
+          onChange={(e) => setLanguageInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const t = languageInput.trim();
+              if (t && !languages.includes(t)) setLanguages((p) => [...p, t]);
+              setLanguageInput("");
+            }
+          }}
+          placeholder="e.g. English, Spanish..."
+          style={{
+            flex: 1, height: 44, padding: "0 14px", fontSize: 14,
+            border: "1px solid #E5E7EB", borderRadius: 8,
+            outline: "none", background: "#fff", fontFamily: "inherit",
+            transition: "border-color 0.15s", boxSizing: "border-box",
+          }}
+          onFocus={(e) => e.target.style.borderColor = "#22c55e"}
+          onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
+        />
+        <button
+          onClick={() => {
+            const t = languageInput.trim();
+            if (t && !languages.includes(t)) setLanguages((p) => [...p, t]);
+            setLanguageInput("");
+          }}
+          style={{
+            padding: "0 18px", height: 44, background: "#111827", color: "#fff",
+            border: "none", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer",
+          }}
+        >Add</button>
+      </div>
+      {languages.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 10 }}>
+          {languages.map((l) => (
+            <span key={l} style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              background: "#22c55e", color: "#fff",
+              fontSize: 12, fontWeight: 600, padding: "4px 10px", borderRadius: 999,
+            }}>
+              {l}
+              <button onClick={() => setLanguages((p) => p.filter((x) => x !== l))}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 14, lineHeight: 1, padding: 0 }}>×</button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {/* Certifications */}
+    <div style={{ marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+        CERTIFICATIONS <span style={{ fontWeight: 500, textTransform: "none", color: "#9CA3AF", fontSize: 10 }}>(optional)</span>
+      </label>
+      <input
+        type="text"
+        value={certifications}
+        onChange={(e) => setCertifications(e.target.value)}
+        placeholder="e.g. AWS Certified, PMP..."
+        style={{
+          width: "100%", height: 44, padding: "0 14px", fontSize: 14,
+          border: "1px solid #E5E7EB", borderRadius: 8,
+          outline: "none", background: "#fff", fontFamily: "inherit",
+          transition: "border-color 0.15s", boxSizing: "border-box",
+        }}
+        onFocus={(e) => e.target.style.borderColor = "#22c55e"}
+        onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
+      />
+    </div>
   </div>
 )}
 
@@ -761,35 +962,50 @@ function handleAddTag() {
           </div>
         )}
 
-        {/* ── Continue button ── */}
-       <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
-  {currentStep > 0 && (
-    <button
-      onClick={() => setCurrentStep((s) => s - 1)}
-      style={{
-        flex: 1, padding: "14px 0", background: "#fff",
-        color: "#374151", border: "1.5px solid #E5E7EB",
-        borderRadius: 999, fontSize: 15, fontWeight: 700, cursor: "pointer",
-      }}
-    >
-      Back
-    </button>
-  )}
-  <button
-    onClick={handleContinue}
-    disabled={currentStep === 0 && selectedType === null}
-    style={{
-      flex: 2, padding: "14px 0",
-      background: currentStep === 0 && selectedType === null ? "#86efac" : "#22c55e",
-      color: "#fff", border: "none", borderRadius: 999,
-      fontSize: 15, fontWeight: 700,
-      cursor: currentStep === 0 && selectedType === null ? "not-allowed" : "pointer",
-      transition: "background 0.15s",
-    }}
-  >
-    {currentStep === STEPS.length - 1 ? "Publish Job Post" : "Continue"}
-  </button>
-</div>
+        {/* ── Navigation buttons ── */}
+        <div style={{ marginTop: 24 }}>
+          <div style={{ display: "flex", gap: 12 }}>
+            {currentStep > 0 && (
+              <button
+                onClick={() => setCurrentStep((s) => s - 1)}
+                style={{
+                  flex: 1, padding: "14px 0", background: "#fff",
+                  color: "#374151", border: "1.5px solid #E5E7EB",
+                  borderRadius: 999, fontSize: 15, fontWeight: 700, cursor: "pointer",
+                }}
+              >
+                Back
+              </button>
+            )}
+            <button
+              onClick={handleContinue}
+              disabled={currentStep === 0 && selectedType === null}
+              style={{
+                flex: 2, padding: "14px 0",
+                background: currentStep === 0 && selectedType === null ? "#86efac" : "#22c55e",
+                color: "#fff", border: "none", borderRadius: 999,
+                fontSize: 15, fontWeight: 700,
+                cursor: currentStep === 0 && selectedType === null ? "not-allowed" : "pointer",
+                transition: "background 0.15s",
+              }}
+            >
+              {currentStep === STEPS.length - 1 ? "Publish Job Post" : "Continue"}
+            </button>
+          </div>
+          {currentStep === 4 && (
+            <div style={{ textAlign: "center", marginTop: 14 }}>
+              <button
+                onClick={() => setCurrentStep(5)}
+                style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "#9CA3AF", fontSize: 13, fontWeight: 500,
+                }}
+              >
+                Skip this step →
+              </button>
+            </div>
+          )}
+        </div>
     </div> {/* closes Step content div */}
 
 </main>
