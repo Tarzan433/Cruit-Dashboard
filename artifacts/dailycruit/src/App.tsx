@@ -493,22 +493,22 @@ const MOCK_JOBS = [
 
 // ─── Search Jobs Page ─────────────────────────────────────────────────────────
 
-type FilterTag = {
+type FilterChip = {
   id: string;
   label: string;
-  icon: string;
+  chip?: "trending" | "clock";
 };
 
-const FILTER_TAGS: FilterTag[] = [
-  { id: "all", label: "All", icon: "" },
-  { id: "new", label: "New", icon: "↗" },
-  { id: "expiring", label: "Expiring", icon: "⏱" },
-  { id: "remote", label: "Remote", icon: "" },
-  { id: "onsite", label: "On-site", icon: "" },
-  { id: "hybrid", label: "Hybrid", icon: "" },
-  { id: "fulltime", label: "Full-time", icon: "" },
-  { id: "parttime", label: "Part-time", icon: "" },
-  { id: "gig", label: "Gig", icon: "" },
+const FILTER_TAGS: FilterChip[] = [
+  { id: "all",      label: "All" },
+  { id: "new",      label: "New",       chip: "trending" },
+  { id: "expiring", label: "Expiring",  chip: "clock" },
+  { id: "remote",   label: "Remote" },
+  { id: "onsite",   label: "On-site" },
+  { id: "hybrid",   label: "Hybrid" },
+  { id: "fulltime", label: "Full-time" },
+  { id: "parttime", label: "Part time" },
+  { id: "gig",      label: "Gig" },
 ];
 
 function JobCard({ job }: { job: typeof MOCK_JOBS[0] }) {
@@ -529,21 +529,9 @@ function JobCard({ job }: { job: typeof MOCK_JOBS[0] }) {
         </button>
       </div>
       <div className="job-tags">
-       
-<span className="job-tag">
-  <MapPinIcon size={13} /> {job.location}
-</span>
-<span className="job-tag">
-  <BriefcaseIcon size={13} /> {job.type}
-</span>
-<span className="job-tag salary">
-  {job.salary}
-</span>
-       
-        <span className="job-tag salary">
-          {job.salary}
-        </span>
-
+        <span className="job-tag"><MapPinIcon /> {job.location}</span>
+        <span className="job-tag"><BriefcaseIcon /> {job.type}</span>
+        <span className="job-tag salary">{job.salary}</span>
       </div>
       <div className="job-footer">
         <span className="job-posted">
@@ -604,7 +592,7 @@ function SearchJobsPage() {
         </button>
       </div>
 
-      {/* Filter tags */}
+      {/* Filter chips */}
       <div className="filter-tags-row">
         {FILTER_TAGS.map((tag) => (
           <button
@@ -612,7 +600,18 @@ function SearchJobsPage() {
             className={`filter-tag${activeFilter === tag.id ? " filter-tag-active" : ""}`}
             onClick={() => setActiveFilter(tag.id)}
           >
-            {tag.icon && <span className="tag-icon">{tag.icon}</span>}
+            {tag.chip === "trending" && (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                <polyline points="17 6 23 6 23 12" />
+              </svg>
+            )}
+            {tag.chip === "clock" && (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            )}
             {tag.label}
           </button>
         ))}
@@ -623,7 +622,9 @@ function SearchJobsPage() {
         <div className="empty-state search-empty">
           <SearchBigIcon />
           <h2 className="empty-title">Start searching</h2>
-          <p className="empty-subtitle">Type at least 2 characters to find jobs</p>
+          <p className="empty-subtitle">
+            <span className="empty-highlight">Type</span> at least 2 characters to find jobs
+          </p>
         </div>
       ) : filteredJobs.length === 0 ? (
         <div className="empty-state search-empty">
