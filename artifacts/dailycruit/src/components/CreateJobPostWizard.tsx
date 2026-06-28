@@ -11,17 +11,26 @@ interface Props {
   onBack: () => void; // called when user clicks "← Job Posts"
 }
 
+type WorkType = "remote" | "hybrid" | "onsite";
+
 export function CreateJobPostWizard({ onBack }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedType, setSelectedType] = useState<JobType>(null);
 
-// Add state for Step 2 data
-const [title, setTitle] = useState("");
-const [description, setDescription] = useState("");
-const [isRemote, setIsRemote] = useState(false);
-const [tags, setTags] = useState<string[]>([]);
-const [tagInput, setTagInput] = useState("");
-const [showErrors, setShowErrors] = useState(false);
+  // Step 2 state
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [isRemote, setIsRemote] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [showErrors, setShowErrors] = useState(false);
+
+  // Step 3 — Location state
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const [stateRegion, setStateRegion] = useState("");
+  const [address, setAddress] = useState("");
+  const [workType, setWorkType] = useState<WorkType>("onsite");
 
 //Continue button logic
   function handleContinue() {
@@ -344,8 +353,176 @@ function handleAddTag() {
   </div>
 )}
 
-{/* STEP 3–5 — Placeholder */}
-{currentStep > 1 && currentStep < STEPS.length - 1 && (
+{/* STEP 3 — Location */}
+{currentStep === 2 && (
+  <div>
+    <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 24 }}>
+      Location
+    </h3>
+
+    {/* Country + City row */}
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+      {/* Country */}
+      <div>
+        <label style={{
+          display: "block", fontSize: 11, fontWeight: 700,
+          letterSpacing: "0.08em", color: "#6B7280",
+          textTransform: "uppercase", marginBottom: 6,
+        }}>Country</label>
+        <input
+          type="text"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+          placeholder="Italy"
+          style={{
+            width: "100%", height: 44, padding: "0 14px", fontSize: 14,
+            border: "1px solid #E5E7EB", borderRadius: 8,
+            outline: "none", background: "#fff",
+            boxSizing: "border-box", fontFamily: "inherit",
+            transition: "border-color 0.15s, box-shadow 0.15s",
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = "#22c55e";
+            e.target.style.boxShadow = "0 0 0 3px rgba(34,197,94,0.12)";
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = "#E5E7EB";
+            e.target.style.boxShadow = "none";
+          }}
+        />
+      </div>
+
+      {/* City */}
+      <div>
+        <label style={{
+          display: "block", fontSize: 11, fontWeight: 700,
+          letterSpacing: "0.08em", color: "#6B7280",
+          textTransform: "uppercase", marginBottom: 6,
+        }}>
+          City <span style={{ color: "#ef4444" }}>*</span>
+        </label>
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder="Milan"
+          style={{
+            width: "100%", height: 44, padding: "0 14px", fontSize: 14,
+            border: "1px solid #E5E7EB", borderRadius: 8,
+            outline: "none", background: "#fff",
+            boxSizing: "border-box", fontFamily: "inherit",
+            transition: "border-color 0.15s, box-shadow 0.15s",
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = "#22c55e";
+            e.target.style.boxShadow = "0 0 0 3px rgba(34,197,94,0.12)";
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = "#E5E7EB";
+            e.target.style.boxShadow = "none";
+          }}
+        />
+        <p style={{ fontSize: 11, color: "#9CA3AF", marginTop: 5, margin: "5px 0 0" }}>
+          Enter the city where the job is based
+        </p>
+      </div>
+    </div>
+
+    {/* State / Region */}
+    <div style={{ marginBottom: 16 }}>
+      <label style={{
+        display: "block", fontSize: 11, fontWeight: 700,
+        letterSpacing: "0.08em", color: "#6B7280",
+        textTransform: "uppercase", marginBottom: 6,
+      }}>State / Region <span style={{ fontSize: 10, fontWeight: 500, textTransform: "none", color: "#9CA3AF" }}>(optional)</span></label>
+      <input
+        type="text"
+        value={stateRegion}
+        onChange={(e) => setStateRegion(e.target.value)}
+        placeholder="e.g. Lombardy"
+        style={{
+          width: "100%", height: 44, padding: "0 14px", fontSize: 14,
+          border: "1px solid #E5E7EB", borderRadius: 8,
+          outline: "none", background: "#fff",
+          boxSizing: "border-box", fontFamily: "inherit",
+          transition: "border-color 0.15s, box-shadow 0.15s",
+        }}
+        onFocus={(e) => {
+          e.target.style.borderColor = "#22c55e";
+          e.target.style.boxShadow = "0 0 0 3px rgba(34,197,94,0.12)";
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = "#E5E7EB";
+          e.target.style.boxShadow = "none";
+        }}
+      />
+    </div>
+
+    {/* Address */}
+    <div style={{ marginBottom: 24 }}>
+      <label style={{
+        display: "block", fontSize: 11, fontWeight: 700,
+        letterSpacing: "0.08em", color: "#6B7280",
+        textTransform: "uppercase", marginBottom: 6,
+      }}>Address</label>
+      <input
+        type="text"
+        value={address}
+        onChange={(e) => setAddress(e.target.value)}
+        placeholder="Via Roma 1"
+        style={{
+          width: "100%", height: 44, padding: "0 14px", fontSize: 14,
+          border: "1px solid #E5E7EB", borderRadius: 8,
+          outline: "none", background: "#fff",
+          boxSizing: "border-box", fontFamily: "inherit",
+          transition: "border-color 0.15s, box-shadow 0.15s",
+        }}
+        onFocus={(e) => {
+          e.target.style.borderColor = "#22c55e";
+          e.target.style.boxShadow = "0 0 0 3px rgba(34,197,94,0.12)";
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = "#E5E7EB";
+          e.target.style.boxShadow = "none";
+        }}
+      />
+    </div>
+
+    {/* Work Type toggle */}
+    <div style={{ marginBottom: 8 }}>
+      <label style={{
+        display: "block", fontSize: 11, fontWeight: 700,
+        letterSpacing: "0.08em", color: "#6B7280",
+        textTransform: "uppercase", marginBottom: 10,
+      }}>Work Type</label>
+      <div style={{ display: "flex", gap: 8 }}>
+        {(["remote", "hybrid", "onsite"] as WorkType[]).map((wt) => {
+          const labels: Record<WorkType, string> = { remote: "Remote", hybrid: "Hybrid", onsite: "On-site" };
+          const active = workType === wt;
+          return (
+            <button
+              key={wt}
+              onClick={() => setWorkType(wt)}
+              style={{
+                flex: 1, padding: "10px 0", fontSize: 13, fontWeight: 600,
+                borderRadius: 999, cursor: "pointer",
+                border: active ? "2px solid #22c55e" : "1.5px solid #E5E7EB",
+                background: active ? "#f0fdf4" : "#fff",
+                color: active ? "#16a34a" : "#6B7280",
+                transition: "all 0.15s",
+              }}
+            >
+              {labels[wt]}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+)}
+
+{/* STEP 4–5 — Placeholder */}
+{currentStep > 2 && currentStep < STEPS.length - 1 && (
   <div style={{ background: "#fff", borderRadius: 12, padding: 32, border: "1px solid #E5E7EB" }}>
     <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
       {STEPS[currentStep]}
