@@ -50,6 +50,9 @@ export function CreateJobPostWizard({ onBack }: Props) {
   const [languageInput, setLanguageInput] = useState("");
   const [certifications, setCertifications] = useState("");
 
+  // Step 6 — Publish state
+  const [published, setPublished] = useState(false);
+
 //Continue button logic
   function handleContinue() {
   if (currentStep === 1) {
@@ -954,58 +957,273 @@ function handleAddTag() {
   </div>
 )}
 
-        {/* STEP 6 — Review placeholder */}
+        {/* STEP 6 — Review & Publish */}
         {currentStep === STEPS.length - 1 && (
-          <div style={{ background: "#fff", borderRadius: 12, padding: 32, border: "1px solid #E5E7EB" }}>
-            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 8 }}>Review & Publish</h3>
-            <p style={{ color: "#6B7280", fontSize: 14 }}>Review your job post before publishing.</p>
+          published ? (
+            /* ── Success state ── */
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{
+                width: 64, height: 64, borderRadius: "50%", background: "#22c55e",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                margin: "0 auto 20px", fontSize: 28, color: "#fff",
+              }}>✓</div>
+              <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 8 }}>
+                Job Post Published! 🎉
+              </h3>
+              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 28 }}>
+                Your job is now live and visible to candidates.
+              </p>
+              <button
+                onClick={onBack}
+                style={{
+                  display: "block", width: "100%", padding: "13px 0",
+                  background: "#22c55e", color: "#fff", border: "none",
+                  borderRadius: 999, fontSize: 15, fontWeight: 700, cursor: "pointer",
+                  marginBottom: 14,
+                }}
+              >
+                View Job Post
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentStep(0);
+                  setPublished(false);
+                  setSelectedType(null);
+                  setTitle(""); setDescription(""); setTags([]);
+                }}
+                style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "#6B7280", fontSize: 13, fontWeight: 500,
+                }}
+              >
+                Create another job post
+              </button>
+            </div>
+          ) : (
+            /* ── Review UI ── */
+            <div>
+              <h3 style={{ fontSize: 22, fontWeight: 700, color: "#111827", marginBottom: 16 }}>
+                Review &amp; Publish
+              </h3>
+
+              {/* Job preview card */}
+              <div style={{
+                background: "#fff", border: "1px solid #E5E7EB",
+                borderRadius: 12, padding: 20, marginBottom: 16,
+              }}>
+                {/* Card header */}
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 0 }}>
+                  {/* Logo placeholder */}
+                  <div style={{
+                    width: 40, height: 40, borderRadius: 8, background: "#F3F4F6",
+                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                  }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-4 0v2" /><line x1="8" y1="12" x2="8" y2="12" /><line x1="16" y1="12" x2="16" y2="12" />
+                    </svg>
+                  </div>
+                  {/* Title + company */}
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: "#111827", margin: 0, lineHeight: 1.3 }}>
+                      {title || "Untitled Job"}
+                    </p>
+                    <p style={{ fontSize: 13, color: "#6B7280", margin: "2px 0 0" }}>Your Company</p>
+                  </div>
+                  {/* Type badge */}
+                  {selectedType && (
+                    <span style={{
+                      background: "#F3F4F6", color: "#374151",
+                      borderRadius: 999, padding: "4px 10px", fontSize: 12, fontWeight: 500,
+                      whiteSpace: "nowrap", flexShrink: 0,
+                    }}>
+                      {selectedType === "standard" ? "Standard" : "Map Pin"}
+                    </span>
+                  )}
+                </div>
+
+                {/* Divider */}
+                <div style={{ borderTop: "1px solid #E5E7EB", margin: "16px 0" }} />
+
+                {/* Detail rows */}
+                {[
+                  {
+                    icon: "📍",
+                    label: "Location",
+                    value: [city, country].filter(Boolean).join(", ") || workType,
+                  },
+                  {
+                    icon: "💰",
+                    label: "Salary",
+                    value: salaryMin || salaryMax
+                      ? `€${salaryMin}${salaryMax ? ` – €${salaryMax}` : ""}${salaryType ? ` / ${salaryType}` : ""}`
+                      : null,
+                  },
+                  {
+                    icon: "👥",
+                    label: "Commitment",
+                    value: commitment,
+                  },
+                  {
+                    icon: "🗓",
+                    label: "Posted",
+                    value: "just-now",
+                  },
+                ].filter((r) => r.value).map((row) => (
+                  <div
+                    key={row.label}
+                    style={{
+                      display: "flex", justifyContent: "space-between", alignItems: "center",
+                      padding: "10px 0", borderBottom: "1px solid #F9FAFB",
+                      transition: "background 0.2s",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "#F9FAFB")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  >
+                    <span style={{ color: "#6B7280", fontSize: 13 }}>
+                      {row.icon} {row.label}
+                    </span>
+                    {row.value === "just-now" ? (
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "#16a34a" }}>Just now</span>
+                    ) : (
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "#111827", textAlign: "right" }}>
+                        {row.value}
+                      </span>
+                    )}
+                  </div>
+                ))}
+
+                {/* Skills chips (conditional) */}
+                {skills.length > 0 && (
+                  <div style={{ paddingTop: 12 }}>
+                    <p style={{ fontSize: 13, color: "#6B7280", marginBottom: 8 }}>🎯 Skills</p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                      {skills.map((s) => (
+                        <span key={s} style={{
+                          background: "#dcfce7", color: "#166534",
+                          borderRadius: 999, padding: "4px 10px", fontSize: 12, fontWeight: 600,
+                        }}>{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Footer text */}
+                <p style={{ fontSize: 12, color: "#6B7280", textAlign: "center", marginTop: 16, marginBottom: 0 }}>
+                  This is how your job post will appear to candidates.
+                </p>
+              </div>
+
+              {/* Edit links */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 16px", marginBottom: 24 }}>
+                {[
+                  { label: "Edit Type", step: 0 },
+                  { label: "Edit Details", step: 1 },
+                  { label: "Edit Location", step: 2 },
+                  { label: "Edit Terms", step: 3 },
+                ].map(({ label, step }) => (
+                  <button
+                    key={label}
+                    onClick={() => setCurrentStep(step)}
+                    style={{
+                      background: "none", border: "none", cursor: "pointer",
+                      fontSize: 12, color: "#6B7280", padding: 0,
+                      display: "flex", alignItems: "center", gap: 4,
+                    }}
+                  >
+                    ✏ {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Primary actions */}
+              <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+                <button
+                  style={{
+                    flex: 1, padding: "12px 0", background: "#fff",
+                    border: "1px solid #D1D5DB", borderRadius: 999,
+                    fontSize: 14, fontWeight: 600, color: "#374151", cursor: "pointer",
+                  }}
+                >
+                  Save as Draft
+                </button>
+                <button
+                  onClick={() => setPublished(true)}
+                  style={{
+                    flex: 2, padding: "12px 0", background: "#22c55e",
+                    border: "none", borderRadius: 999,
+                    fontSize: 15, fontWeight: 700, color: "#fff", cursor: "pointer",
+                    animation: "pulse-publish 2.4s ease-in-out infinite",
+                  }}
+                >
+                  🚀 Publish
+                </button>
+              </div>
+            </div>
+          )
+        )}
+
+        {/* ── Navigation buttons (steps 0–4 only; step 6 has its own buttons) ── */}
+        {currentStep < STEPS.length - 1 && (
+          <div style={{ marginTop: 24 }}>
+            <div style={{ display: "flex", gap: 12 }}>
+              {currentStep > 0 && (
+                <button
+                  onClick={() => setCurrentStep((s) => s - 1)}
+                  style={{
+                    flex: 1, padding: "14px 0", background: "#fff",
+                    color: "#374151", border: "1.5px solid #E5E7EB",
+                    borderRadius: 999, fontSize: 15, fontWeight: 700, cursor: "pointer",
+                  }}
+                >
+                  Back
+                </button>
+              )}
+              <button
+                onClick={handleContinue}
+                disabled={currentStep === 0 && selectedType === null}
+                style={{
+                  flex: 2, padding: "14px 0",
+                  background: currentStep === 0 && selectedType === null ? "#86efac" : "#22c55e",
+                  color: "#fff", border: "none", borderRadius: 999,
+                  fontSize: 15, fontWeight: 700,
+                  cursor: currentStep === 0 && selectedType === null ? "not-allowed" : "pointer",
+                  transition: "background 0.15s",
+                }}
+              >
+                Continue
+              </button>
+            </div>
+            {currentStep === 4 && (
+              <div style={{ textAlign: "center", marginTop: 14 }}>
+                <button
+                  onClick={() => setCurrentStep(5)}
+                  style={{
+                    background: "none", border: "none", cursor: "pointer",
+                    color: "#9CA3AF", fontSize: 13, fontWeight: 500,
+                  }}
+                >
+                  Skip this step →
+                </button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* ── Navigation buttons ── */}
-        <div style={{ marginTop: 24 }}>
-          <div style={{ display: "flex", gap: 12 }}>
-            {currentStep > 0 && (
-              <button
-                onClick={() => setCurrentStep((s) => s - 1)}
-                style={{
-                  flex: 1, padding: "14px 0", background: "#fff",
-                  color: "#374151", border: "1.5px solid #E5E7EB",
-                  borderRadius: 999, fontSize: 15, fontWeight: 700, cursor: "pointer",
-                }}
-              >
-                Back
-              </button>
-            )}
+        {/* ── Step 6: Back button below the review card (only when not published) ── */}
+        {currentStep === STEPS.length - 1 && !published && (
+          <div style={{ marginTop: 10 }}>
             <button
-              onClick={handleContinue}
-              disabled={currentStep === 0 && selectedType === null}
+              onClick={() => setCurrentStep((s) => s - 1)}
               style={{
-                flex: 2, padding: "14px 0",
-                background: currentStep === 0 && selectedType === null ? "#86efac" : "#22c55e",
-                color: "#fff", border: "none", borderRadius: 999,
-                fontSize: 15, fontWeight: 700,
-                cursor: currentStep === 0 && selectedType === null ? "not-allowed" : "pointer",
-                transition: "background 0.15s",
+                width: "100%", padding: "12px 0", background: "#fff",
+                border: "1px solid #D1D5DB", borderRadius: 999,
+                fontSize: 14, fontWeight: 600, color: "#374151", cursor: "pointer",
               }}
             >
-              {currentStep === STEPS.length - 1 ? "Publish Job Post" : "Continue"}
+              Back
             </button>
           </div>
-          {currentStep === 4 && (
-            <div style={{ textAlign: "center", marginTop: 14 }}>
-              <button
-                onClick={() => setCurrentStep(5)}
-                style={{
-                  background: "none", border: "none", cursor: "pointer",
-                  color: "#9CA3AF", fontSize: 13, fontWeight: 500,
-                }}
-              >
-                Skip this step →
-              </button>
-            </div>
-          )}
-        </div>
+        )}
     </div> {/* closes Step content div */}
 
 </main>
