@@ -1,0 +1,42 @@
+Create a modern "Change account type" modal dialog overlay frontend component for my job portal application based on the provided UI layout.
+
+Tech Stack Constraints:
+- Use only standard HTML5 semantic markup, vanilla CSS3, and vanilla JavaScript (ES6+).
+- Do not use Tailwind, React, or heavy external UI component frameworks. Keep the structure clean so I can easily run it locally in VS Code and connect the active selection update to Firebase/Firestore later.
+
+UI Layout & Structure to Build:
+
+1. Modal Background Overlay:
+   - A full-screen fixed background overlay (`backdrop-filter: blur()` or a semi-transparent dark grey background) that dims out the underlying Settings page content.
+
+2. Modal Card Container:
+   - A centered, white rectangular container with significantly rounded corners and clean padding.
+   - Top Header Section:
+     - Left side: Title "Change account type" (bold, clean font).
+     - Right side: Small, muted sub-text reading "Previous data is retained for 60 days after switching".
+
+3. Card Grid Selection Layout (3 Columns):
+   Inside the modal body, create a horizontal grid containing three equal-width interactive select-cards. Each card has a white background, rounded borders, a centered layout, an illustration/icon area, a bold title, a short description, and a bottom selection dot.
+
+   - Card 1: Job Seeker (Active/Current State)
+     - Border style: A distinct light green dashed or fine-bordered outline.
+     - Top Badge: A small black pill banner absolute-positioned at the top center of the card that reads "CURRENT" in white text.
+     - Content: A green-themed character graphic/icon, a bold green title "Job Seeker", and a muted description "Find and apply to jobs perfectly matched for you".
+     - Selection Indicator: A small, solid green dot centered at the bottom.
+
+   - Card 2: Recruiter (Inactive State)
+     - Border style: A subtle gray solid outline.
+     - Content: A green-themed character graphic/icon, a bold black title "Recruiter", and a muted description "Professional dashboard to post jobs & hire talent".
+     - Selection Indicator: Empty/no active dot.
+
+   - Card 3: Gigsman (Inactive State)
+     - Border style: A subtle gray solid outline.
+     - Content: A green-themed character graphic/icon, a bold black title "Gigsman", and a muted description "Search gigs & post flexible one-time work".
+     - Selection Indicator: Empty/no active dot.
+
+Specific Interaction Logic (JavaScript):
+- Modal Trigger: Logic to display this modal when the "Change" button in Settings is clicked.
+- Closing the Modal: The modal should close if a user clicks outside the white card area onto the dimmed background overlay.
+- Selection Toggle: Clicking any of the 3 cards should shift the active state (the dashed green border, the "CURRENT" badge, green title text, and the green dot indicator) to that specific card.
+
+Please provide the modular HTML structure, the clean CSS layout separating the modal backdrop and the internal card grid rules, and the vanilla JavaScript to manage modal display toggling and card active-state switching.

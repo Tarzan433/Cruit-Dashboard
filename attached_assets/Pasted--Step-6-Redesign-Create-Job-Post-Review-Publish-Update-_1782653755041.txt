@@ -1,0 +1,471 @@
+# Step 6: Redesign "Create Job Post – Review & Publish"
+
+Update the existing **Step 6: Review & Publish** screen in the job creation flow.
+
+## Critical Requirements
+
+* Preserve the existing architecture.
+* Continue using **Wouter routing** for all page navigation.
+* Do **NOT** introduce any show/hide page navigation patterns.
+* Reuse existing form data collected from previous steps.
+* Maintain all existing functionality unless explicitly changed below.
+
+---
+
+# DO NOT MODIFY
+
+The following elements must remain exactly as they are:
+
+* Navbar
+* "← Job Posts" back link
+* "YOU'RE CREATING / New Job Post" header section
+* Existing green brand color `#22c55e`
+* Existing Wouter route structure
+
+---
+
+# 1. Fix Progress Bar (Currently Broken)
+
+The progress indicator currently has overlapping labels.
+
+## Required Layout
+
+Use:
+
+```css
+.steps-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+  flex: 1;
+}
+```
+
+### Label styling
+
+```css
+.step-label {
+  margin-top: 4px;
+  font-size: 11px;
+  text-align: center;
+  white-space: nowrap;
+  color: #6b7280;
+}
+```
+
+## Completion State
+
+Because this is the final review step:
+
+* All 6 circles must display as completed.
+* Every circle should use the brand green color `#22c55e`.
+* Each circle should contain a white checkmark `✓`.
+* No inactive or gray circles should appear.
+
+---
+
+# 2. Review & Publish Section
+
+Add a section heading:
+
+```text
+Review & Publish
+```
+
+### Style
+
+* font-size: approximately 22px
+* font-weight: 700
+* margin-bottom: 16px
+
+---
+
+# 3. Job Preview Card (Major UI Upgrade)
+
+Replace the existing preview UI with a realistic job listing card.
+
+## Card Container
+
+```css
+background: #ffffff;
+border: 1px solid #e5e7eb;
+border-radius: 12px;
+padding: 20px;
+max-width: 400px;
+margin: 0 auto;
+```
+
+---
+
+## Top Area
+
+### Left side
+
+Display:
+
+* Company logo placeholder
+* Size: `40x40px`
+* Gray rounded square background
+* Center a building icon inside
+
+### Middle
+
+Display:
+
+**Job Title**
+
+* Source: Step 1 data
+* Font size: 16px
+* Font weight: bold
+
+**Company Name**
+
+* Below title
+* Font size: 13px
+* Color: `#6b7280`
+
+### Right side
+
+Display a pill badge showing:
+
+Examples:
+
+```text
+Standard
+Full-time
+Remote
+```
+
+Badge styling:
+
+```css
+background: #f3f4f6;
+color: #374151;
+border-radius: 999px;
+padding: 4px 10px;
+font-size: 12px;
+```
+
+---
+
+# Divider
+
+Add:
+
+```css
+border-top: 1px solid #e5e7eb;
+margin: 16px 0;
+```
+
+---
+
+# 4. Detail Rows
+
+Display rows using:
+
+```text
+Icon + Label (left)
+Value (right)
+```
+
+Each row should be hoverable.
+
+## Required rows
+
+### Location
+
+Icon: 📍
+
+Value:
+
+Use Step 3 location data.
+
+---
+
+### Salary
+
+Icon: 💰
+
+Format:
+
+```text
+€123 / hourly
+₹25,000 / monthly
+```
+
+Use Step 4 salary + salary type.
+
+---
+
+### Commitment
+
+Icon: 👥
+
+Examples:
+
+```text
+Full-time
+Part-time
+Contract
+```
+
+Use Step 4 data.
+
+---
+
+### Posted
+
+Icon: 🗓
+
+Always display:
+
+```text
+Just now
+```
+
+Use muted green text.
+
+---
+
+### Skills (Conditional)
+
+Only render if requirements/skills exist.
+
+Display each skill as a green chip.
+
+Example:
+
+```text
+React
+Firebase
+Node.js
+```
+
+Chip styling:
+
+```css
+background: #dcfce7;
+color: #166534;
+border-radius: 999px;
+padding: 4px 10px;
+font-size: 12px;
+```
+
+---
+
+## Detail Row Styling
+
+```css
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  transition: background 0.2s ease;
+}
+
+.detail-row:hover {
+  background: #f9fafb;
+}
+```
+
+Label:
+
+```css
+color: #6b7280;
+font-size: 13px;
+```
+
+Value:
+
+```css
+font-size: 13px;
+font-weight: 600;
+color: #111827;
+text-align: right;
+```
+
+---
+
+# Preview Footer Text
+
+At the bottom of the card display:
+
+```text
+This is how your job post will appear to candidates.
+```
+
+Style:
+
+```css
+font-size: 12px;
+color: #6b7280;
+text-align: center;
+margin-top: 16px;
+```
+
+---
+
+# 5. Section Edit Links
+
+Below the preview card add inline edit actions:
+
+```text
+✏ Edit Type
+✏ Edit Details
+✏ Edit Location
+✏ Edit Terms
+```
+
+Requirements:
+
+* Display in a horizontal row.
+* Font size: 12px.
+* Color: `#6b7280`.
+* Wrap on smaller screens.
+* Clicking each action should navigate directly to its corresponding step using existing Wouter routes.
+
+Examples:
+
+```text
+Edit Type      -> Step 1
+Edit Details   -> Step 2
+Edit Location  -> Step 3
+Edit Terms     -> Step 4
+```
+
+---
+
+# 6. Action Buttons
+
+## Primary Row
+
+Display side-by-side buttons.
+
+### Save as Draft
+
+```css
+background: white;
+border: 1px solid #d1d5db;
+border-radius: 999px;
+padding: 12px 24px;
+font-size: 14px;
+```
+
+---
+
+### Publish
+
+Text:
+
+```text
+🚀 Publish
+```
+
+Style:
+
+```css
+background: #22c55e;
+color: white;
+font-weight: 700;
+border-radius: 999px;
+padding: 12px 40px;
+```
+
+Add a subtle pulse animation to attract attention.
+
+Example:
+
+```css
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+```
+
+Apply an infinite slow pulse.
+
+---
+
+## Secondary Row
+
+Below the primary actions:
+
+Full-width Back button.
+
+```css
+background: white;
+border: 1px solid #d1d5db;
+border-radius: 999px;
+padding: 12px;
+width: 100%;
+```
+
+---
+
+# 7. Publish Success State
+
+When the user successfully publishes:
+
+Replace the entire review screen content with a success screen.
+
+## Content
+
+Large green success icon:
+
+* Circular green background
+* Size: 64px
+* White checkmark centered
+
+Display:
+
+```text
+Job Post Published! 🎉
+```
+
+Subtitle:
+
+```text
+Your job is now live and visible to candidates.
+```
+
+Actions:
+
+1. Green primary button
+
+```text
+View Job Post
+```
+
+2. Gray text link
+
+```text
+Create another job post
+```
+
+---
+
+# 8. Page Styling
+
+Apply:
+
+```css
+background: #f0f2f5;
+min-height: 100vh;
+```
+
+Center all review content horizontally.
+
+Ensure layout is fully responsive on mobile devices.
+
+Use smooth transitions where appropriate.
+
+Avoid introducing layout shifts or breaking existing functionality.

@@ -1,0 +1,74 @@
+Update the "Create Job Post - Requirements" step (Step 5) to match 
+the design and fix existing issues:
+
+**FIX PROGRESS BAR LABELS (broken right now):**
+- Step labels (Type, Details, Location, Terms, Requirements, Review) 
+  are all squished together with no spacing — fix this
+- Each label must be centered below its own circle with proper spacing
+- Use: text-align:center, font-size:11px, margin-top:4px, 
+  white-space:nowrap on each label
+- Give each step enough min-width (at least 60px) so labels don't overlap
+- Steps 1–4 green filled circle with white checkmark ✓
+- Step 5 green filled circle with white "5" (current)
+- Step 6 empty gray circle with gray "6"
+
+**REQUIREMENTS FORM:**
+
+Section heading: "Requirements" bold ~22px
+Subtitle below: "All optional — you can skip this step" 
+in small muted gray italic text
+
+Replace the plain dropdown with a better UX:
+
+**SKILLS / TAGS input:**
+- Label: "SKILLS REQUIRED" (uppercase, 11px, muted)
+- A tag input field where user types a skill and presses Enter 
+  to add it as a chip/tag
+- Each added tag shows as a green pill with an × to remove it
+- Placeholder: "e.g. React, Photoshop, Excel..."
+
+**EXPERIENCE LEVEL selector:**
+- Label: "EXPERIENCE LEVEL" (uppercase, 11px, muted)
+- 4 pill toggle buttons in a row:
+  Internship | Junior | Mid-level | Senior
+- Selected: green bg (#22c55e), white text
+- Unselected: white bg, gray border
+- Border-radius: 999px
+
+**EDUCATION selector:**
+- Label: "EDUCATION" (uppercase, 11px, muted)
+- Dropdown select with options:
+  Any | High School | Bachelor's Degree | Master's Degree | PhD
+- White bg, gray border, border-radius 8px, height 44px
+
+**LANGUAGES field:**
+- Label: "LANGUAGES" (uppercase, 11px, muted)
+- Same tag/chip input style as Skills field
+- Placeholder: "e.g. English, Spanish..."
+
+**CERTIFICATIONS field (optional):**
+- Label: "CERTIFICATIONS (optional)" (uppercase, 11px, muted)
+- Simple text input
+- Placeholder: "e.g. AWS Certified, PMP..."
+
+**BUTTONS:**
+- "Back" — white bg, gray border, border-radius 999px, padding 12px 28px
+- "Continue" — green bg (#22c55e), white bold text, 
+  border-radius 999px, padding 12px 60px
+- Add a "Skip this step →" text link between the buttons 
+  in small muted gray, clicking it goes directly to step 6
+
+**STYLING:**
+- Card: centered, max-width 400px, white bg
+- Page background: light gray (#f0f2f5)
+- All labels: uppercase, 11px, font-weight 600, color #6b7280
+- Input focus: green border (#22c55e)
+- Tag chips: green bg (#22c55e), white text, 
+  border-radius 999px, font-size 12px, padding 4px 10px
+
+**Do NOT change:**
+- Navbar
+- "← Job Posts" back link
+- "YOU'RE CREATING / New Job Post" header
+- Green brand color (#22c55e)
+- Wouter routing — do not use show/hide for page navigation

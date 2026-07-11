@@ -1,0 +1,43 @@
+Create a "Settings" page frontend view component for my job portal web application based on the layout and content shown in the provided images. 
+
+Tech Stack Constraints:
+- Use only standard HTML5 semantic elements, vanilla CSS3, and vanilla JavaScript (ES6+).
+- Do not use Tailwind, React, or complex external UI frame frameworks. Keep it exceptionally clean and modular for standard text-editor (VS Code) development and smooth mapping to Firebase services later.
+
+UI Layout & Structure to Build:
+
+1. Top Layout Header:
+   - A row with a pill-shaped "< Back" button on the left, followed immediately by a Gear settings icon and a bold page title: "Settings".
+
+2. Main Settings Container:
+   A centered column layout containing vertically stacked sections. Each major category sits inside its own clean white card with a subtle border/box-shadow. 
+   Inside each card, individual setting rows must feature a section title (bold), a short muted sub-label explanation description, and a form control element aligned to the right side.
+
+   - SECTION 1: ACCOUNT (Small capitalized header)
+     - Row: "Account Type". Description: "Switch between Job Seeker, Recruiter, or Gigsman. Your previous data is retained for 60 days after switching." 
+     - Right controls: A light green pill badge reading "Job Seeker" followed by a solid black button reading "Change".
+
+   - SECTION 2: LANGUAGE & REGION (Small capitalized header)
+     - Row 1: "Language" (Description: "Interface display language"). Right control: A dropdown menu select element containing "English".
+     - Row 2: "Region" (Description: "Affects job listings and local content"). Right control: A dropdown menu select element containing "Europe".
+     - Row 3: "Time Zone" (Description: "Used for scheduling and deadlines"). Right control: A dropdown menu select element containing "Select Time Zone".
+
+   - SECTION 3: NOTIFICATIONS (Small capitalized header)
+     - Row 1: "Web Notifications" (Description: "Receive alerts directly in your browser"). Right control: A standard horizontal toggle switch component (set to OFF state).
+     - Row 2: "Email Notifications" (Description: "Updates and activity sent to your email"). Right control: A standard horizontal toggle switch component (set to ON state, showing bright green accent highlight).
+     - Row 3: "Mobile Notifications". Right control: A standard toggle switch component (set to OFF state).
+
+   - SECTION 4: DANGER ZONE (Small capitalized header styled in a dark red color)
+     This card contains account management actions. Text button styles should look sharp and clear.
+     - Row 1: "Export my data" (Description: "Download a copy of all your personal data, activity, and content stored on this platform."). Right control: A rounded gray text button "Export".
+     - Row 2: "Revoke all active sessions" (Description: "Sign out from all devices immediately. You’ll need to log in again everywhere."). Right control: A rounded gray text button "Revoke".
+     - Row 3: "Delete all personal data" (Description: "Permanently remove your personal information while keeping your account active. This cannot be undone."). Right control: A rounded button with a red text color saying "Delete data".
+     - Row 4: "Remove profile from search" (Description: "Your profile won’t appear in recruiter or employer searches. You can still use the platform normally."). Right control: A standard toggle switch component (set to OFF state).
+     - Row 5: "Reset feed & preferences" (Description: "Clear your personalized feed, saved filters, and interest history. Your account and content won’t be affected."). Right control: A rounded gray text button "Reset".
+     - Row 6: "Deactivate account" (Description: "Temporarily hide your profile and pause all activity. Your data is preserved and you can reactivate at any time by logging back in."). Right control: A rounded button with a red text color saying "Deactivate".
+     - Row 7: "Delete account" (Description: "Permanently delete your account and all associated data. A 15-day grace period applies — you can cancel within that window."). Right control: A rounded button with a solid red border/text color saying "Delete account".
+
+Specific Interaction Logic (JavaScript):
+- Add basic click event listener bindings on the toggle switches so they dynamically slide/flip between their on and off visual classes when clicked.
+
+Please generate the modular HTML layout structure, a dedicated CSS stylesheet cleanly isolating layout margins and specific UI button classes, and the basic JS logic for interactive toggle elements.

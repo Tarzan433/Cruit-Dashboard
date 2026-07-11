@@ -1,0 +1,79 @@
+Build the "Search Jobs" page for a job recruiting platform called "DailyCruit" 
+using HTML, CSS, and vanilla JavaScript (or React). 
+This is a continuation of the same app with a shared navbar.
+
+---
+
+## NAVBAR (same as homepage)
+- Fixed top navbar, white background, subtle bottom shadow
+- Left: Small green icon + bold text "DAILYCRUIT"
+- Center: Pill-shaped nav container with 3 links:
+    - 🏠 Home
+    - 📄 Search jobs  ← ACTIVE (green text + green border highlight)
+    - 📋 My Applications
+  - Active tab "Search jobs" has a green-bordered pill background 
+    and green colored text/icon
+- Right: Chat icon, Bell icon, Purple avatar circle with "T" + green dot
+
+---
+
+## MAIN CONTENT AREA
+- Light gray-blue background: #F0F2F5
+- Content centered horizontally, max-width ~700px
+
+---
+
+## SEARCH BAR
+- Wide rounded search input (white background, border: 1px solid #E0E0E0)
+- Left inside: 🔍 gray search icon
+- Placeholder text: "Search by role, company or location..."
+- Right side: A small square rounded button with a filter/sliders icon (≡ lines icon)
+- Full width of the content area
+
+---
+
+## FILTER TAGS ROW (below search bar, ~12px gap)
+Horizontal scrollable row of pill-shaped filter buttons:
+  1. "All" — ACTIVE: green outline + green text, white background
+  2. "↗ New" — with trend-up arrow icon
+  3. "⏱ Expiring" — with clock icon
+  4. "Remote"
+  5. "On-site"
+  6. "Hybrid"
+  7. "Full-time"
+  8. "Part-time"
+  9. "Gig"
+
+- Inactive pills: light gray border, gray text, white/transparent background
+- Active pill ("All"): green border (#22C55E), green text, white background
+- All pills: rounded-full (border-radius: 999px), padding 6px 14px, font-size 13px
+- Clicking a pill makes it active (toggle active style)
+
+---
+
+## EMPTY STATE (centered below filters)
+- Large gray 🔍 search icon (outlined, not filled)
+- Bold heading: "Start searching"
+- Subtitle (gray): "Type at least 2 characters to find jobs"
+- No buttons needed here
+
+---
+
+## INTERACTIONS
+- Typing 2+ characters in the search bar hides the empty state 
+  and shows a placeholder "Searching..." or mock job card list
+- Clicking filter pills toggles the active green style
+- Filter icon button opens a placeholder dropdown or alert: 
+  "Advanced filters coming soon!"
+
+---
+
+## STYLING DETAILS
+- Font: Inter or system sans-serif
+- Green: #22C55E
+- Background: #F0F2F5
+- Navbar: white, no transparency
+- Search bar: white, border-radius: 12px, height: 48px
+- Filter row: display flex, gap: 8px, flex-wrap: nowrap, overflow-x: auto
+- All pill buttons: border-radius: 999px
+- Scrollbar visible on the right (default browser)

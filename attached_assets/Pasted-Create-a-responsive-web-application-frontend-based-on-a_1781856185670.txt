@@ -1,0 +1,30 @@
+Create a responsive web application frontend based on a job portal layout using standard HTML, vanilla CSS, and vanilla JavaScript. 
+
+Tech Stack Constraints:
+- Use only HTML5, CSS3, and JavaScript (ES6+).
+- Do not use React, Tailwind, or external UI libraries unless standard CDN icons are needed (like FontAwesome for icons). 
+- Keep the structure clean so I can easily integrate Firebase authentication and Firestore database logic later.
+
+UI Layout & Structure to Build:
+1. Top Navigation Bar:
+   - Left side: Logo brand "DAILYCRUIT" with a small icon.
+   - Center: Nav links for "Home" (active state), "Search jobs", and "My Applications".
+   - Right side: Message icon, Notification bell icon, and a circular Profile Initials Avatar Button (showing a "T" with a green active status indicator dot).
+
+2. Main Content Area:
+   - A welcoming heading: "Welcome, Tarzan" followed by a subtitle "Find your next opportunity".
+   - Filter Tabs: A row containing pill buttons: "New" (highlighted/active), "Expiring", and "Near me".
+   - Job Card: A clean card with a subtle green border on the left edge. It should display a title "🚀 Work From Home Opportunity for Students & Freshers IN", tags for "full time" and "Remote", a short snippet description, metadata icons for location ("Remote") and date ("07 Jun 2026"), and the price tag "40$/monthly" highlighted in green.
+
+3. Sidebar Right Panel (Job Detail):
+   - A sliding or fixed right panel detailing the selected job. 
+   - Includes a close "X" button, the job title, stats ("Remote", "21 views"), a dedicated block for "Salary: 40$/monthly", "Posted: 07 Jun 2026", and a detailed "DESCRIPTION" section featuring a bulleted list with checkmark emojis.
+
+Specific Interaction Logic (JavaScript):
+- Profile Dropdown Menu: When the top-right circular Profile Avatar button ("T") is clicked, toggle the visibility of a floating dropdown menu positioned directly below it. 
+- The dropdown menu container must feature:
+  - Top header area displaying the avatar, the user's name ("Tarzan"), and their email address.
+  - A vertical menu list with icons and text for: "Profile", "Settings", "Instructions", "Shop" (with a green 'new' badge), "Dev Log" (with a version badge 'v0.4.8'), "Install App" (with a green 'new' badge), and a red-colored "Log out" button.
+  - Clicking outside of this menu or clicking the profile icon again should close it.
+
+Please generate the HTML, a clean separation of CSS for the styling/animations, and the JS file managing the dropdown toggle state.

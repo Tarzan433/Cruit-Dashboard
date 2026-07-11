@@ -1,0 +1,22 @@
+Add JavaScript state-switching logic and dynamic navigation bar updates to the job portal application using standard HTML5, vanilla CSS3, and vanilla JavaScript (ES6+). No external frameworks or libraries are allowed.
+
+Context & Trigger Condition:
+- Inside the "Change account type" modal overlay, a user can click on the different account layout options.
+- When the user clicks on the "Recruiter" card option, the app should save this selection and trigger a global change in the application state from "Job Seeker" to "Recruiter".
+
+Dynamic UI Updates to Implement (JavaScript & CSS):
+
+1. Navigation Bar Mutation:
+   - Identify the center navigation links block in the top navbar.
+   - When the state switches to "Recruiter", dynamically hide or remove the "My Applications" navigation link button.
+   - Inject or display a new navigation link button in its place that reads "Job Posts" accompanied by an office building/corporate layout icon (matching the image provided).
+   - Ensure that if the user switches back to "Job Seeker", the reverse happens ("Job Posts" is removed, and "My Applications" returns).
+
+2. Modal Dismissal & Settings Page State Sync:
+   - Upon clicking the "Recruiter" card, automatically update its visual style to the active state (dashed green border, "CURRENT" badge, bottom green dot) and strip the active state from the "Job Seeker" card.
+   - Add a subtle 300ms delay to simulate processing, then close/hide the modal overlay completely.
+   - On the underlying Settings page card under the "ACCOUNT" section, dynamically change the light green pill badge text from reading "Job Seeker" to reading "Recruiter".
+
+Code Architecture Requirements:
+- Write clean, modular vanilla JavaScript functions (e.g., `switchAccountType(newType)`) that change CSS classes or use `style.display = 'none' / 'flex'` to toggle elements natively.
+- Keep the JavaScript structure clean and well-commented so I can easily run it in VS Code and connect these state changes to a Firebase Firestore user database document later.
