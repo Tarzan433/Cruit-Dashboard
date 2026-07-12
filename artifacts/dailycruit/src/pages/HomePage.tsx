@@ -5,6 +5,7 @@ import { subscribeToActiveJobs } from "../services/jobService";
 import { applyToJob, getFriendlyErrorMessage, hasAppliedToJob } from "../services/applicationService";
 import { JobCard, type JobCardData } from "../components/JobCard";
 import { JobDetailsDrawer } from "../components/JobDetailsDrawer";
+import { CompanyViewPanel } from "../components/CompanyViewPanel";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -13,6 +14,7 @@ export type HomeJob = {
   jobId?: string;
   recruiterId?: string;
   company?: string;
+  companyId?: string | null;
   title: string;
   tags: string[];
   description: string;
@@ -25,12 +27,13 @@ export type HomeJob = {
 
 // ─── Shared jobs loader ────────────────────────────────────────────────────────
 
-function toHomeJob(job: { id?: string; recruiterId?: string; company?: string; title: string; description: string; location: string; salary: string; postedDate?: string; commitment?: string; workMode?: string; skills?: string[]; views?: number; createdAt?: number; }): HomeJob {
+function toHomeJob(job: { id?: string; recruiterId?: string; company?: string; companyId?: string | null; title: string; description: string; location: string; salary: string; postedDate?: string; commitment?: string; workMode?: string; skills?: string[]; views?: number; createdAt?: number; }): HomeJob {
   return {
     id: Number(job.createdAt ?? 0),
     jobId: job.id,
     recruiterId: job.recruiterId,
     company: job.company,
+    companyId: job.companyId ?? null,
     title: job.title,
     tags: [job.commitment, job.workMode]
       .filter((t): t is string => Boolean(t) && t !== "—" && t !== "onsite" && t !== "remote" && t !== "hybrid")
@@ -58,6 +61,7 @@ type HomePageProps = {
 
 export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }: HomePageProps) {
   const [activeFilter, setActiveFilter] = useState<HomeFilter>("new");
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [selectedJob, setSelectedJob] = useState<HomeJob | null>(null);
   const [sharedJobs, setSharedJobs] = useState<HomeJob[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -175,6 +179,7 @@ export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }:
     recruiterId: job.recruiterId,
     title: job.title,
     company: job.company,
+    companyId: job.companyId,
     location: job.location,
     posted: job.date,
     salary: job.salary,
@@ -239,6 +244,7 @@ export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }:
                   isSaved={savedJobIds.includes(job.jobId ?? "")}
                   isSaving={savingJobIds[job.jobId ?? ""] ?? false}
                   showApplyButton={false}
+                  onViewCompany={(companyId) => setSelectedCompanyId(companyId)}
                 />
               );
             })
@@ -256,6 +262,13 @@ export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }:
           isSaved={savedJobIds.includes(selectedJob.jobId ?? "")}
           isSaving={savingJobIds[selectedJob.jobId ?? ""] ?? false}
           onToggleSave={() => handleToggleSaved(selectedJob)}
+        />
+      )}
+
+      {selectedCompanyId && (
+        <CompanyViewPanel
+          companyId={selectedCompanyId}
+          onClose={() => setSelectedCompanyId(null)}
         />
       )}
     </>

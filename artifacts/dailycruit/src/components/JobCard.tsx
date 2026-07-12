@@ -5,6 +5,7 @@ export type JobCardData = {
   recruiterId?: string;
   title: string;
   company?: string;
+  companyId?: string | null;
   companyLogo?: string;
   companyColor?: string;
   location: string;
@@ -36,6 +37,7 @@ type JobCardProps = {
   isApplying?: boolean;
   showApplyButton?: boolean;
   showCompany?: boolean;
+  onViewCompany?: (companyId: string) => void;
 };
 
 export function JobCard({
@@ -49,6 +51,7 @@ export function JobCard({
   isApplying = false,
   showApplyButton = true,
   showCompany = true,
+  onViewCompany,
 }: JobCardProps) {
   return (
     <div className="home-job-card" onClick={onClick}>
@@ -67,7 +70,35 @@ export function JobCard({
               <h3 className="home-job-title">{job.title}</h3>
             </div>
             {showCompany && job.company ? (
-              <span className="job-company" style={{ marginTop: -4 }}>{job.company}</span>
+              job.companyId ? (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    if (onViewCompany && job.companyId) {
+                      onViewCompany(job.companyId);
+                    }
+                  }}
+                  style={{
+                    marginTop: -4,
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    color: "#7C3AED",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    fontFamily: "inherit",
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    alignSelf: "flex-start",
+                  }}
+                >
+                  View company
+                </button>
+              ) : (
+                <span className="job-company" style={{ marginTop: -4 }}>{job.company}</span>
+              )
             ) : null}
           </div>
 

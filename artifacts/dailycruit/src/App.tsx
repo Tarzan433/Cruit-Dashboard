@@ -10,7 +10,7 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { auth } from "./firebase/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { getUserProfile, updateUserProfile, type ProfileData } from "./services/profile";
 import {
   DEFAULT_ACHIEVEMENTS,
@@ -484,15 +484,15 @@ type FilterChip = {
 };
 
 const FILTER_TAGS: FilterChip[] = [
-  { id: "all",      label: "All" },
-  { id: "new",      label: "New",       chip: "trending" },
-  { id: "expiring", label: "Expiring",  chip: "clock" },
-  { id: "remote",   label: "Remote" },
-  { id: "onsite",   label: "On-site" },
-  { id: "hybrid",   label: "Hybrid" },
+  { id: "all", label: "All" },
+  { id: "new", label: "New", chip: "trending" },
+  { id: "expiring", label: "Expiring", chip: "clock" },
+  { id: "remote", label: "Remote" },
+  { id: "onsite", label: "On-site" },
+  { id: "hybrid", label: "Hybrid" },
   { id: "fulltime", label: "Full-time" },
   { id: "parttime", label: "Part time" },
-  { id: "gig",      label: "Gig" },
+  { id: "gig", label: "Gig" },
 ];
 
 type SearchJobCardData = {
@@ -832,10 +832,10 @@ function ProfileDropdown({ accountType, onClose, onNavigate, onLogout }: { accou
   const menuItems =
     accountType === "recruiter"
       ? [
-          DD_MENU_ITEMS[0],
-          { icon: <Building2 size={16} />, label: "Company Profile", badge: null },
-          ...DD_MENU_ITEMS.slice(1),
-        ]
+        DD_MENU_ITEMS[0],
+        { icon: <Building2 size={16} />, label: "Company Profile", badge: null },
+        ...DD_MENU_ITEMS.slice(1),
+      ]
       : DD_MENU_ITEMS;
 
   useEffect(() => {
@@ -2160,11 +2160,11 @@ function ProfilePage({ onBack, accountType, onPhotoSaved, onAccountTypeChange }:
                 <div className="profile-photo-menu-backdrop" onClick={() => setShowPhotoMenu(false)} />
                 <div className="profile-photo-menu">
                   <button className="profile-photo-menu-item" onClick={() => uploadInputRef.current?.click()}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
                     Upload from device
                   </button>
                   <button className="profile-photo-menu-item" onClick={() => cameraInputRef.current?.click()}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /><circle cx="12" cy="13" r="4" /></svg>
                     Take a photo
                   </button>
                 </div>
@@ -2842,6 +2842,20 @@ export default function App() {
     };
   }, [authUserId]);
 
+  // Redirect to the correct home page once the profile has loaded and
+  // accountType is known. Skipped while the initial account-type modal is
+  // open (that flow handles its own navigation).
+  useEffect(() => {
+    if (profileLoading || !isAuthenticated) return;
+    if (showInitialAcctModal) return;
+
+    if (accountType === "recruiter" && !location.startsWith("/recruiter/")) {
+      navigate("/recruiter/home");
+    } else if (accountType === "jobseeker" && !location.startsWith("/seeker/")) {
+      navigate("/seeker/home");
+    }
+  }, [profileLoading, isAuthenticated, accountType, showInitialAcctModal]);
+
   function handleAccountTypeChange(t: AccountType) {
     setAccountType(t);
     if (authUserId) {
@@ -2874,16 +2888,16 @@ export default function App() {
 
   const navItems: { id: NavPage; icon: string; label: string }[] = isRecruiter
     ? [
-        { id: "home", icon: "🏠", label: "Home" },
-        { id: "search", icon: "📄", label: "Search jobs" },
-        { id: "jobposts", icon: "🏢", label: "Job Posts" },
-      ]
+      { id: "home", icon: "🏠", label: "Home" },
+      { id: "search", icon: "📄", label: "Search jobs" },
+      { id: "jobposts", icon: "🏢", label: "Job Posts" },
+    ]
     : [
-        { id: "home", icon: "🏠", label: "Home" },
-        { id: "search", icon: "📄", label: "Search jobs" },
-        { id: "applications", icon: "📋", label: "My Applications" },
-        { id: "saved", icon: "🔖", label: "Saved Jobs" },
-      ];
+      { id: "home", icon: "🏠", label: "Home" },
+      { id: "search", icon: "📄", label: "Search jobs" },
+      { id: "applications", icon: "📋", label: "My Applications" },
+      { id: "saved", icon: "🔖", label: "Saved Jobs" },
+    ];
 
   function isNavActive(id: NavPage): boolean {
     switch (id) {
@@ -3071,10 +3085,13 @@ export default function App() {
                   setShowProfileMenu(false);
                 }}
                 onLogout={() => {
-                  localStorage.removeItem("dailycruit_auth");
-                  setIsAuthenticated(false);
-                  setShowProfileMenu(false);
-                  navigate("/login");
+                  void signOut(auth).finally(() => {
+                    localStorage.removeItem("dailycruit_auth");
+                    setIsAuthenticated(false);
+                    setAccountType("jobseeker");
+                    setShowProfileMenu(false);
+                    navigate("/login");
+                  });
                 }}
               />
             )}

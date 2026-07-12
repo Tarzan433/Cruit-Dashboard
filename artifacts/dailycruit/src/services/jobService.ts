@@ -9,6 +9,8 @@ import {
 import { db, auth } from "../firebase/firebase";
 import type { Job } from "../models/job";
 
+import { getUserProfile } from "./profile";
+
 const JOBS_COLLECTION = "jobs";
 
 function formatPostedDate(value: unknown): string {
@@ -25,12 +27,23 @@ export async function createJob(jobData: Omit<Job, "id" | "jobId" | "postedDate"
     throw new Error("You must be signed in to post a job.");
   }
 
+  let companyId: string | null = null;
+  try {
+    const profile = await getUserProfile(currentUser.uid);
+    if (profile?.companyId) {
+      companyId = profile.companyId;
+    }
+  } catch (err) {
+    console.error("Failed to fetch recruiter companyId for job posting:", err);
+  }
+
   const docRef = doc(collection(db, JOBS_COLLECTION));
 
   const payload: Job = {
     ...jobData,
     jobId: docRef.id,
     recruiterId: currentUser.uid,
+    companyId,
     postedDate: serverTimestamp() as unknown as string,
     isActive: true,
   };
