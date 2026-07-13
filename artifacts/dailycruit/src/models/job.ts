@@ -15,7 +15,7 @@ export interface Job {
   companyLogo?: string;
   postedDate?: string;
   isActive: boolean;
-  status?: "Active" | "Paused";
+  status?: "Active" | "Draft" | "Closed" | "Paused";
   views?: number;
   applicants?: number;
   commitment?: string;

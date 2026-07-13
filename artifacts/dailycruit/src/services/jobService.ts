@@ -5,6 +5,7 @@ import {
   onSnapshot,
   serverTimestamp,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import type { Job } from "../models/job";
@@ -128,4 +129,13 @@ export async function getActiveJobs(): Promise<Job[]> {
       const bTime = b.createdAt ?? 0;
       return bTime - aTime;
     });
+}
+
+
+export async function updateJobStatus(jobId: string, status: "Active" | "Draft" | "Closed"): Promise<void> {
+  const jobRef = doc(db, JOBS_COLLECTION, jobId);
+  await updateDoc(jobRef, {
+    status,
+    isActive: status === "Active",
+  });
 }

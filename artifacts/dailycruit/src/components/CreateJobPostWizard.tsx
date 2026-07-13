@@ -17,7 +17,7 @@ export interface PublishedJob {
   commitment: string;
   workMode: string;
   skills: string[];
-  status: "Active" | "Paused";
+  status: "Active" | "Paused" | "Draft" | "Closed";
   views: number;
   applicants: number;
   postedDate: string;
@@ -73,7 +73,7 @@ export function CreateJobPostWizard({ onBack, onPublish }: Props) {
   const [publishError, setPublishError] = useState<string | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
 
-  function buildPublishedJob(): PublishedJob {
+  function buildPublishedJob(status: "Active" | "Draft" = "Active"): PublishedJob {
     const now = Date.now();
     const today = new Date(now).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
@@ -89,7 +89,7 @@ export function CreateJobPostWizard({ onBack, onPublish }: Props) {
       commitment: commitment || "—",
       workMode: workType,
       skills: [...skills],
-      status: "Active",
+      status,
       views: 0,
       applicants: 0,
       postedDate: today,
@@ -122,7 +122,7 @@ export function CreateJobPostWizard({ onBack, onPublish }: Props) {
     return errors;
   }
 
-  async function handlePublishNow() {
+   async function handlePublishNow() {
     const validationErrors = validateRequiredFields();
     if (validationErrors.length > 0) {
       setPublishError(validationErrors[0]);
@@ -138,6 +138,19 @@ export function CreateJobPostWizard({ onBack, onPublish }: Props) {
       setPublished(true);
     } catch (error) {
       setPublishError(error instanceof Error ? error.message : "We couldn't publish your job right now. Please try again.");
+    } finally {
+      setIsPublishing(false);
+    }
+  }
+
+  async function handleSaveDraft() {
+    setPublishError(null);
+    setIsPublishing(true);
+    try {
+      await onPublish(buildPublishedJob("Draft"));
+      setPublished(true);
+    } catch (error) {
+      setPublishError(error instanceof Error ? error.message : "We couldn't save your draft. Please try again.");
     } finally {
       setIsPublishing(false);
     }
@@ -1256,15 +1269,17 @@ function handleAddTag() {
 
               {/* Primary actions */}
               <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
-                <button
-                  style={{
-                    flex: 1, padding: "12px 0", background: "#fff",
-                    border: "1px solid #D1D5DB", borderRadius: 999,
-                    fontSize: 14, fontWeight: 600, color: "#374151", cursor: "pointer",
-                  }}
-                >
-                  Save as Draft
-                </button>
+               <button
+  onClick={handleSaveDraft}
+  disabled={isPublishing}
+  style={{
+    flex: 1, padding: "12px 0", background: "#fff",
+    border: "1px solid #D1D5DB", borderRadius: 999,
+    fontSize: 14, fontWeight: 600, color: "#374151", cursor: isPublishing ? "not-allowed" : "pointer",
+  }}
+>
+  Save as Draft
+</button>
                 <button
                   onClick={handlePublishNow}
                   disabled={isPublishing}

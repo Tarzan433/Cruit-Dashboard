@@ -4,8 +4,9 @@
 import { useEffect, useState } from "react";
 import { CreateJobPostWizard, PublishedJob } from "../components/CreateJobPostWizard";
 import { auth } from "../firebase/firebase";
-import { createJob, getRecruiterJobs } from "../services/jobService";
+import { createJob, getRecruiterJobs, updateJobStatus } from "../services/jobService";
 import { onAuthStateChanged } from "firebase/auth";
+import { Eye, Pencil, Share2, Ban, RotateCcw } from "lucide-react";
 
 
 // ─── Recruiter Home Page ──────────────────────────────────────────────────────
@@ -125,7 +126,7 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
   );
 }
 
-// ─── Job Posts Page (Recruiter) ───────────────────────────────────────────────
+// ─── Job Posts Page (Recruiter) ──────────────────────────────────────────
 
 export function JobPostsPage() {
   const [showWizard, setShowWizard] = useState(false);
@@ -154,6 +155,29 @@ export function JobPostsPage() {
 
     return () => unsubscribe();
   }, []);
+
+  async function handleToggleJobStatus(jobId: string, currentStatus: string | undefined) {
+  const isClosing = currentStatus !== "Closed";
+  const newStatus = isClosing ? "Closed" : "Active";
+  const confirmMessage = isClosing
+    ? "Close this job post? Seekers won't be able to view it anymore."
+    : "Reopen this job post? It will be visible to seekers again.";
+
+  const confirmed = window.confirm(confirmMessage);
+  if (!confirmed) return;
+
+  try {
+    await updateJobStatus(jobId, newStatus);
+    setJobs((prevJobs) =>
+      prevJobs.map((job) =>
+        job.id === jobId ? { ...job, status: newStatus } : job
+      )
+    );
+  } catch {
+    setErrorMessage("We couldn't update this job post. Please try again.");
+  }
+}
+
 
   async function handlePublish(job: PublishedJob) {
     try {
@@ -302,19 +326,19 @@ export function JobPostsPage() {
               </div>
 
               {/* Status badge */}
-              <div>
-                <span style={{
-                  display: "inline-flex", alignItems: "center", gap: 5,
-                  background: job.status === "Active" ? "#f0fdf4" : "#fef9f0",
-                  color: job.status === "Active" ? "#16a34a" : "#d97706",
-                  border: `1px solid ${job.status === "Active" ? "#bbf7d0" : "#fde68a"}`,
-                  borderRadius: 999, padding: "4px 12px",
-                  fontSize: 12, fontWeight: 600,
-                }}>
-                  <span style={{ fontSize: 8 }}>●</span>
-                  {job.status}
-                </span>
-              </div>
+      <div>
+  <span style={{
+    display: "inline-flex", alignItems: "center", gap: 5,
+    background: job.status === "Active" ? "#f0fdf4" : job.status === "Closed" ? "#fef2f2" : "#fef9f0",
+    color: job.status === "Active" ? "#16a34a" : job.status === "Closed" ? "#b91c1c" : "#d97706",
+    border: `1px solid ${job.status === "Active" ? "#bbf7d0" : job.status === "Closed" ? "#fecaca" : "#fde68a"}`,
+    borderRadius: 999, padding: "4px 12px",
+    fontSize: 12, fontWeight: 600,
+  }}>
+    <span style={{ fontSize: 8 }}>●</span>
+    {job.status}
+  </span>
+</div>
 
               {/* Views */}
               <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>{job.views}</span>
@@ -325,28 +349,37 @@ export function JobPostsPage() {
               {/* Posted date */}
               <span style={{ fontSize: 13, color: "#6B7280" }}>{job.postedDate}</span>
 
-              {/* Actions */}
-              <div style={{ display: "flex", gap: 8 }}>
-                {[
-                  { icon: "👁", title: "View" },
-                  { icon: "✏", title: "Edit" },
-                  { icon: "🔗", title: "Share" },
-                ].map(({ icon, title }) => (
-                  <button
-                    key={title}
-                    title={title}
-                    style={{
-                      background: "none", border: "none", cursor: "pointer",
-                      fontSize: 15, padding: "4px",
-                      borderRadius: 6, transition: "background 0.15s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "#F3F4F6")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
-                  >
-                    {icon}
-                  </button>
-                ))}
-              </div>
+{/* Actions */}
+<div style={{ display: "flex", gap: 8 }}>
+{[
+  { icon: <Eye size={16} />, title: "View" },
+  { icon: <Pencil size={16} />, title: "Edit" },
+  { icon: <Share2 size={16} />, title: "Share" },
+  {
+    icon: job.status === "Closed" ? <RotateCcw size={16} /> : <Ban size={16} />,
+    title: job.status === "Closed" ? "Reopen" : "Close",
+  },
+].map(({ icon, title }) => (
+  <button
+    key={title}
+    title={title}
+    onClick={
+      title === "Close" || title === "Reopen"
+        ? () => handleToggleJobStatus(job.id ?? "", job.status)
+        : undefined
+    }
+    style={{
+      background: "none", border: "none", cursor: "pointer",
+      fontSize: 15, padding: "4px",
+      borderRadius: 6, transition: "background 0.15s",
+    }}
+    onMouseEnter={(e) => (e.currentTarget.style.background = "#F3F4F6")}
+    onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
+  >
+    {icon}
+  </button>
+))}
+</div>
             </div>
           ))}
         </div>
