@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import { CreateJobPostWizard, PublishedJob } from "../components/CreateJobPostWizard";
 import { auth } from "../firebase/firebase";
 import { createJob, getRecruiterJobs, updateJobStatus } from "../services/jobService";
+import { getApplicationsForRecruiter, type Application } from "../services/applicationService";
 import { onAuthStateChanged } from "firebase/auth";
 import { Eye, Pencil, Share2, Ban, RotateCcw } from "lucide-react";
+import { getUserProfile } from "../services/profile";
 
 
 // ─── Recruiter Home Page ──────────────────────────────────────────────────────
@@ -18,7 +20,62 @@ const REC_CHATS = [
 ];
 
 export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }) {
+  const [jobs, setJobs] = useState<PublishedJob[]>([]);
+  const [applications, setApplications] = useState<(Application & { applicantName: string })[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setJobs([]);
+        setApplications([]);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const recruiterJobs = await getRecruiterJobs(user.uid);
+        const recruiterApplications = await getApplicationsForRecruiter(user.uid);
+
+        const uniqueApplicantIds = Array.from(new Set(recruiterApplications.map((app) => app.applicantId)));
+        const applicantProfiles = await Promise.all(
+          uniqueApplicantIds.map((id) => getUserProfile(id))
+        );
+
+        const nameById: Record<string, string> = {};
+        uniqueApplicantIds.forEach((id, index) => {
+          nameById[id] = applicantProfiles[index]?.fullName ?? "Unknown applicant";
+        });
+
+        const applicationsWithNames = recruiterApplications.map((app) => ({
+          ...app,
+          applicantName: nameById[app.applicantId] ?? "Unknown applicant",
+        }));
+
+        setJobs(recruiterJobs as unknown as PublishedJob[]);
+        setApplications(applicationsWithNames);
+      } catch {
+        setJobs([]);
+        setApplications([]);
+      } finally {
+        setIsLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const totalPosts = jobs.length;
+  const activeCount = jobs.filter((j) => j.status === "Active").length;
+  const draftCount = jobs.filter((j) => j.status === "Draft").length;
+  const closedCount = jobs.filter((j) => j.status === "Closed").length;
+  const totalApplications = applications.length;
+  const totalViews = jobs.reduce((sum, j) => sum + (j.views ?? 0), 0);
+
   return (
+
+
+
     <main className="main-content rec-main">
       {/* Top row: welcome + 3 metric cards */}
       <div className="rec-top-row">
@@ -38,7 +95,7 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
             </svg>
           </div>
-          <span className="rec-metric-value">0</span>
+          <span className="rec-metric-value">{totalViews}</span>
           <span className="rec-metric-label">Total Views</span>
           <span className="rec-metric-sub">Across all posts</span>
         </div>
@@ -50,11 +107,11 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" />
             </svg>
           </div>
-          <span className="rec-metric-value">0</span>
-          <span className="rec-metric-label">Total Posts</span>
-          <div className="rec-posts-stats">
-            <span>0 Active</span><span className="rec-stat-dot" /><span>0 Draft</span><span className="rec-stat-dot" /><span>0 Archived</span>
-          </div>
+          <span className="rec-metric-value">{totalPosts}</span>
+<span className="rec-metric-label">Total Posts</span>
+<div className="rec-posts-stats">
+  <span>{activeCount} Active</span><span className="rec-stat-dot" /><span>{draftCount} Draft</span><span className="rec-stat-dot" /><span>{closedCount} Closed</span>
+</div>
         </div>
 
         {/* Metric: Applications */}
@@ -64,27 +121,49 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
             </svg>
           </div>
-          <span className="rec-metric-value">0</span>
-          <span className="rec-metric-label">Applications</span>
+          <span className="rec-metric-value">{totalApplications}</span>
+<span className="rec-metric-label">Applications</span>
           <span className="rec-metric-sub">Recent received</span>
         </div>
       </div>
 
       {/* Middle grid: Recent Applications + Top Posts + Recent Chats */}
       <div className="rec-mid-grid">
-        {/* Recent Applications */}
-        <div className="rec-panel-card">
-          <div className="rec-panel-header">
-            <span className="rec-panel-title">Recent Applications</span>
-            <button className="rec-see-all">See all →</button>
-          </div>
-          <div className="rec-empty-panel">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
-            </svg>
-            <span className="rec-empty-text">No applications yet</span>
-          </div>
+     {/* Recent Applications */}
+<div className="rec-panel-card">
+  <div className="rec-panel-header">
+    <span className="rec-panel-title">Recent Applications</span>
+    <button className="rec-see-all">See all →</button>
+  </div>
+  {applications.length === 0 ? (
+    <div className="rec-empty-panel">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
+      </svg>
+      <span className="rec-empty-text">No applications yet</span>
+    </div>
+  ) : (
+    <ul style={{ listStyle: "none", margin: 0, padding: "0 4px" }}>
+  {applications.slice(0, 5).map((app) => (
+    <li key={app.applicationId} style={{ padding: "14px 4px", borderBottom: "1px solid #F3F4F6" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+        <div>
+          <p style={{ margin: 0, fontWeight: 600, fontSize: 14, color: "#111827" }}>{app.applicantName}</p>
+          <p style={{ margin: "4px 0 0", fontSize: 12.5, color: "#6B7280" }}>
+            Applied to <span style={{ fontWeight: 500, color: "#374151" }}>{app.jobTitle}</span> · {app.status}
+          </p>
         </div>
+        <button
+          style={{ background: "none", border: "none", color: "#7C3AED", fontSize: 12.5, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}
+        >
+          View profile
+        </button>
+      </div>
+    </li>
+  ))}
+</ul>
+  )}
+</div>
 
         {/* Right column: Top Posts + Recent Chats stacked */}
         <div className="rec-right-col">
@@ -145,7 +224,19 @@ export function JobPostsPage() {
 
       try {
         const recruiterJobs = await getRecruiterJobs(user.uid);
-        setJobs(recruiterJobs as unknown as PublishedJob[]);
+        const applications = await getApplicationsForRecruiter(user.uid);
+
+        const applicantCounts: Record<string, number> = {};
+        applications.forEach((app) => {
+          applicantCounts[app.jobId] = (applicantCounts[app.jobId] ?? 0) + 1;
+        });
+
+        const jobsWithCounts = recruiterJobs.map((job) => ({
+          ...job,
+          applicants: applicantCounts[job.id ?? ""] ?? 0,
+        }));
+
+        setJobs(jobsWithCounts as unknown as PublishedJob[]);
       } catch {
         setErrorMessage("We couldn't load your posts right now.");
       } finally {

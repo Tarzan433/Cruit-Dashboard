@@ -137,4 +137,22 @@ export async function getMyApplications(): Promise<Application[]> {
   return snapshot.docs.map((docSnapshot) => normalizeApplication(docSnapshot));
 }
 
+export async function getApplicationsForJob(jobId: string): Promise<Application[]> {
+  const snapshot = await getDocs(
+    query(collection(db, APPLICATIONS_COLLECTION), where("jobId", "==", jobId))
+  );
+
+  return snapshot.docs.map((docSnapshot) => normalizeApplication(docSnapshot));
+}
+
+export async function getApplicationsForRecruiter(recruiterId: string): Promise<Application[]> {
+  const snapshot = await getDocs(
+    query(collection(db, APPLICATIONS_COLLECTION), where("recruiterId", "==", recruiterId))
+  );
+
+  return snapshot.docs.map((docSnapshot) => normalizeApplication(docSnapshot));
+}
+
 export { DEFAULT_STATUS, getFriendlyErrorMessage };
+
+
