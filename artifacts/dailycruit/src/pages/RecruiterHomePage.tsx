@@ -1,16 +1,33 @@
 
 // ─── Imports ─────────────────────────────────────────────────────────────────
-
 import { useEffect, useState } from "react";
-import { CreateJobPostWizard, PublishedJob } from "../components/CreateJobPostWizard";
-import { auth } from "../firebase/firebase";
-import { createJob, getRecruiterJobs, updateJobStatus } from "../services/jobService";
-import { getApplicationsForRecruiter, type Application } from "../services/applicationService";
 import { onAuthStateChanged } from "firebase/auth";
 import { Eye, Pencil, Share2, Ban, RotateCcw } from "lucide-react";
-import { getUserProfile } from "../services/profile";
 
+import { auth } from "../firebase/firebase";
 
+import {
+  CreateJobPostWizard,
+  PublishedJob,
+} from "../components/CreateJobPostWizard";
+
+import { ApplicantViewPanel } from "../components/ApplicantViewPanel";
+
+import {
+  createJob,
+  getRecruiterJobs,
+  updateJobStatus,
+} from "../services/jobService";
+
+import {
+  getApplicationsForRecruiter,
+  type Application,
+} from "../services/applicationService";
+
+import {
+  getUserProfile,
+  type ProfileData,
+} from "../services/profile";
 // ─── Recruiter Home Page ──────────────────────────────────────────────────────
 
 const REC_CHATS = [
@@ -20,9 +37,18 @@ const REC_CHATS = [
 ];
 
 export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }) {
-  const [jobs, setJobs] = useState<PublishedJob[]>([]);
-  const [applications, setApplications] = useState<(Application & { applicantName: string })[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+const [jobs, setJobs] = useState<PublishedJob[]>([]);
+const [applications, setApplications] = useState<
+  (Application & {
+    applicantName: string;
+    applicantProfile: ProfileData | null;
+  })[]
+>([]);
+const [isLoading, setIsLoading] = useState(true);
+
+const [showApplicantPanel, setShowApplicantPanel] = useState(false);
+const [selectedApplicant, setSelectedApplicant] =
+  useState<ProfileData | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -42,18 +68,21 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
           uniqueApplicantIds.map((id) => getUserProfile(id))
         );
 
-        const nameById: Record<string, string> = {};
-        uniqueApplicantIds.forEach((id, index) => {
-          nameById[id] = applicantProfiles[index]?.fullName ?? "Unknown applicant";
-        });
+const profileById: Record<string, ProfileData | null> = {};
 
-        const applicationsWithNames = recruiterApplications.map((app) => ({
-          ...app,
-          applicantName: nameById[app.applicantId] ?? "Unknown applicant",
-        }));
+uniqueApplicantIds.forEach((id, index) => {
+  profileById[id] = applicantProfiles[index];
+});
+
+const applicationsWithProfiles = recruiterApplications.map((app) => ({
+  ...app,
+  applicantName:
+    profileById[app.applicantId]?.fullName ?? "Unknown applicant",
+  applicantProfile: profileById[app.applicantId] ?? null,
+}));
 
         setJobs(recruiterJobs as unknown as PublishedJob[]);
-        setApplications(applicationsWithNames);
+setApplications(applicationsWithProfiles);        
       } catch {
         setJobs([]);
         setApplications([]);
@@ -153,11 +182,23 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
             Applied to <span style={{ fontWeight: 500, color: "#374151" }}>{app.jobTitle}</span> · {app.status}
           </p>
         </div>
-        <button
-          style={{ background: "none", border: "none", color: "#7C3AED", fontSize: 12.5, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}
-        >
-          View profile
-        </button>
+      <button
+  onClick={() => {
+    setSelectedApplicant(app.applicantProfile);
+    setShowApplicantPanel(true);
+  }}
+  style={{
+    background: "none",
+    border: "none",
+    color: "#7C3AED",
+    fontSize: 12.5,
+    fontWeight: 600,
+    cursor: "pointer",
+    whiteSpace: "nowrap"
+  }}
+>
+  View profile
+</button>
       </div>
     </li>
   ))}
@@ -200,7 +241,13 @@ export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }
             </ul>
           </div>
         </div>
-      </div>
+            </div>
+
+      <ApplicantViewPanel
+        open={showApplicantPanel}
+        applicant={selectedApplicant}
+        onClose={() => setShowApplicantPanel(false)}
+      />
     </main>
   );
 }

@@ -2254,14 +2254,117 @@ function ProfilePage({ onBack, accountType, onPhotoSaved, onAccountTypeChange }:
             </section>
             <div className="section-divider" />
             <section className="profile-section">
-              <h4 className="section-title">Account Meta</h4>
-              <ul className="account-meta-list">
-                <li><span className="meta-key">Account type</span><span className="meta-val">{acctLabel[accountType]}</span></li>
-                <li><span className="meta-key">Member since</span><span className="meta-val">Mar 2026</span></li>
-                <li><span className="meta-key">Reputation</span><span className="meta-val">0</span></li>
-              </ul>
-            </section>
-          </div>
+  <h4 className="section-title">Contact</h4>
+
+  <ul className="account-meta-list">
+    <li>
+      <span className="meta-key">Phone</span>
+      <span className="meta-val">
+        {profileData?.phoneNumber || "Not provided"}
+      </span>
+    </li>
+
+    <li>
+      <span className="meta-key">Email</span>
+      <span className="meta-val">
+        {profileData?.email || "Not provided"}
+      </span>
+    </li>
+  </ul>
+</section>
+
+<div className="section-divider" />
+
+<section className="profile-section">
+  <h4 className="section-title">Experience</h4>
+  <p className="section-body">
+    {profileData?.experience || "No experience added yet."}
+  </p>
+</section>
+
+<div className="section-divider" />
+
+<section className="profile-section">
+  <h4 className="section-title">Education</h4>
+  <p className="section-body">
+    {profileData?.education || "No education added yet."}
+  </p>
+</section>
+
+<div className="section-divider" />
+{(profileData?.github || profileData?.linkedin || profileData?.portfolio) && (
+  <>
+    <div className="section-divider" />
+
+    <section className="profile-section">
+      <h4 className="section-title">Links</h4>
+
+      <ul className="account-meta-list">
+        {profileData?.github && (
+          <li>
+            <span className="meta-key">GitHub</span>
+            <a
+              href={String(profileData.github)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="meta-val"
+            >
+              View Profile
+            </a>
+          </li>
+        )}
+
+        {profileData?.linkedin && (
+          <li>
+            <span className="meta-key">LinkedIn</span>
+            <a
+              href={String(profileData.linkedin)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="meta-val"
+            >
+              View Profile
+            </a>
+          </li>
+        )}
+
+        {profileData?.portfolio && (
+          <li>
+            <span className="meta-key">Portfolio</span>
+            <a
+              href={String(profileData.portfolio)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="meta-val"
+            >
+              Visit Website
+            </a>
+          </li>
+        )}
+      </ul>
+    </section>
+  </>
+)}
+
+<section className="profile-section">
+  <h4 className="section-title">Account Meta</h4>
+  <ul className="account-meta-list">
+    <li>
+      <span className="meta-key">Account type</span>
+      <span className="meta-val">{acctLabel[accountType]}</span>
+    </li>
+    <li>
+      <span className="meta-key">Member since</span>
+      <span className="meta-val">Mar 2026</span>
+    </li>
+    <li>
+      <span className="meta-key">Reputation</span>
+      <span className="meta-val">0</span>
+    </li>
+  </ul>
+</section>
+
+</div>
 
           {/* Right column: stats 2×2 */}
           <div className="profile-stats-col">
