@@ -19,7 +19,7 @@ import {
   updateJobStatus,
 } from "../services/jobService";
 
-import {
+import { 
   getApplicationsForRecruiter,
   type Application,
 } from "../services/applicationService";
