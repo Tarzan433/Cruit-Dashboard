@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   X,
   MapPin,
@@ -7,15 +8,20 @@ import {
   User,
   Briefcase,
   GraduationCap,
-  Link,
+  Link as LinkIcon,
   FileText,
-  Code2,
   ExternalLink,
   MessageSquare,
   Star,
   Calendar,
   XCircle,
   Sparkles,
+  Globe,
+  Linkedin,
+  Github,
+  Download,
+  CheckCircle2,
+  UserCheck,
 } from "lucide-react";
 import type { ProfileData } from "../services/profile";
 
@@ -25,15 +31,172 @@ type ApplicantViewPanelProps = {
   applicant: ProfileData | null;
 };
 
+/* -------------------------------------------------------------------------- */
+/*  Design tokens (local — keeps your folder structure untouched)             */
+/* -------------------------------------------------------------------------- */
+
+const ACCENT = "emerald";
+
+/* -------------------------------------------------------------------------- */
+/*  Reusable primitives                                                        */
+/* -------------------------------------------------------------------------- */
+
+type LucideIcon = React.ComponentType<{ size?: number; className?: string }>;
+
+interface SectionCardProps {
+  icon: LucideIcon;
+  title: string;
+  children: React.ReactNode;
+  accent?: "emerald" | "blue" | "violet";
+}
+
+const sectionAccent: Record<NonNullable<SectionCardProps["accent"]>, string> = {
+  emerald: "bg-emerald-50 text-emerald-600 ring-emerald-600/10",
+  blue: "bg-blue-50 text-blue-600 ring-blue-600/10",
+  violet: "bg-violet-50 text-violet-600 ring-violet-600/10",
+};
+
+function SectionCard({
+  icon: Icon,
+  title,
+  children,
+  accent = "emerald",
+}: SectionCardProps) {
+  return (
+    <section className="group rounded-2xl border border-zinc-200/70 bg-white p-6 shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-all duration-300 hover:border-zinc-300/60 hover:shadow-[0_8px_24px_-8px_rgba(16,24,40,0.12)]">
+      <header className="mb-5 flex items-center gap-3">
+        <span
+          className={`flex h-9 w-9 items-center justify-center rounded-xl ring-1 ring-inset ${sectionAccent[accent]}`}
+        >
+          <Icon size={17} />
+        </span>
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.1em] text-zinc-500">
+          {title}
+        </h3>
+      </header>
+      {children}
+    </section>
+  );
+}
+
+interface TimelineItemProps {
+  lineColor: string;
+  dotColor: string;
+  children: React.ReactNode;
+}
+
+function TimelineItem({ lineColor, dotColor, children }: TimelineItemProps) {
+  return (
+    <div className={`ml-1 border-l-2 ${lineColor} py-1 pl-5`}>
+      <div className="relative">
+        <span
+          className={`absolute -left-[27px] top-1.5 h-3.5 w-3.5 rounded-full border-2 ${dotColor} bg-white shadow-sm`}
+        />
+        <p className="whitespace-pre-line text-sm leading-relaxed text-zinc-600">
+          {children}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+interface LinkTileProps {
+  href?: string;
+  icon: LucideIcon;
+  label: string;
+  displayUrl?: string;
+}
+
+function LinkTile({ href, icon: Icon, label, displayUrl }: LinkTileProps) {
+  if (!href) {
+    return (
+      <div
+        aria-disabled="true"
+        className="flex flex-col justify-between rounded-xl border border-dashed border-zinc-200 bg-zinc-50/40 p-4 opacity-60"
+      >
+        <div>
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-400">
+            <Icon size={16} />
+          </span>
+          <h4 className="mt-3 text-xs font-semibold text-zinc-400">{label}</h4>
+          <p className="mt-0.5 text-[11px] text-zinc-400">Not provided</p>
+        </div>
+        <div className="mt-4 flex items-center justify-end">
+          <ExternalLink size={12} className="text-zinc-300" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2"
+    >
+      <div>
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 ring-1 ring-inset ring-emerald-600/10">
+          <Icon size={16} />
+        </span>
+        <h4 className="mt-3 text-xs font-semibold text-zinc-900">{label}</h4>
+        <p className="mt-0.5 truncate text-[11px] text-zinc-400">{displayUrl}</p>
+      </div>
+      <div className="mt-4 flex items-center justify-end">
+        <ExternalLink size={12} className="text-zinc-400" />
+      </div>
+    </a>
+  );
+}
+
+interface ActionButtonProps {
+  icon: LucideIcon;
+  label: string;
+  variant: "default" | "primary" | "success" | "danger";
+  onClick?: () => void;
+}
+
+const actionVariants: Record<ActionButtonProps["variant"], string> = {
+  default:
+    "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 active:bg-zinc-100",
+  primary:
+    "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 active:bg-zinc-100",
+  success:
+    "bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 shadow-sm shadow-emerald-600/20",
+  danger:
+    "border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:border-red-300 active:bg-red-200/80",
+};
+
+function ActionButton({ icon: Icon, label, variant, onClick }: ActionButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-3 text-xs font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2 ${actionVariants[variant]}`}
+    >
+      <Icon size={15} />
+      <span className="hidden sm:inline">{label}</span>
+    </button>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Main panel                                                                 */
+/* -------------------------------------------------------------------------- */
+
 export function ApplicantViewPanel({
   open,
   onClose,
   applicant,
 }: ApplicantViewPanelProps) {
   const [mounted, setMounted] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = "applicant-panel-title";
 
+  // Mount animation trigger (preserves original enter/exit transition behavior)
   useEffect(() => {
-    let t: NodeJS.Timeout;
+    let t: ReturnType<typeof setTimeout>;
     if (open && applicant) {
       t = setTimeout(() => setMounted(true), 50);
     } else {
@@ -44,338 +207,266 @@ export function ApplicantViewPanel({
     };
   }, [open, applicant]);
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    },
+    [onClose],
+  );
+
+  // Escape-to-close + body scroll lock + focus management
+  useEffect(() => {
+    if (!open) return;
+    document.addEventListener("keydown", handleKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    panelRef.current?.focus();
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open, handleKeyDown]);
+
   if (!open || !applicant) return null;
+
+  const initials = applicant.fullName?.charAt(0).toUpperCase() || "?";
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
-        mounted ? "opacity-100" : "opacity-0 pointer-events-none"
+      className={`fixed inset-0 z-50 flex justify-end bg-zinc-900/40 backdrop-blur-sm transition-opacity duration-300 ${
+        mounted ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       onClick={onClose}
+      role="presentation"
     >
-      {/* Drawer Shell */}
+      {/* Drawer shell */}
       <div
-        className={`h-full w-full bg-white shadow-2xl rounded-l-2xl border-l border-zinc-200/80 flex flex-col transition-transform duration-300 ease-out sm:max-w-[560px] lg:max-w-[720px] ${
+        ref={panelRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className={`flex h-full w-full flex-col rounded-l-2xl border-l border-zinc-200/80 bg-white shadow-2xl transition-transform duration-300 ease-out focus:outline-none sm:max-w-[560px] lg:max-w-[720px] ${
           mounted ? "translate-x-0" : "translate-x-full"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Sticky Header / Hero Section */}
-        <div className="sticky top-0 z-20 bg-white border-b border-zinc-200/80 px-6 py-6 shadow-sm flex-shrink-0">
-          <div className="flex items-center justify-between gap-4">
-            
-            <div className="flex items-center gap-5">
-              {/* Large Avatar */}
-              <div className="relative flex-shrink-0">
-                {applicant.photoURL ? (
-                  <img
-                    src={applicant.photoURL}
-                    alt={applicant.fullName}
-                    className="h-20 w-20 rounded-full object-cover border-4 border-white shadow-md ring-1 ring-zinc-200"
+        {/* ---------------------------------------------------------------- */}
+        {/*  HERO HEADER                                                      */}
+        {/* ---------------------------------------------------------------- */}
+        <header className="relative flex-shrink-0 overflow-hidden border-b border-zinc-200/80 bg-gradient-to-b from-emerald-50/60 via-white to-white">
+          {/* decorative glow */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-200/30 blur-3xl"
+          />
+          <div className="relative px-7 pt-6 pb-7">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex min-w-0 items-center gap-5">
+                {/* Avatar */}
+                <div className="relative flex-shrink-0">
+                  {applicant.photoURL ? (
+                    <img
+                      src={applicant.photoURL}
+                      alt={applicant.fullName}
+                      className="h-20 w-20 rounded-full border-4 border-white object-cover shadow-lg ring-1 ring-zinc-200"
+                    />
+                  ) : (
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-emerald-400 to-emerald-600 text-2xl font-bold text-white shadow-lg ring-1 ring-zinc-200">
+                      {initials}
+                    </div>
+                  )}
+                  <span
+                    aria-label="Available for work"
+                    className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-white bg-emerald-500 shadow-sm"
                   />
-                ) : (
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-green-50 to-emerald-600 text-2xl font-bold text-white shadow-md border-4 border-white ring-1 ring-zinc-200">
-                    {applicant.fullName?.charAt(0).toUpperCase() || "?"}
-                  </div>
-                )}
-                {/* Available for Work Green Dot indicator */}
-                <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-white bg-green-500 shadow-sm" />
-              </div>
-
-              {/* Profile Details */}
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-xl font-bold text-zinc-900 tracking-tight leading-none">
-                    {applicant.fullName || "Unknown User"}
-                  </h2>
-                  <span className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-semibold text-green-700 ring-1 ring-inset ring-green-600/20">
-                    Available for Work
-                  </span>
                 </div>
-                
-                <p className="text-xs text-zinc-400 mt-1">
-                  @{applicant.username || "username"} • {applicant.headline || "Professional"}
-                </p>
 
-                {/* Contact details */}
-                <div className="mt-3.5 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-zinc-500">
-                  {applicant.location && (
-                    <span className="flex items-center gap-1.5">
-                      <MapPin size={13} className="text-green-600" />
-                      {applicant.location}
+                {/* Identity */}
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2
+                      id={titleId}
+                      className="text-2xl font-bold leading-tight tracking-tight text-zinc-900"
+                    >
+                      {applicant.fullName || "Unknown User"}
+                    </h2>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      Available for Work
                     </span>
-                  )}
-                  {applicant.email && (
-                    <a href={`mailto:${applicant.email}`} className="flex items-center gap-1.5 hover:text-green-600 transition-colors">
-                      <Mail size={13} className="text-green-600" />
-                      {applicant.email}
-                    </a>
-                  )}
-                  {applicant.phoneNumber && (
-                    <a href={`tel:${applicant.phoneNumber}`} className="flex items-center gap-1.5 hover:text-green-600 transition-colors">
-                      <Phone size={13} className="text-green-600" />
-                      {applicant.phoneNumber}
-                    </a>
-                  )}
+                  </div>
+
+                  <p className="mt-1 truncate text-sm font-medium text-zinc-500">
+                    {applicant.headline || "Professional"}
+                  </p>
+                  <p className="mt-0.5 truncate text-xs text-zinc-400">
+                    @{applicant.username || "username"}
+                  </p>
                 </div>
               </div>
+
+              {/* Close */}
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close panel"
+                className="rounded-xl p-2 text-zinc-400 transition-all duration-200 hover:bg-zinc-100 hover:text-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40"
+              >
+                <X size={20} />
+              </button>
             </div>
 
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className="rounded-lg p-2 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 transition-all duration-200"
-            >
-              <X size={20} />
-            </button>
-            
+            {/* Contact row */}
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-600">
+              {applicant.location && (
+                <span className="flex items-center gap-1.5">
+                  <MapPin size={14} className="text-emerald-600" />
+                  {applicant.location}
+                </span>
+              )}
+              {applicant.email && (
+                <a
+                  href={`mailto:${applicant.email}`}
+                  className="flex items-center gap-1.5 transition-colors hover:text-emerald-600"
+                >
+                  <Mail size={14} className="text-emerald-600" />
+                  <span className="truncate">{applicant.email}</span>
+                </a>
+              )}
+              {applicant.phoneNumber && (
+                <a
+                  href={`tel:${applicant.phoneNumber}`}
+                  className="flex items-center gap-1.5 transition-colors hover:text-emerald-600"
+                >
+                  <Phone size={14} className="text-emerald-600" />
+                  {applicant.phoneNumber}
+                </a>
+              )}
+            </div>
+
+            {/* Quick actions */}
+            <div className="mt-6 grid grid-cols-4 gap-2.5">
+              <ActionButton icon={MessageSquare} label="Message" variant="default" />
+              <ActionButton icon={Star} label="Shortlist" variant="success" />
+              <ActionButton icon={UserCheck} label="Hire" variant="default" />
+              <ActionButton icon={XCircle} label="Reject" variant="danger" />
+            </div>
           </div>
-        </div>
+        </header>
 
-        {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto bg-zinc-50/50 p-6 space-y-5 scrollbar-thin">
-          
-          {/* About Card */}
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="mb-4 flex items-center gap-2">
-              <User size={18} className="text-green-600" />
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-                About
-              </h3>
-            </div>
-            <p className="text-sm leading-relaxed text-zinc-600 whitespace-pre-line">
-              {applicant.about || "This applicant hasn't added an introduction yet."}
+        {/* ---------------------------------------------------------------- */}
+        {/*  SCROLLABLE BODY                                                  */}
+        {/* ---------------------------------------------------------------- */}
+        <div className="flex-1 space-y-5 overflow-y-auto bg-zinc-50/60 p-7">
+          {/* About */}
+          <SectionCard icon={User} title="About">
+            <p className="whitespace-pre-line text-[15px] leading-relaxed text-zinc-600">
+              {applicant.about ||
+                "This applicant hasn't added an introduction yet."}
             </p>
-          </div>
+          </SectionCard>
 
-          {/* Skills Card */}
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="mb-4 flex items-center gap-2">
-              <Sparkles size={18} className="text-green-600" />
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-                Skills
-              </h3>
-            </div>
+          {/* Skills */}
+          <SectionCard icon={Sparkles} title="Skills">
             {applicant.skills && applicant.skills.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {applicant.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="rounded-full border border-green-200 bg-green-50 px-3.5 py-1.5 text-xs font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100/50 shadow-sm cursor-default"
+                    className="cursor-default rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1.5 text-xs font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100/60"
                   >
                     {skill}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-zinc-400">
-                No skills added.
-              </p>
+              <p className="text-sm text-zinc-400">No skills added.</p>
             )}
-          </div>
+          </SectionCard>
 
-          {/* Experience Card */}
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="mb-4 flex items-center gap-2">
-              <Briefcase size={18} className="text-green-600" />
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-                Experience
-              </h3>
-            </div>
+          {/* Experience */}
+          <SectionCard icon={Briefcase} title="Experience">
             {applicant.experience ? (
-              <div className="border-l-2 border-green-500 pl-4 py-1 ml-1">
-                <div className="relative">
-                  <div className="absolute -left-[23px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-green-500 bg-white" />
-                  <p className="whitespace-pre-line text-sm leading-relaxed text-zinc-600">
-                    {applicant.experience}
-                  </p>
-                </div>
+              <div className="rounded-xl border border-zinc-200/70 bg-zinc-50/40 p-4">
+                <TimelineItem
+                  lineColor="border-emerald-500"
+                  dotColor="border-emerald-500"
+                >
+                  {applicant.experience}
+                </TimelineItem>
               </div>
             ) : (
-              <p className="text-sm text-zinc-400">
-                No experience added.
-              </p>
+              <p className="text-sm text-zinc-400">No experience added.</p>
             )}
-          </div>
+          </SectionCard>
 
-          {/* Education Card */}
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="mb-4 flex items-center gap-2">
-              <GraduationCap size={18} className="text-green-600" />
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-                Education
-              </h3>
-            </div>
+          {/* Education */}
+          <SectionCard icon={GraduationCap} title="Education" accent="blue">
             {applicant.education ? (
-              <div className="border-l-2 border-blue-500 pl-4 py-1 ml-1">
-                <div className="relative">
-                  <div className="absolute -left-[23px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-blue-500 bg-white" />
-                  <p className="whitespace-pre-line text-sm leading-relaxed text-zinc-600">
-                    {applicant.education}
-                  </p>
-                </div>
-              </div>
+              <TimelineItem
+                lineColor="border-blue-500"
+                dotColor="border-blue-500"
+              >
+                {applicant.education}
+              </TimelineItem>
             ) : (
-              <p className="text-sm text-zinc-400">
-                No education added.
-              </p>
+              <p className="text-sm text-zinc-400">No education added.</p>
             )}
-          </div>
+          </SectionCard>
 
-          {/* Links Card */}
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="mb-4 flex items-center gap-2">
-              <Link size={18} className="text-green-600" />
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-                Professional Links
-              </h3>
-            </div>
+          {/* Links */}
+          <SectionCard icon={LinkIcon} title="Professional Links" accent="violet">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {/* Portfolio */}
-              {applicant.portfolio ? (
-                <a
-                  href={applicant.portfolio}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition-all duration-200 transform hover:-translate-y-0.5"
-                >
-                  <div>
-                    <span className="text-lg">🌐</span>
-                    <h4 className="text-xs font-semibold text-zinc-900 mt-2">Portfolio</h4>
-                    <p className="text-[10px] text-zinc-400 truncate mt-0.5">{applicant.portfolio}</p>
-                  </div>
-                  <div className="flex items-center justify-end mt-4">
-                    <ExternalLink size={12} className="text-zinc-400" />
-                  </div>
-                </a>
-              ) : (
-                <div className="flex flex-col justify-between rounded-xl border border-zinc-100 bg-zinc-50/50 p-4 opacity-50 cursor-not-allowed">
-                  <div>
-                    <span className="text-lg">🌐</span>
-                    <h4 className="text-xs font-semibold text-zinc-400 mt-2">Portfolio</h4>
-                    <p className="text-[10px] text-zinc-400 mt-0.5">Not provided</p>
-                  </div>
-                  <div className="flex items-center justify-end mt-4">
-                    <ExternalLink size={12} className="text-zinc-300" />
-                  </div>
-                </div>
-              )}
-
-              {/* LinkedIn */}
-              {applicant.linkedin ? (
-                <a
-                  href={applicant.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition-all duration-200 transform hover:-translate-y-0.5"
-                >
-                  <div>
-                    <span className="text-lg">💼</span>
-                    <h4 className="text-xs font-semibold text-zinc-900 mt-2">LinkedIn</h4>
-                    <p className="text-[10px] text-zinc-400 truncate mt-0.5">{applicant.linkedin}</p>
-                  </div>
-                  <div className="flex items-center justify-end mt-4">
-                    <ExternalLink size={12} className="text-zinc-400" />
-                  </div>
-                </a>
-              ) : (
-                <div className="flex flex-col justify-between rounded-xl border border-zinc-100 bg-zinc-50/50 p-4 opacity-50 cursor-not-allowed">
-                  <div>
-                    <span className="text-lg">💼</span>
-                    <h4 className="text-xs font-semibold text-zinc-400 mt-2">LinkedIn</h4>
-                    <p className="text-[10px] text-zinc-400 mt-0.5">Not provided</p>
-                  </div>
-                  <div className="flex items-center justify-end mt-4">
-                    <ExternalLink size={12} className="text-zinc-300" />
-                  </div>
-                </div>
-              )}
-
-              {/* GitHub */}
-              {applicant.github ? (
-                <a
-                  href={applicant.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition-all duration-200 transform hover:-translate-y-0.5"
-                >
-                  <div>
-                    <span className="text-lg">🐙</span>
-                    <h4 className="text-xs font-semibold text-zinc-900 mt-2">GitHub</h4>
-                    <p className="text-[10px] text-zinc-400 truncate mt-0.5">{applicant.github}</p>
-                  </div>
-                  <div className="flex items-center justify-end mt-4">
-                    <ExternalLink size={12} className="text-zinc-400" />
-                  </div>
-                </a>
-              ) : (
-                <div className="flex flex-col justify-between rounded-xl border border-zinc-100 bg-zinc-50/50 p-4 opacity-50 cursor-not-allowed">
-                  <div>
-                    <span className="text-lg">🐙</span>
-                    <h4 className="text-xs font-semibold text-zinc-400 mt-2">GitHub</h4>
-                    <p className="text-[10px] text-zinc-400 mt-0.5">Not provided</p>
-                  </div>
-                  <div className="flex items-center justify-end mt-4">
-                    <ExternalLink size={12} className="text-zinc-300" />
-                  </div>
-                </div>
-              )}
+              <LinkTile
+                href={applicant.portfolio}
+                icon={Globe}
+                label="Portfolio"
+                displayUrl={applicant.portfolio}
+              />
+              <LinkTile
+                href={applicant.linkedin}
+                icon={Linkedin}
+                label="LinkedIn"
+                displayUrl={applicant.linkedin}
+              />
+              <LinkTile
+                href={applicant.github}
+                icon={Github}
+                label="GitHub"
+                displayUrl={applicant.github}
+              />
             </div>
-          </div>
+          </SectionCard>
 
-          {/* Resume Card */}
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="mb-4 flex items-center gap-2">
-              <FileText size={18} className="text-green-600" />
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-                Resume
-              </h3>
-            </div>
-            
-            <div className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50/30 p-10 text-center flex flex-col items-center justify-center hover:bg-zinc-50/60 transition-colors duration-200">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 mb-3 shadow-sm border border-zinc-200/50">
-                <FileText size={20} />
+          {/* Resume */}
+          <SectionCard icon={FileText} title="Resume">
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-300 bg-gradient-to-b from-zinc-50/60 to-white p-10 text-center transition-colors duration-200 hover:bg-zinc-50/80">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-zinc-200/60 bg-white text-zinc-400 shadow-sm">
+                <FileText size={22} />
               </div>
-              <p className="text-sm font-semibold text-zinc-900">Resume coming soon</p>
-              <p className="text-xs text-zinc-400 mt-1 max-w-[240px]">Applicant resume document will be uploaded and accessible here once the feature is active.</p>
+              <p className="text-sm font-semibold text-zinc-900">
+                Resume coming soon
+              </p>
+              <p className="mt-1 max-w-[260px] text-xs leading-relaxed text-zinc-400">
+                Applicant resume document will be uploaded and accessible here
+                once the feature is active.
+              </p>
             </div>
-          </div>
-
+          </SectionCard>
         </div>
 
-        {/* Recruiter Actions */}
-        <div className="sticky bottom-0 border-t border-zinc-200 bg-white/95 backdrop-blur px-6 py-4 flex-shrink-0">
+        {/* ---------------------------------------------------------------- */}
+        {/*  STICKY BOTTOM ACTIONS                                            */}
+        {/* ---------------------------------------------------------------- */}
+        <footer className="flex-shrink-0 border-t border-zinc-200 bg-white/95 px-7 py-4 backdrop-blur">
           <div className="grid grid-cols-4 gap-3">
-            <button
-              className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white py-3 text-xs font-semibold text-zinc-700 shadow-sm transition hover:bg-zinc-50 hover:border-zinc-300 active:bg-zinc-100 transform hover:-translate-y-0.5 duration-200"
-            >
-              <MessageSquare size={14} className="text-zinc-500" />
-              <span className="hidden sm:inline">Message</span>
-            </button>
-
-            <button
-              className="flex items-center justify-center gap-2 rounded-xl bg-green-600 py-3 text-xs font-semibold text-white shadow-sm transition hover:bg-green-700 active:bg-green-800 transform hover:-translate-y-0.5 duration-200"
-            >
-              <Star size={14} fill="currentColor" />
-              <span className="hidden sm:inline">Shortlist</span>
-            </button>
-
-            <button
-              className="flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white py-3 text-xs font-semibold text-zinc-700 shadow-sm transition hover:bg-zinc-50 hover:border-zinc-300 active:bg-zinc-100 transform hover:-translate-y-0.5 duration-200"
-            >
-              <Calendar size={14} className="text-zinc-500" />
-              <span className="hidden sm:inline">Interview</span>
-            </button>
-
-            <button
-              className="flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 py-3 text-xs font-semibold text-red-600 shadow-sm transition hover:bg-red-100 hover:border-red-300 active:bg-red-200/80 transform hover:-translate-y-0.5 duration-200"
-            >
-              <XCircle size={14} />
-              <span className="hidden sm:inline">Reject</span>
-            </button>
+            <ActionButton icon={XCircle} label="Reject" variant="danger" />
+            <ActionButton icon={Star} label="Shortlist" variant="success" />
+            <ActionButton icon={UserCheck} label="Hire" variant="default" />
+            <ActionButton icon={MessageSquare} label="Message" variant="default" />
           </div>
-        </div>
-
+        </footer>
       </div>
     </div>
   );
