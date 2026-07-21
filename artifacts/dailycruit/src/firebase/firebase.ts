@@ -12,12 +12,6 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-console.log("=== FIREBASE ENV DEBUG ===");
-console.log("ALL ENV VARIABLES:", import.meta.env);
-console.log("API KEY RAW VALUE:", import.meta.env.VITE_FIREBASE_API_KEY);
-console.log("==========================");
-
-
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
