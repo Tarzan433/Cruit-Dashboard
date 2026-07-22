@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { CompanyAvatar } from "./ui/CompanyAvatar";
 import type { JobCardData } from "./JobCard";
+import { useTrackJobView } from "../hooks/useTrackJobView";
 
 type JobDetailsDrawerProps = {
   job: JobCardData;
@@ -11,6 +12,7 @@ type JobDetailsDrawerProps = {
   isSaved: boolean;
   isSaving: boolean;
   onToggleSave: () => void;
+  isOwner: boolean; 
 };
 
 export function JobDetailsDrawer({
@@ -22,6 +24,7 @@ export function JobDetailsDrawer({
   isSaved,
   isSaving,
   onToggleSave,
+  isOwner,
 }: JobDetailsDrawerProps) {
   const drawerRef = useRef<HTMLDivElement | null>(null);
   const bullets = job.bullets && job.bullets.length > 0
@@ -37,6 +40,8 @@ export function JobDetailsDrawer({
   const employmentTypeTag = job.tags?.[0];
   const workModeTag = job.workMode || job.tags?.find((tag) => /remote|hybrid|on-site|onsite/i.test(tag));
   const tagItems = [employmentTypeTag, workModeTag].filter(Boolean) as string[];
+
+  useTrackJobView(job.id, isOwner);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
