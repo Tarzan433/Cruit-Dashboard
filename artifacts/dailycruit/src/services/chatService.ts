@@ -182,3 +182,45 @@ export async function sendChatMessage(
     lastMessageTimestamp: serverTimestamp(),
   });
 }
+
+/**
+ * Find an existing conversation between exactly two users, or create a new one.
+ */
+import { getDocs } from "firebase/firestore";
+
+export async function findOrCreateConversation(
+  myId: string,
+  myInfo: ParticipantInfo,
+  otherId: string,
+  otherInfo: ParticipantInfo
+): Promise<string> {
+  // Query conversations where myId is in participantIds
+  const q = query(
+    collection(db, "conversations"),
+    where("participantIds", "array-contains", myId)
+  );
+
+  const snapshot = await getDocs(q);
+  
+  // Look for a conversation that has exactly these two participant IDs
+  for (const docSnapshot of snapshot.docs) {
+    const data = docSnapshot.data();
+    const ids = (data.participantIds as string[]) || [];
+    if (ids.length === 2 && ids.includes(myId) && ids.includes(otherId)) {
+      return docSnapshot.id;
+    }
+  }
+
+  // If not found, create a new one
+  const newConversationRef = await addDoc(collection(db, "conversations"), {
+    participantIds: [myId, otherId],
+    participantInfo: {
+      [myId]: myInfo,
+      [otherId]: otherInfo,
+    },
+    lastMessage: "",
+    lastMessageTimestamp: serverTimestamp(),
+  });
+
+  return newConversationRef.id;
+}

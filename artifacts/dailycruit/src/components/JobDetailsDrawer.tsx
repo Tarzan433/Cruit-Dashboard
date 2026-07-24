@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
 import { CompanyAvatar } from "./ui/CompanyAvatar";
+import { useLocation } from "wouter";
+import { auth } from "../firebase/firebase";
+import { findOrCreateConversation } from "../services/chatService";
 import type { JobCardData } from "./JobCard";
 import { useTrackJobView } from "../hooks/useTrackJobView";
 
@@ -26,6 +29,7 @@ export function JobDetailsDrawer({
   onToggleSave,
   isOwner,
 }: JobDetailsDrawerProps) {
+  const [location, navigate] = useLocation();
   const drawerRef = useRef<HTMLDivElement | null>(null);
   const bullets = job.bullets && job.bullets.length > 0
     ? job.bullets
@@ -94,9 +98,36 @@ export function JobDetailsDrawer({
             <button
               className="drawer-bookmark-btn"
               title="Chat"
-              onClick={(event) => {
+              onClick={async (event) => {
                 event.stopPropagation();
-                console.log("open chat - not wired yet");
+                
+                const myUid = auth.currentUser?.uid;
+                if (!myUid) return;
+                
+                const theirUid = job.recruiterId || job.companyId;
+                if (!theirUid) return;
+                
+                const myInfo = {
+                  name: auth.currentUser?.displayName || "Applicant",
+                  initial: (auth.currentUser?.displayName || "A").charAt(0).toUpperCase(),
+                  job: "Applicant",
+                  role: "seeker",
+                };
+                
+                const theirInfo = {
+                  name: job.company || "Company",
+                  initial: (job.company || "C").charAt(0).toUpperCase(),
+                  job: "Recruiter",
+                  role: "recruiter",
+                };
+                
+                try {
+                  const convId = await findOrCreateConversation(myUid, myInfo, theirUid, theirInfo);
+                  const basePath = location.startsWith('/recruiter') ? '/recruiter' : '/seeker';
+                  navigate(`${basePath}/chat?id=${convId}`);
+                } catch (err) {
+                  console.error("Failed to open chat", err);
+                }
               }}
               aria-label="Open chat"
             >

@@ -1,5 +1,7 @@
-
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useLocation } from "wouter";
+import { auth } from "../firebase/firebase";
+import { findOrCreateConversation } from "../services/chatService";
 import {
   X,
   MapPin,
@@ -190,6 +192,7 @@ export function ApplicantViewPanel({
   onClose,
   applicant,
 }: ApplicantViewPanelProps) {
+  const [location, navigate] = useLocation();
   const [mounted, setMounted] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = "applicant-panel-title";
@@ -228,6 +231,36 @@ export function ApplicantViewPanel({
   }, [open, handleKeyDown]);
 
   if (!open || !applicant) return null;
+
+  const handleMessage = async () => {
+    const myUid = auth.currentUser?.uid;
+    if (!myUid) return;
+    
+    const theirUid = applicant.uid;
+    if (!theirUid) return;
+    
+    const myInfo = {
+      name: auth.currentUser?.displayName || "Recruiter",
+      initial: (auth.currentUser?.displayName || "R").charAt(0).toUpperCase(),
+      job: "Recruiter",
+      role: "recruiter",
+    };
+    
+    const theirInfo = {
+      name: applicant.fullName || "Applicant",
+      initial: (applicant.fullName || "A").charAt(0).toUpperCase(),
+      job: "Applicant",
+      role: "seeker",
+    };
+    
+    try {
+      const convId = await findOrCreateConversation(myUid, myInfo, theirUid, theirInfo);
+      const basePath = location.startsWith('/recruiter') ? '/recruiter' : '/seeker';
+      navigate(`${basePath}/chat?id=${convId}`);
+    } catch (err) {
+      console.error("Failed to open chat", err);
+    }
+  };
 
   const initials = applicant.fullName?.charAt(0).toUpperCase() || "?";
 
@@ -347,7 +380,7 @@ export function ApplicantViewPanel({
 
             {/* Quick actions */}
             <div className="mt-6 grid grid-cols-4 gap-2.5">
-              <ActionButton icon={MessageSquare} label="Message" variant="default" />
+              <ActionButton icon={MessageSquare} label="Message" variant="default" onClick={handleMessage} />
               <ActionButton icon={Star} label="Shortlist" variant="success" />
               <ActionButton icon={UserCheck} label="Hire" variant="default" />
               <ActionButton icon={XCircle} label="Reject" variant="danger" />
@@ -464,7 +497,7 @@ export function ApplicantViewPanel({
             <ActionButton icon={XCircle} label="Reject" variant="danger" />
             <ActionButton icon={Star} label="Shortlist" variant="success" />
             <ActionButton icon={UserCheck} label="Hire" variant="default" />
-            <ActionButton icon={MessageSquare} label="Message" variant="default" />
+            <ActionButton icon={MessageSquare} label="Message" variant="default" onClick={handleMessage} />
           </div>
         </footer>
       </div>

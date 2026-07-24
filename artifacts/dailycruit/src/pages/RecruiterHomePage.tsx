@@ -5,6 +5,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { Eye, Pencil, Share2, Ban, RotateCcw } from "lucide-react";
 
 import { auth } from "../firebase/firebase";
+import { useLocation } from "wouter";
+import { findOrCreateConversation } from "../services/chatService";
 
 import {
   CreateJobPostWizard,
@@ -37,6 +39,7 @@ const REC_CHATS = [
 ];
 
 export function RecruiterHomePage({ onCreatePost }: { onCreatePost: () => void }) {
+const [location, navigate] = useLocation();
 const [jobs, setJobs] = useState<PublishedJob[]>([]);
 const [applications, setApplications] = useState<
   (Application & {
@@ -184,9 +187,35 @@ setApplications(applicationsWithProfiles);
         </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button
-          onClick={(event) => {
+          onClick={async (event) => {
             event.stopPropagation();
-            console.log("open chat - not wired yet", app.applicantId);
+            const myUid = auth.currentUser?.uid;
+            if (!myUid) return;
+
+            const theirUid = app.applicantId;
+            if (!theirUid) return;
+
+            const myInfo = {
+              name: auth.currentUser?.displayName || "Recruiter",
+              initial: (auth.currentUser?.displayName || "R").charAt(0).toUpperCase(),
+              job: "Recruiter",
+              role: "recruiter",
+            };
+
+            const theirInfo = {
+              name: app.applicantName || "Applicant",
+              initial: (app.applicantName || "A").charAt(0).toUpperCase(),
+              job: "Applicant",
+              role: "seeker",
+            };
+
+            try {
+              const convId = await findOrCreateConversation(myUid, myInfo, theirUid, theirInfo);
+              const basePath = location.startsWith('/recruiter') ? '/recruiter' : '/seeker';
+              navigate(`${basePath}/chat?id=${convId}`);
+            } catch (err) {
+              console.error("Failed to open chat", err);
+            }
           }}
           title="Chat"
           style={{

@@ -1,4 +1,7 @@
 import { CompanyAvatar } from "./ui/CompanyAvatar";
+import { useLocation } from "wouter";
+import { auth } from "../firebase/firebase";
+import { findOrCreateConversation } from "../services/chatService";
 
 export type JobCardData = {
   id: string;
@@ -53,6 +56,8 @@ export function JobCard({
   showCompany = true,
   onViewCompany,
 }: JobCardProps) {
+  const [location, navigate] = useLocation();
+
   return (
     <div className="home-job-card" onClick={onClick}>
       <div className="home-job-card-inner">
@@ -106,9 +111,36 @@ export function JobCard({
             <button
               className="job-save-btn"
               title="Chat"
-              onClick={(event) => {
+              onClick={async (event) => {
                 event.stopPropagation();
-                console.log("open chat - not wired yet");
+                
+                const myUid = auth.currentUser?.uid;
+                if (!myUid) return;
+                
+                const theirUid = job.recruiterId || job.companyId;
+                if (!theirUid) return;
+                
+                const myInfo = {
+                  name: auth.currentUser?.displayName || "Applicant",
+                  initial: (auth.currentUser?.displayName || "A").charAt(0).toUpperCase(),
+                  job: "Applicant",
+                  role: "seeker",
+                };
+                
+                const theirInfo = {
+                  name: job.company || "Company",
+                  initial: (job.company || "C").charAt(0).toUpperCase(),
+                  job: "Recruiter",
+                  role: "recruiter",
+                };
+                
+                try {
+                  const convId = await findOrCreateConversation(myUid, myInfo, theirUid, theirInfo);
+                  const basePath = location.startsWith('/recruiter') ? '/recruiter' : '/seeker';
+                  navigate(`${basePath}/chat?id=${convId}`);
+                } catch (err) {
+                  console.error("Failed to open chat", err);
+                }
               }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

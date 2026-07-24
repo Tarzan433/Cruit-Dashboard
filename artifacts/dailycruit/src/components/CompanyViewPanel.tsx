@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import { useLocation } from "wouter";
+import { auth, db } from "../firebase/firebase";
+import { findOrCreateConversation } from "../services/chatService";
 import type { Company } from "../models/company";
 import { CompanyAvatar } from "./ui/CompanyAvatar";
 
@@ -10,6 +12,7 @@ interface CompanyViewPanelProps {
 }
 
 export function CompanyViewPanel({ companyId, onClose }: CompanyViewPanelProps) {
+  const [location, navigate] = useLocation();
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,6 +101,48 @@ export function CompanyViewPanel({ companyId, onClose }: CompanyViewPanelProps) 
           </div>
 
           <div className="drawer-header-actions">
+            {company && (
+              <button
+                className="drawer-bookmark-btn"
+                title="Message"
+                onClick={async (event) => {
+                  event.stopPropagation();
+                  
+                  const myUid = auth.currentUser?.uid;
+                  if (!myUid) return;
+                  
+                  const theirUid = companyId;
+                  if (!theirUid) return;
+                  
+                  const myInfo = {
+                    name: auth.currentUser?.displayName || "Applicant",
+                    initial: (auth.currentUser?.displayName || "A").charAt(0).toUpperCase(),
+                    job: "Applicant",
+                    role: "seeker",
+                  };
+                  
+                  const theirInfo = {
+                    name: company.name || "Company",
+                    initial: (company.name || "C").charAt(0).toUpperCase(),
+                    job: "Recruiter",
+                    role: "recruiter",
+                  };
+                  
+                  try {
+                    const convId = await findOrCreateConversation(myUid, myInfo, theirUid, theirInfo);
+                    const basePath = location.startsWith('/recruiter') ? '/recruiter' : '/seeker';
+                    navigate(`${basePath}/chat?id=${convId}`);
+                  } catch (err) {
+                    console.error("Failed to open chat", err);
+                  }
+                }}
+                aria-label="Open chat"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </button>
+            )}
             <button className="drawer-close-btn" onClick={onClose} aria-label="Close company details">
               ×
             </button>
