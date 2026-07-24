@@ -182,23 +182,60 @@ setApplications(applicationsWithProfiles);
             Applied to <span style={{ fontWeight: 500, color: "#374151" }}>{app.jobTitle}</span> · {app.status}
           </p>
         </div>
-      <button
-  onClick={() => {
-    setSelectedApplicant(app.applicantProfile);
-    setShowApplicantPanel(true);
-  }}
-  style={{
-    background: "none",
-    border: "none",
-    color: "#7C3AED",
-    fontSize: 12.5,
-    fontWeight: 600,
-    cursor: "pointer",
-    whiteSpace: "nowrap"
-  }}
->
-  View profile
-</button>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <button
+          onClick={(event) => {
+            event.stopPropagation();
+            console.log("open chat - not wired yet", app.applicantId);
+          }}
+          title="Chat"
+          style={{
+            background: "none",
+            border: "1px solid #E5E7EB",
+            borderRadius: "6px",
+            color: "#6B7280",
+            width: "30px",
+            height: "30px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+            padding: 0
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "#374151";
+            e.currentTarget.style.borderColor = "#D1D5DB";
+            e.currentTarget.style.backgroundColor = "#F9FAFB";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "#6B7280";
+            e.currentTarget.style.borderColor = "#E5E7EB";
+            e.currentTarget.style.backgroundColor = "transparent";
+          }}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </button>
+        <button
+          onClick={() => {
+            setSelectedApplicant(app.applicantProfile);
+            setShowApplicantPanel(true);
+          }}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#7C3AED",
+            fontSize: 12.5,
+            fontWeight: 600,
+            cursor: "pointer",
+            whiteSpace: "nowrap"
+          }}
+        >
+          View profile
+        </button>
+      </div>
       </div>
     </li>
   ))}

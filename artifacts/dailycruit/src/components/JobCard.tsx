@@ -102,25 +102,39 @@ export function JobCard({
             ) : null}
           </div>
 
-          <button
-            className="job-save-btn"
-            title={isSaved ? "Saved" : "Save job"}
-            onClick={(event) => {
-              event.stopPropagation();
-              onToggleSave();
-            }}
-            disabled={isSaving}
-            style={{
-              opacity: isSaving ? 0.7 : 1,
-              color: isSaved ? "#16A34A" : undefined,
-              borderColor: isSaved ? "#BBF7D0" : undefined,
-              background: isSaved ? "#F0FDF4" : undefined,
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-            </svg>
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <button
+              className="job-save-btn"
+              title="Chat"
+              onClick={(event) => {
+                event.stopPropagation();
+                console.log("open chat - not wired yet");
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </button>
+            <button
+              className="job-save-btn"
+              title={isSaved ? "Saved" : "Save job"}
+              onClick={(event) => {
+                event.stopPropagation();
+                onToggleSave();
+              }}
+              disabled={isSaving}
+              style={{
+                opacity: isSaving ? 0.7 : 1,
+                color: isSaved ? "#16A34A" : undefined,
+                borderColor: isSaved ? "#BBF7D0" : undefined,
+                background: isSaved ? "#F0FDF4" : undefined,
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div className="home-job-tags">
