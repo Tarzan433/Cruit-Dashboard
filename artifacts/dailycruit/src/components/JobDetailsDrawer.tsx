@@ -15,7 +15,7 @@ type JobDetailsDrawerProps = {
   isSaved: boolean;
   isSaving: boolean;
   onToggleSave: () => void;
-  isOwner: boolean; 
+  isOwner?: boolean;
 };
 
 export function JobDetailsDrawer({
@@ -27,7 +27,7 @@ export function JobDetailsDrawer({
   isSaved,
   isSaving,
   onToggleSave,
-  isOwner,
+  isOwner = false,
 }: JobDetailsDrawerProps) {
   const [location, navigate] = useLocation();
   const drawerRef = useRef<HTMLDivElement | null>(null);

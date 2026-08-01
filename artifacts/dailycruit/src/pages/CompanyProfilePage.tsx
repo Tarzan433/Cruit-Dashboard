@@ -191,6 +191,7 @@ export default function CompanyProfilePage() {
 
   return (
     <main className="main-content profile-main">
+      <div className="content-container">
       {/* Back button */}
       <button 
         className="profile-back-btn" 
@@ -400,6 +401,7 @@ export default function CompanyProfilePage() {
           </button>
         </div>
       </form>
+      </div>
     </main>
   );
 }

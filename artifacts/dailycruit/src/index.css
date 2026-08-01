@@ -74,6 +74,14 @@ body {
   gap: 2px;
 }
 
+.top-nav-tabs {
+  display: flex;
+}
+
+.mobile-tabs-bar {
+  display: none;
+}
+
 .nav-link {
   display: flex;
   align-items: center;
@@ -178,6 +186,75 @@ body {
 /* Main content */
 .main-content {
   margin-top: 64px;
+}
+
+/* Shared centered content wrapper */
+.content-container {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.content-container--grid {
+  gap: 20px;
+}
+
+@media (max-width: 767px) {
+  .top-nav-tabs {
+    display: none;
+  }
+
+  .mobile-tabs-bar {
+    display: flex !important;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 72px;
+    align-items: center;
+    justify-content: space-around;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #ffffff;
+    border-top: 1px solid #E5E7EB;
+    box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+  }
+
+  .mobile-tabs-bar .nav-pill {
+    width: 100%;
+    justify-content: space-around;
+    background: transparent;
+    padding: 0;
+    gap: 8px;
+  }
+
+  .mobile-tabs-bar .nav-link {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 6px;
+    border-radius: 12px;
+    font-size: 11px;
+    line-height: 1.1;
+  }
+
+  .mobile-tabs-bar .nav-link.active {
+    background: #ECFDF3;
+    color: #166534;
+    box-shadow: none;
+  }
+
+  .main-content {
+    padding-bottom: 88px;
+  }
+}
+
+.main-content {
   min-height: calc(100vh - 64px);
   padding: 28px 32px;
   position: relative;
@@ -365,6 +442,78 @@ body {
 }
 
 /* Search input container (position:relative holds icons) */
+.home-search-shell {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.home-search-trigger {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  margin: 0 auto 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  height: 52px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #D1D5DB;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.home-search-trigger:focus-within {
+  border-color: #22C55E;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+}
+
+.home-search-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
+.home-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111827;
+}
+
+.home-search-input::placeholder {
+  color: #9CA3AF;
+}
+
+.home-search-close {
+  border: none;
+  background: transparent;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.home-search-close:hover {
+  background: #F3F4F6;
+}
+
+.home-search-expanded-panel {
+  width: 100%;
+}
+
+.home-search-expanded-panel .search-page {
+  padding-top: 0;
+}
+
 .search-input-container {
   position: relative;
   width: 560px;
@@ -2292,6 +2441,33 @@ body {
   overflow: hidden;
 }
 
+@media (max-width: 767px) {
+  .chat-layout {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 64px);
+    margin-top: 64px;
+  }
+
+  .chat-left,
+  .chat-right {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+    height: 100%;
+  }
+
+  .chat-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-right {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 /* Left panel */
 .chat-left {
   width: 360px;
@@ -2444,6 +2620,11 @@ body {
 }
 
 /* Chat list empty state */
+.chat-empty-state-shell {
+  flex: 1;
+  min-height: 0;
+}
+
 .chat-list-empty {
   flex: 1;
   display: flex;
@@ -2479,6 +2660,11 @@ body {
   flex-direction: column;
   background: #F0F2F5;
   min-width: 0;
+}
+
+.chat-right-content {
+  flex: 1;
+  min-height: 0;
 }
 
 .chat-right-default {
@@ -2815,17 +3001,62 @@ body {
 }
 
 /* ─── Responsive ──────────────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .nav-link span.nav-label {
-    display: none;
+@media (max-width: 767px) {
+  /* Keep the navbar at the top on mobile. Previously this block moved
+     the entire `.navbar` to the bottom and hid the logo/right icons,
+     which made the top-bar (logo, chat, bell, profile) disappear.
+     We only want to hide the tabs, not the surrounding navbar. */
+
+  .navbar-logo {
+    /* ensure logo remains visible on mobile */
+    display: flex;
+    align-items: center;
   }
 
-  .navbar-logo .logo-text {
-    display: none;
+  .nav-pill {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: space-between;
+    padding: 4px;
+    background: transparent;
+    gap: 4px;
+  }
+
+  .nav-link {
+    gap: 4px;
+    padding: 8px 10px;
+    min-height: 44px;
+    font-size: 10px;
+    line-height: 1.1;
+    flex: 1 1 0;
+    justify-content: center;
+    border-radius: 12px;
+    background: transparent;
+  }
+
+  .nav-link.active {
+    background: #F3F4F6;
+    box-shadow: none;
+  }
+
+  .nav-link .nav-icon {
+    font-size: 16px;
+  }
+
+  .nav-link span.nav-label {
+    display: inline;
+    white-space: nowrap;
+  }
+
+  .navbar-right {
+    /* keep right-side icons visible on mobile */
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .main-content {
-    padding: 20px 16px;
+    padding: 20px 16px 96px;
   }
 
   .create-btn-top {
@@ -2833,6 +3064,29 @@ body {
     top: 20px;
     padding: 8px 14px;
     font-size: 13px;
+  }
+
+  .chat-empty-state-shell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    height: 64px;
+    border-bottom: 1px solid #E5E7EB;
+    border-top: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 }
 

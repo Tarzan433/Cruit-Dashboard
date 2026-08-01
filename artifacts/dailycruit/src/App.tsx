@@ -756,6 +756,7 @@ function SettingsPage({
 
   return (
     <main className="main-content settings-main">
+      <div className="content-container">
       {/* Header row */}
       <div className="settings-header-row">
         <button className="settings-back-btn" onClick={onBack}>← Back</button>
@@ -939,6 +940,7 @@ function SettingsPage({
           onClose={() => setShowAcctModal(false)}
         />
       )}
+      </div>
     </main>
   );
 }
@@ -1850,6 +1852,7 @@ function ProfilePage({ onBack, accountType, onPhotoSaved, onAccountTypeChange }:
 
   return (
     <main className="main-content profile-main">
+      <div className="content-container">
       {profileToast && (
         <div className={`profile-toast ${profileToast.type === "success" ? "profile-toast-success" : "profile-toast-error"}`}>
           <span>{profileToast.type === "success" ? "✓" : "!"}</span>
@@ -2174,6 +2177,7 @@ function ProfilePage({ onBack, accountType, onPhotoSaved, onAccountTypeChange }:
         onShowToast={(toast) => setProfileToast(toast)}
         onAchievementsUpdated={(updates) => setAchievements((prev) => ({ ...prev, ...updates }))}
       />
+      </div>
     </main>
   );
 }
@@ -2260,13 +2264,14 @@ function ApplicationsPage({
   if (isLoading) {
     return (
       <main className="main-content">
-        <div className="empty-state">
-          <svg
-            className="empty-icon apps-icon"
-            viewBox="0 0 56 56"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+        <div className="content-container">
+          <div className="empty-state">
+            <svg
+              className="empty-icon apps-icon"
+              viewBox="0 0 56 56"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
             <rect x="8" y="4" width="36" height="48" rx="4" stroke="#D1D5DB" strokeWidth="2.5" />
             <line x1="16" y1="18" x2="36" y2="18" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
             <line x1="16" y1="27" x2="36" y2="27" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
@@ -2274,6 +2279,7 @@ function ApplicationsPage({
           </svg>
           <h1 className="empty-title">Loading applications…</h1>
           <p className="empty-subtitle">Please wait while we fetch your latest updates.</p>
+          </div>
         </div>
       </main>
     );
@@ -2282,13 +2288,14 @@ function ApplicationsPage({
   if (errorMessage) {
     return (
       <main className="main-content">
-        <div className="empty-state">
-          <svg
-            className="empty-icon apps-icon"
-            viewBox="0 0 56 56"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+        <div className="content-container">
+          <div className="empty-state">
+            <svg
+              className="empty-icon apps-icon"
+              viewBox="0 0 56 56"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
             <rect x="8" y="4" width="36" height="48" rx="4" stroke="#D1D5DB" strokeWidth="2.5" />
             <line x1="16" y1="18" x2="36" y2="18" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
             <line x1="16" y1="27" x2="36" y2="27" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
@@ -2296,6 +2303,7 @@ function ApplicationsPage({
           </svg>
           <h1 className="empty-title">Unable to load applications</h1>
           <p className="empty-subtitle">{errorMessage}</p>
+          </div>
         </div>
       </main>
     );
@@ -2304,13 +2312,14 @@ function ApplicationsPage({
   if (applications.length === 0) {
     return (
       <main className="main-content">
-        <div className="empty-state">
-          <svg
-            className="empty-icon apps-icon"
-            viewBox="0 0 56 56"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+        <div className="content-container">
+          <div className="empty-state">
+            <svg
+              className="empty-icon apps-icon"
+              viewBox="0 0 56 56"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
             <rect x="8" y="4" width="36" height="48" rx="4" stroke="#D1D5DB" strokeWidth="2.5" />
             <line x1="16" y1="18" x2="36" y2="18" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
             <line x1="16" y1="27" x2="36" y2="27" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
@@ -2323,6 +2332,7 @@ function ApplicationsPage({
           <button className="explore-btn" onClick={onExplore}>
             Explore jobs →
           </button>
+          </div>
         </div>
       </main>
     );
@@ -2330,13 +2340,14 @@ function ApplicationsPage({
 
   return (
     <main className="main-content">
-      {toastMessage && (
-        <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: toastMessage.includes("already") ? "#fef3c7" : "#f0fdf4", color: toastMessage.includes("already") ? "#92400e" : "#166534", fontSize: 13, border: `1px solid ${toastMessage.includes("already") ? "#fde68a" : "#bbf7d0"}` }}>
-          {toastMessage}
-        </div>
-      )}
+      <div className="content-container">
+        {toastMessage && (
+          <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: toastMessage.includes("already") ? "#fef3c7" : "#f0fdf4", color: toastMessage.includes("already") ? "#92400e" : "#166534", fontSize: 13, border: `1px solid ${toastMessage.includes("already") ? "#fde68a" : "#bbf7d0"}` }}>
+            {toastMessage}
+          </div>
+        )}
 
-      <div className="job-list" style={{ gap: 12 }}>
+        <div className="job-list" style={{ gap: 12 }}>
         {applications.map((application) => {
           const cardJob = mapApplicationToCard(application);
 
@@ -2370,6 +2381,7 @@ function ApplicationsPage({
           onToggleSave={() => void handleSaveJob(selectedJob)}
         />
       )}
+      </div>
     </main>
   );
 }
@@ -2490,8 +2502,9 @@ function SavedJobsPage({
   if (isLoading) {
     return (
       <main className="main-content">
-        <div className="empty-state">
-          <svg className="empty-icon apps-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div className="content-container">
+          <div className="empty-state">
+            <svg className="empty-icon apps-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="8" y="4" width="36" height="48" rx="4" stroke="#D1D5DB" strokeWidth="2.5" />
             <line x1="16" y1="18" x2="36" y2="18" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
             <line x1="16" y1="27" x2="36" y2="27" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
@@ -2499,6 +2512,7 @@ function SavedJobsPage({
           </svg>
           <h1 className="empty-title">Loading saved jobs…</h1>
           <p className="empty-subtitle">Please wait while we load your saved opportunities.</p>
+          </div>
         </div>
       </main>
     );
@@ -2507,8 +2521,9 @@ function SavedJobsPage({
   if (errorMessage) {
     return (
       <main className="main-content">
-        <div className="empty-state">
-          <svg className="empty-icon apps-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div className="content-container">
+          <div className="empty-state">
+            <svg className="empty-icon apps-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="8" y="4" width="36" height="48" rx="4" stroke="#D1D5DB" strokeWidth="2.5" />
             <line x1="16" y1="18" x2="36" y2="18" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
             <line x1="16" y1="27" x2="36" y2="27" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
@@ -2516,6 +2531,7 @@ function SavedJobsPage({
           </svg>
           <h1 className="empty-title">Unable to load saved jobs</h1>
           <p className="empty-subtitle">{errorMessage}</p>
+          </div>
         </div>
       </main>
     );
@@ -2524,8 +2540,9 @@ function SavedJobsPage({
   if (savedJobs.length === 0) {
     return (
       <main className="main-content">
-        <div className="empty-state">
-          <svg className="empty-icon apps-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div className="content-container">
+          <div className="empty-state">
+            <svg className="empty-icon apps-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="8" y="4" width="36" height="48" rx="4" stroke="#D1D5DB" strokeWidth="2.5" />
             <line x1="16" y1="18" x2="36" y2="18" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
             <line x1="16" y1="27" x2="36" y2="27" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" />
@@ -2536,6 +2553,7 @@ function SavedJobsPage({
           <button className="explore-btn" onClick={onExplore}>
             Explore jobs →
           </button>
+          </div>
         </div>
       </main>
     );
@@ -2543,12 +2561,13 @@ function SavedJobsPage({
 
   return (
     <main className="main-content">
-      {toastMessage && (
-        <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: toastMessage.includes("already") ? "#fef3c7" : "#f0fdf4", color: toastMessage.includes("already") ? "#92400e" : "#166534", fontSize: 13, border: `1px solid ${toastMessage.includes("already") ? "#fde68a" : "#bbf7d0"}` }}>
-          {toastMessage}
-        </div>
-      )}
-      <div className="job-list" style={{ gap: 12 }}>
+      <div className="content-container">
+        {toastMessage && (
+          <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: toastMessage.includes("already") ? "#fef3c7" : "#f0fdf4", color: toastMessage.includes("already") ? "#92400e" : "#166534", fontSize: 13, border: `1px solid ${toastMessage.includes("already") ? "#fde68a" : "#bbf7d0"}` }}>
+            {toastMessage}
+          </div>
+        )}
+        <div className="job-list" style={{ gap: 12 }}>
         {savedJobs.map((savedJob) => {
           const cardJob: JobCardData = {
             id: savedJob.jobId,
@@ -2578,18 +2597,19 @@ function SavedJobsPage({
           );
         })}
       </div>
-      {selectedJob && (
-        <JobDetailsDrawer
-          job={selectedJob}
-          onClose={() => setSelectedJob(null)}
-          onApply={() => handleApplyJob(selectedJob)}
-          isApplied={applyState[selectedJob.id]?.applied ?? false}
-          isApplying={applyState[selectedJob.id]?.applying ?? false}
-          isSaved={savedJobIds.includes(selectedJob.id)}
-          isSaving={savingJobIds[selectedJob.id] ?? false}
-          onToggleSave={() => handleSaveJob(selectedJob)}
-        />
-      )}
+        {selectedJob && (
+          <JobDetailsDrawer
+            job={selectedJob}
+            onClose={() => setSelectedJob(null)}
+            onApply={() => handleApplyJob(selectedJob)}
+            isApplied={applyState[selectedJob.id]?.applied ?? false}
+            isApplying={applyState[selectedJob.id]?.applying ?? false}
+            isSaved={savedJobIds.includes(selectedJob.id)}
+            isSaving={savingJobIds[selectedJob.id] ?? false}
+            onToggleSave={() => handleSaveJob(selectedJob)}
+          />
+        )}
+      </div>
     </main>
   );
 }
@@ -2736,7 +2756,6 @@ export default function App() {
     ]
     : [
       { id: "home", icon: "🏠", label: "Home" },
-      { id: "search", icon: "📄", label: "Search jobs" },
       { id: "applications", icon: "📋", label: "My Applications" },
       { id: "saved", icon: "🔖", label: "Saved Jobs" },
     ];
@@ -2801,6 +2820,24 @@ export default function App() {
   const isChatActive =
     location === "/seeker/chat" || location === "/recruiter/chat";
 
+  function TabsBar({ className = "" }: { className?: string }) {
+    return (
+      <div className={`nav-pill ${className}`.trim()}>
+        {navItems.map((item) => (
+          <button
+            key={item.id}
+            className={`nav-link${isNavActive(item.id) ? " active" : ""}`}
+            data-page={item.id}
+            onClick={() => handleNavClick(item.id)}
+          >
+            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-label">{item.label}</span>
+          </button>
+        ))}
+      </div>
+    );
+  }
+
   if (appLoading) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -2855,25 +2892,13 @@ export default function App() {
         />
       )}
       {/* Navbar */}
-      <nav className="navbar">
+      <nav className="navbar" data-nav-mode={isRecruiter ? "recruiter" : "seeker"}>
         <a className="navbar-logo" href="#" onClick={(e) => e.preventDefault()}>
           <LogoIcon />
           <span className="logo-text">DAILYCRUIT</span>
         </a>
 
-        <div className="nav-pill">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              className={`nav-link${isNavActive(item.id) ? " active" : ""}`}
-              data-page={item.id}
-              onClick={() => handleNavClick(item.id)}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              <span className="nav-label">{item.label}</span>
-            </button>
-          ))}
-        </div>
+        <TabsBar className="top-nav-tabs" />
 
         <div className="navbar-right">
           <button
@@ -2940,6 +2965,10 @@ export default function App() {
           </div>
         </div>
       </nav>
+
+      <div className="mobile-tabs-bar" role="navigation" aria-label="Mobile navigation">
+        <TabsBar />
+      </div>
 
       {/* Route-based page rendering */}
       <Switch>

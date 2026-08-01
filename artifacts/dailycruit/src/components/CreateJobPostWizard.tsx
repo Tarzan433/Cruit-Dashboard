@@ -207,12 +207,13 @@ function handleAddTag() {
         ← Job Posts
       </button>
 
-      {/* ── Page header ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: 12,
-          background: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
+      <div className="content-container">
+        {/* ── Page header ── */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: 12,
+            background: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
           </svg>
@@ -1359,7 +1360,8 @@ function handleAddTag() {
             </button>
           </div>
         )}
-    </div> {/* closes Step content div */}
+      </div> {/* closes Step content div */}
+      </div> {/* closes content-container */}
 
 </main>
 );

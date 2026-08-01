@@ -6,6 +6,7 @@ import { applyToJob, getFriendlyErrorMessage, hasAppliedToJob } from "../service
 import { JobCard, type JobCardData } from "../components/JobCard";
 import { JobDetailsDrawer } from "../components/JobDetailsDrawer";
 import { CompanyViewPanel } from "../components/CompanyViewPanel";
+import { SearchJobsPage } from "../components/SearchJobsPage";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,7 +52,14 @@ function toHomeJob(job: { id?: string; recruiterId?: string; company?: string; c
 
 
 
-type HomeFilter = "new" | "expiring" | "nearme";
+function HomeSearchIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="7" />
+      <line x1="16.5" y1="16.5" x2="22" y2="22" />
+    </svg>
+  );
+}
 
 type HomePageProps = {
   onCreateJob: () => void;
@@ -60,7 +68,6 @@ type HomePageProps = {
 };
 
 export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }: HomePageProps) {
-  const [activeFilter, setActiveFilter] = useState<HomeFilter>("new");
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [selectedJob, setSelectedJob] = useState<HomeJob | null>(null);
   const [sharedJobs, setSharedJobs] = useState<HomeJob[]>([]);
@@ -70,6 +77,8 @@ export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }:
   const [isApplying, setIsApplying] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [savingJobIds, setSavingJobIds] = useState<Record<string, boolean>>({});
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -166,12 +175,6 @@ export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }:
     }
   }
 
-  const filters: { id: HomeFilter; label: string }[] = [
-    { id: "new", label: "New" },
-    { id: "expiring", label: "Expiring" },
-    { id: "nearme", label: "Near me" },
-  ];
-
   const allJobs: HomeJob[] = [...sharedJobs];
 
   const mapToCardData = (job: HomeJob): JobCardData => ({
@@ -192,63 +195,97 @@ export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }:
   return (
     <>
       <main className="main-content home-main">
-        <div className="home-welcome">
-          <div>
-            <h1 className="home-heading">Welcome, Tarzan 👋</h1>
-            <p className="home-subheading">Find your next opportunity</p>
+        <div className="content-container">
+          <div className="home-welcome">
+            <div>
+              <h1 className="home-heading">Welcome, Tarzan 👋</h1>
+              <p className="home-subheading">Find your next opportunity</p>
+            </div>
           </div>
-        </div>
 
-        <div className="home-filter-row">
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              className={`home-filter-btn${activeFilter === f.id ? " home-filter-active" : ""}`}
-              onClick={() => setActiveFilter(f.id)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+          <div className={`home-search-shell${isSearchExpanded ? " home-search-expanded" : ""}`}>
+          <div className="home-search-trigger" role="searchbox">
+            <span className="home-search-icon">
+              <HomeSearchIcon size={18} />
+            </span>
+            <input
+              className="home-search-input"
+              type="text"
+              placeholder="Search jobs, companies, or locations"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              onFocus={() => setIsSearchExpanded(true)}
+              onClick={() => setIsSearchExpanded(true)}
+            />
+            {isSearchExpanded && (
+              <button
+                type="button"
+                className="home-search-close"
+                aria-label="Close search"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsSearchExpanded(false);
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
 
-        <div className="home-job-list">
-          {errorMessage && (
-            <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: "#fef2f2", color: "#b91c1c", fontSize: 13, border: "1px solid #fecaca" }}>
-              {errorMessage}
-            </div>
-          )}
-          {toastMessage && (
-            <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: toastMessage.includes("already") ? "#fef3c7" : "#f0fdf4", color: toastMessage.includes("already") ? "#92400e" : "#166534", fontSize: 13, border: `1px solid ${toastMessage.includes("already") ? "#fde68a" : "#bbf7d0"}` }}>
-              {toastMessage}
-            </div>
-          )}
-          {isLoading ? (
-            <div style={{ textAlign: "center", padding: "48px 0", color: "#6B7280" }}>
-              <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Loading jobs...</p>
-              <p style={{ fontSize: 14 }}>Please wait while we load the latest opportunities.</p>
-            </div>
-          ) : allJobs.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "48px 0", color: "#6B7280" }}>
-              <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No jobs available yet.</p>
-              <p style={{ fontSize: 14 }}>Check back later for new opportunities.</p>
+          {isSearchExpanded ? (
+            <div className="home-search-expanded-panel">
+              <SearchJobsPage
+                savedJobIds={savedJobIds}
+                onToggleSavedJob={onToggleSavedJob}
+                query={searchQuery}
+                onQueryChange={setSearchQuery}
+                showSearchInput={false}
+              />
             </div>
           ) : (
-            allJobs.map((job) => {
-              const cardJob = mapToCardData(job);
-              return (
-                <JobCard
-                  key={cardJob.id}
-                  job={cardJob}
-                  onClick={() => setSelectedJob(job)}
-                  onToggleSave={() => handleToggleSaved(job)}
-                  isSaved={savedJobIds.includes(job.jobId ?? "")}
-                  isSaving={savingJobIds[job.jobId ?? ""] ?? false}
-                  showApplyButton={false}
-                  onViewCompany={(companyId) => setSelectedCompanyId(companyId)}
-                />
-              );
-            })
+            <>
+              <div className="home-job-list">
+                {errorMessage && (
+                  <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: "#fef2f2", color: "#b91c1c", fontSize: 13, border: "1px solid #fecaca" }}>
+                    {errorMessage}
+                  </div>
+                )}
+                {toastMessage && (
+                  <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: toastMessage.includes("already") ? "#fef3c7" : "#f0fdf4", color: toastMessage.includes("already") ? "#92400e" : "#166534", fontSize: 13, border: `1px solid ${toastMessage.includes("already") ? "#fde68a" : "#bbf7d0"}` }}>
+                    {toastMessage}
+                  </div>
+                )}
+                {isLoading ? (
+                  <div style={{ textAlign: "center", padding: "48px 0", color: "#6B7280" }}>
+                    <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Loading jobs...</p>
+                    <p style={{ fontSize: 14 }}>Please wait while we load the latest opportunities.</p>
+                  </div>
+                ) : allJobs.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "48px 0", color: "#6B7280" }}>
+                    <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No jobs available yet.</p>
+                    <p style={{ fontSize: 14 }}>Check back later for new opportunities.</p>
+                  </div>
+                ) : (
+                  allJobs.map((job) => {
+                    const cardJob = mapToCardData(job);
+                    return (
+                      <JobCard
+                        key={cardJob.id}
+                        job={cardJob}
+                        onClick={() => setSelectedJob(job)}
+                        onToggleSave={() => handleToggleSaved(job)}
+                        isSaved={savedJobIds.includes(job.jobId ?? "")}
+                        isSaving={savingJobIds[job.jobId ?? ""] ?? false}
+                        showApplyButton={false}
+                        onViewCompany={(companyId) => setSelectedCompanyId(companyId)}
+                      />
+                    );
+                  })
+                )}
+              </div>
+            </>
           )}
+          </div>
         </div>
       </main>
 

@@ -197,10 +197,12 @@ function ChatPage({ onBack }: { onBack: () => void }) {
           <p>Loading...</p>
         </div>
       ) : conversations.length === 0 ? (
-        <div className="chat-list-empty">
-          <ChatBubbleEmptyIcon />
-          <h4>No chats yet</h4>
-          <p>When you message a recruiter or applicant, it will appear here.</p>
+        <div className="chat-empty-state-shell">
+          <div className="chat-list-empty">
+            <ChatBubbleEmptyIcon />
+            <h4>No chats yet</h4>
+            <p>When you message a recruiter or applicant, it will appear here.</p>
+          </div>
         </div>
       ) : (
         <div className="chat-list">
@@ -244,6 +246,7 @@ function ChatPage({ onBack }: { onBack: () => void }) {
   // On desktop it is never shown (no back arrow in top-bar on desktop).
   const conversationPanel = (
     <div className="chat-right">
+      <div className="content-container chat-right-content">
       {!selectedContact ? (
         <div className="chat-right-default">
           <span className="chat-select-pill">Select a chat to start messaging</span>
@@ -308,14 +311,19 @@ function ChatPage({ onBack }: { onBack: () => void }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
+
+  const isMobileListView = isMobile && !selectedContact;
+  const isMobileConversationView = isMobile && Boolean(selectedContact);
 
   // ── Mobile: show one pane at a time ───────────────────────────────────────
   if (isMobile) {
     return (
       <div className="chat-layout">
-        {selectedContact ? conversationPanel : listPanel}
+        {isMobileListView && listPanel}
+        {isMobileConversationView && conversationPanel}
       </div>
     );
   }

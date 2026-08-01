@@ -109,6 +109,7 @@ setApplications(applicationsWithProfiles);
 
 
     <main className="main-content rec-main">
+      <div className="content-container content-container--grid">
       {/* Top row: welcome + 3 metric cards */}
       <div className="rec-top-row">
         {/* Welcome card */}
@@ -307,7 +308,8 @@ setApplications(applicationsWithProfiles);
             </ul>
           </div>
         </div>
-            </div>
+      </div>
+      </div>
 
       <ApplicantViewPanel
         open={showApplicantPanel}
