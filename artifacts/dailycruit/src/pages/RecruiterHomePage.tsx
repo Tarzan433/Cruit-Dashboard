@@ -164,7 +164,7 @@ setApplications(applicationsWithProfiles);
             </div>
 
             <div className="rec-posts-stats desktop-only">
-              <span>{activeCount} Active</span><span className="rec-stat-dot" /><span>{draftCount} Draft</span><span className="rec-stat-dot" /><span>{closedCount} Closed</span>
+              <span>{draftCount} Draft</span><span className="rec-stat-dot" /><span>{closedCount} Closed</span>
             </div>
             <div className="rec-posts-stats-mobile mobile-only">
               <div className="rec-posts-stats-mobile-row">
