@@ -105,15 +105,12 @@ setApplications(applicationsWithProfiles);
   const totalViews = jobs.reduce((sum, j) => sum + (j.views ?? 0), 0);
 
   return (
-
-
-
     <main className="main-content rec-main">
       <div className="content-container content-container--grid">
       {/* Top row: welcome + 3 metric cards */}
       <div className="rec-top-row">
         {/* Welcome card */}
-        <div className="rec-welcome-card">
+        <div className="rec-welcome-card text-[color:var(--auth-input-focus-border)]">
           <div className="rec-welcome-text">
             <h2 className="rec-welcome-title">Welcome back, Tarzan! 👋</h2>
             <p className="rec-welcome-sub">Here's an overview of your activity</p>
@@ -379,7 +376,6 @@ setApplications(applicationsWithProfiles);
         </div>
       </div>
       </div>
-
       <ApplicantViewPanel
         open={showApplicantPanel}
         applicant={selectedApplicant}
@@ -520,26 +516,23 @@ export function JobPostsPage() {
           + Create Job Post
         </button>
       </div>
-
       {errorMessage && (
         <div style={{ marginBottom: 16, padding: "12px 14px", borderRadius: 12, background: "#fef2f2", color: "#b91c1c", border: "1px solid #fecaca", fontSize: 13 }}>
           {errorMessage}
         </div>
       )}
-
       {successMessage && (
         <div style={{ marginBottom: 16, padding: "12px 14px", borderRadius: 12, background: "#f0fdf4", color: "#166534", border: "1px solid #bbf7d0", fontSize: 13 }}>
           {successMessage}
         </div>
       )}
-
       {isLoading ? (
         <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #E5E7EB", padding: "40px 32px", textAlign: "center", color: "#6B7280" }}>
           Loading your posts...
         </div>
       ) : jobs.length === 0 ? (
         /* ── Empty state ── */
-        <div style={{
+        (<div style={{
           background: "#fff", borderRadius: 16, border: "1px solid #E5E7EB",
           padding: "60px 32px", textAlign: "center",
         }}>
@@ -558,180 +551,179 @@ export function JobPostsPage() {
           >
             + Create Job Post
           </button>
-        </div>
+        </div>)
       ) : (
         /* ── Dashboard table (desktop) + Mobile card list ── */
-        <>
-        {/* Mobile card list — hidden on desktop via CSS */}
-        <div className="mobile-card-list">
-          {jobs.map((job) => {
-            const badgeClass =
-              job.status === "Active"
-                ? "mobile-card__badge mobile-card__badge--active"
-                : job.status === "Closed"
-                ? "mobile-card__badge mobile-card__badge--closed"
-                : "mobile-card__badge mobile-card__badge--draft";
-            return (
-              <div key={job.id} className="mobile-card">
-                {/* Top row: title + badge */}
-                <div className="mobile-card__top">
-                  <div>
-                    <p className="mobile-card__title">{job.title}</p>
-                    <p className="mobile-card__meta">
-                      {job.location}{job.commitment && job.commitment !== "—" ? ` · ${job.commitment}` : ""}
-                    </p>
+        (<>
+          {/* Mobile card list — hidden on desktop via CSS */}
+          <div className="mobile-card-list">
+            {jobs.map((job) => {
+              const badgeClass =
+                job.status === "Active"
+                  ? "mobile-card__badge mobile-card__badge--active"
+                  : job.status === "Closed"
+                  ? "mobile-card__badge mobile-card__badge--closed"
+                  : "mobile-card__badge mobile-card__badge--draft";
+              return (
+                <div key={job.id} className="mobile-card">
+                  {/* Top row: title + badge */}
+                  <div className="mobile-card__top">
+                    <div>
+                      <p className="mobile-card__title">{job.title}</p>
+                      <p className="mobile-card__meta">
+                        {job.location}{job.commitment && job.commitment !== "—" ? ` · ${job.commitment}` : ""}
+                      </p>
+                    </div>
+                    <span className={badgeClass}>
+                      <span className="mobile-card__badge-dot">●</span>
+                      {job.status}
+                    </span>
                   </div>
-                  <span className={badgeClass}>
-                    <span className="mobile-card__badge-dot">●</span>
-                    {job.status}
-                  </span>
+
+                  {/* Stats row */}
+                  <div className="mobile-card__stats">
+                    <div className="mobile-card__stat">
+                      <span className="mobile-card__stat-label">Views</span>
+                      <span className="mobile-card__stat-value">{job.views ?? 0}</span>
+                    </div>
+                    <div className="mobile-card__stat">
+                      <span className="mobile-card__stat-label">Applicants</span>
+                      <span className="mobile-card__stat-value">{job.applicants ?? 0}</span>
+                    </div>
+                    <div className="mobile-card__stat">
+                      <span className="mobile-card__stat-label">Posted</span>
+                      <span className="mobile-card__stat-value">{job.postedDate ?? "—"}</span>
+                    </div>
+                  </div>
+
+                  {/* Action icons */}
+                  <div className="mobile-card__actions">
+                    {[
+                      { icon: <Eye size={15} />, title: "View" },
+                      { icon: <Pencil size={15} />, title: "Edit" },
+                      { icon: <Share2 size={15} />, title: "Share" },
+                      {
+                        icon: job.status === "Closed" ? <RotateCcw size={15} /> : <Ban size={15} />,
+                        title: job.status === "Closed" ? "Reopen" : "Close",
+                      },
+                    ].map(({ icon, title }) => (
+                      <button
+                        key={title}
+                        title={title}
+                        className="mobile-card__action-btn"
+                        onClick={
+                          title === "Close" || title === "Reopen"
+                            ? () => handleToggleJobStatus(job.id ?? "", job.status)
+                            : undefined
+                        }
+                      >
+                        {icon}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {/* Desktop table — hidden on mobile via CSS */}
+          <div className="job-posts-table" style={{ background: "#fff", borderRadius: 16, border: "1px solid #E5E7EB", overflow: "hidden" }}>
+            {/* Table header */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr 80px 100px 120px 100px",
+              padding: "12px 20px",
+              borderBottom: "1px solid #E5E7EB",
+              background: "#F9FAFB",
+            }}>
+              {["JOB", "STATUS", "VIEWS", "APPLICANTS", "POSTED", "ACTIONS"].map((h) => (
+                <span key={h} style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  {h}
+                </span>
+              ))}
+            </div>
+
+            {/* Table rows */}
+            {jobs.map((job, idx) => (
+              <div
+                key={job.id}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "2fr 1fr 80px 100px 120px 100px",
+                  padding: "16px 20px",
+                  alignItems: "center",
+                  borderBottom: idx < jobs.length - 1 ? "1px solid #F3F4F6" : "none",
+                  transition: "background 0.15s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#F9FAFB")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+              >
+                {/* Job title + meta */}
+                <div>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>{job.title}</p>
+                  <p style={{ fontSize: 12, color: "#6B7280", margin: "2px 0 0" }}>
+                    {job.location}{job.commitment && job.commitment !== "—" ? ` · ${job.commitment}` : ""}
+                  </p>
                 </div>
 
-                {/* Stats row */}
-                <div className="mobile-card__stats">
-                  <div className="mobile-card__stat">
-                    <span className="mobile-card__stat-label">Views</span>
-                    <span className="mobile-card__stat-value">{job.views ?? 0}</span>
-                  </div>
-                  <div className="mobile-card__stat">
-                    <span className="mobile-card__stat-label">Applicants</span>
-                    <span className="mobile-card__stat-value">{job.applicants ?? 0}</span>
-                  </div>
-                  <div className="mobile-card__stat">
-                    <span className="mobile-card__stat-label">Posted</span>
-                    <span className="mobile-card__stat-value">{job.postedDate ?? "—"}</span>
-                  </div>
-                </div>
+                {/* Status badge */}
+        <div>
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 5,
+      background: job.status === "Active" ? "#f0fdf4" : job.status === "Closed" ? "#fef2f2" : "#fef9f0",
+      color: job.status === "Active" ? "#16a34a" : job.status === "Closed" ? "#b91c1c" : "#d97706",
+      border: `1px solid ${job.status === "Active" ? "#bbf7d0" : job.status === "Closed" ? "#fecaca" : "#fde68a"}`,
+      borderRadius: 999, padding: "4px 12px",
+      fontSize: 12, fontWeight: 600,
+    }}>
+      <span style={{ fontSize: 8 }}>●</span>
+      {job.status}
+    </span>
+  </div>
 
-                {/* Action icons */}
-                <div className="mobile-card__actions">
-                  {[
-                    { icon: <Eye size={15} />, title: "View" },
-                    { icon: <Pencil size={15} />, title: "Edit" },
-                    { icon: <Share2 size={15} />, title: "Share" },
-                    {
-                      icon: job.status === "Closed" ? <RotateCcw size={15} /> : <Ban size={15} />,
-                      title: job.status === "Closed" ? "Reopen" : "Close",
-                    },
-                  ].map(({ icon, title }) => (
-                    <button
-                      key={title}
-                      title={title}
-                      className="mobile-card__action-btn"
-                      onClick={
-                        title === "Close" || title === "Reopen"
-                          ? () => handleToggleJobStatus(job.id ?? "", job.status)
-                          : undefined
-                      }
-                    >
-                      {icon}
-                    </button>
-                  ))}
-                </div>
+                {/* Views */}
+                <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>{job.views}</span>
+
+                {/* Applicants */}
+                <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>{job.applicants}</span>
+
+                {/* Posted date */}
+                <span style={{ fontSize: 13, color: "#6B7280" }}>{job.postedDate}</span>
+
+  {/* Actions */}
+  <div style={{ display: "flex", gap: 8 }}>
+  {[
+    { icon: <Eye size={16} />, title: "View" },
+    { icon: <Pencil size={16} />, title: "Edit" },
+    { icon: <Share2 size={16} />, title: "Share" },
+    {
+      icon: job.status === "Closed" ? <RotateCcw size={16} /> : <Ban size={16} />,
+      title: job.status === "Closed" ? "Reopen" : "Close",
+    },
+  ].map(({ icon, title }) => (
+    <button
+      key={title}
+      title={title}
+      onClick={
+        title === "Close" || title === "Reopen"
+          ? () => handleToggleJobStatus(job.id ?? "", job.status)
+          : undefined
+      }
+      style={{
+        background: "none", border: "none", cursor: "pointer",
+        fontSize: 15, padding: "4px",
+        borderRadius: 6, transition: "background 0.15s",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = "#F3F4F6")}
+      onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
+    >
+      {icon}
+    </button>
+  ))}
+  </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Desktop table — hidden on mobile via CSS */}
-        <div className="job-posts-table" style={{ background: "#fff", borderRadius: 16, border: "1px solid #E5E7EB", overflow: "hidden" }}>
-          {/* Table header */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr 80px 100px 120px 100px",
-            padding: "12px 20px",
-            borderBottom: "1px solid #E5E7EB",
-            background: "#F9FAFB",
-          }}>
-            {["JOB", "STATUS", "VIEWS", "APPLICANTS", "POSTED", "ACTIONS"].map((h) => (
-              <span key={h} style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                {h}
-              </span>
             ))}
           </div>
-
-          {/* Table rows */}
-          {jobs.map((job, idx) => (
-            <div
-              key={job.id}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "2fr 1fr 80px 100px 120px 100px",
-                padding: "16px 20px",
-                alignItems: "center",
-                borderBottom: idx < jobs.length - 1 ? "1px solid #F3F4F6" : "none",
-                transition: "background 0.15s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#F9FAFB")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-            >
-              {/* Job title + meta */}
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>{job.title}</p>
-                <p style={{ fontSize: 12, color: "#6B7280", margin: "2px 0 0" }}>
-                  {job.location}{job.commitment && job.commitment !== "—" ? ` · ${job.commitment}` : ""}
-                </p>
-              </div>
-
-              {/* Status badge */}
-      <div>
-  <span style={{
-    display: "inline-flex", alignItems: "center", gap: 5,
-    background: job.status === "Active" ? "#f0fdf4" : job.status === "Closed" ? "#fef2f2" : "#fef9f0",
-    color: job.status === "Active" ? "#16a34a" : job.status === "Closed" ? "#b91c1c" : "#d97706",
-    border: `1px solid ${job.status === "Active" ? "#bbf7d0" : job.status === "Closed" ? "#fecaca" : "#fde68a"}`,
-    borderRadius: 999, padding: "4px 12px",
-    fontSize: 12, fontWeight: 600,
-  }}>
-    <span style={{ fontSize: 8 }}>●</span>
-    {job.status}
-  </span>
-</div>
-
-              {/* Views */}
-              <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>{job.views}</span>
-
-              {/* Applicants */}
-              <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>{job.applicants}</span>
-
-              {/* Posted date */}
-              <span style={{ fontSize: 13, color: "#6B7280" }}>{job.postedDate}</span>
-
-{/* Actions */}
-<div style={{ display: "flex", gap: 8 }}>
-{[
-  { icon: <Eye size={16} />, title: "View" },
-  { icon: <Pencil size={16} />, title: "Edit" },
-  { icon: <Share2 size={16} />, title: "Share" },
-  {
-    icon: job.status === "Closed" ? <RotateCcw size={16} /> : <Ban size={16} />,
-    title: job.status === "Closed" ? "Reopen" : "Close",
-  },
-].map(({ icon, title }) => (
-  <button
-    key={title}
-    title={title}
-    onClick={
-      title === "Close" || title === "Reopen"
-        ? () => handleToggleJobStatus(job.id ?? "", job.status)
-        : undefined
-    }
-    style={{
-      background: "none", border: "none", cursor: "pointer",
-      fontSize: 15, padding: "4px",
-      borderRadius: 6, transition: "background 0.15s",
-    }}
-    onMouseEnter={(e) => (e.currentTarget.style.background = "#F3F4F6")}
-    onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
-  >
-    {icon}
-  </button>
-))}
-</div>
-            </div>
-          ))}
-        </div>
-        </>
+        </>)
       )}
     </main>
   );
