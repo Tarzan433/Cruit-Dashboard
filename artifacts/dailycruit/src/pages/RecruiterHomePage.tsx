@@ -121,42 +121,80 @@ setApplications(applicationsWithProfiles);
           <button className="rec-new-post-btn" onClick={onCreatePost}>+ New Post</button>
         </div>
 
-        {/* Metric: Total Views */}
-        <div className="rec-metric-card">
-          <div className="rec-metric-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
-            </svg>
-          </div>
-          <span className="rec-metric-value">{totalViews}</span>
-          <span className="rec-metric-label">Total Views</span>
-          <span className="rec-metric-sub">Across all posts</span>
-        </div>
+        {/* Metric cards wrapper */}
+        <div className="rec-stats-row">
+          {/* Metric: Total Views */}
+          <div className="rec-metric-card">
+            <span className="rec-metric-label mobile-only">Total Views</span>
+            <div className="rec-metric-icon desktop-only">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
+              </svg>
+            </div>
+            <span className="rec-metric-value desktop-only">{totalViews}</span>
+            <span className="rec-metric-label desktop-only">Total Views</span>
 
-        {/* Metric: Total Posts */}
-        <div className="rec-metric-card">
-          <div className="rec-metric-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" />
-            </svg>
+            {/* Mobile view layout */}
+            <div className="rec-metric-value-row mobile-only">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
+              </svg>
+              <span className="rec-metric-value">{totalViews}</span>
+            </div>
+            <span className="rec-metric-sub desktop-only">Across all posts</span>
           </div>
-          <span className="rec-metric-value">{totalPosts}</span>
-<span className="rec-metric-label">Total Posts</span>
-<div className="rec-posts-stats">
-  <span>{activeCount} Active</span><span className="rec-stat-dot" /><span>{draftCount} Draft</span><span className="rec-stat-dot" /><span>{closedCount} Closed</span>
-</div>
-        </div>
 
-        {/* Metric: Applications */}
-        <div className="rec-metric-card">
-          <div className="rec-metric-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
-            </svg>
+          {/* Metric: Total Posts */}
+          <div className="rec-metric-card">
+            <span className="rec-metric-label mobile-only">Total Posts</span>
+            <div className="rec-metric-icon desktop-only">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" />
+              </svg>
+            </div>
+            <span className="rec-metric-value desktop-only">{totalPosts}</span>
+            <span className="rec-metric-label desktop-only">Total Posts</span>
+
+            {/* Mobile view layout */}
+            <div className="rec-metric-value-row mobile-only">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" />
+              </svg>
+              <span className="rec-metric-value">{totalPosts}</span>
+            </div>
+
+            <div className="rec-posts-stats desktop-only">
+              <span>{activeCount} Active</span><span className="rec-stat-dot" /><span>{draftCount} Draft</span><span className="rec-stat-dot" /><span>{closedCount} Closed</span>
+            </div>
+            <div className="rec-posts-stats-mobile mobile-only">
+              <div className="rec-posts-stats-mobile-row">
+                <span><span className="stat-num">{activeCount}</span>Active</span>
+                <span><span className="stat-num">{draftCount}</span>Draft</span>
+              </div>
+              <div><span className="stat-num">{closedCount}</span>Archived</div>
+            </div>
           </div>
-          <span className="rec-metric-value">{totalApplications}</span>
-<span className="rec-metric-label">Applications</span>
-          <span className="rec-metric-sub">Recent received</span>
+
+          {/* Metric: Applications */}
+          <div className="rec-metric-card">
+            <span className="rec-metric-label mobile-only">Applications</span>
+            <div className="rec-metric-icon desktop-only">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
+              </svg>
+            </div>
+            <span className="rec-metric-value desktop-only">{totalApplications}</span>
+            <span className="rec-metric-label desktop-only">Applications</span>
+
+            {/* Mobile view layout */}
+            <div className="rec-metric-value-row mobile-only">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
+              </svg>
+              <span className="rec-metric-value">{totalApplications}</span>
+            </div>
+            <span className="rec-metric-sub desktop-only">Recent received</span>
+          </div>
         </div>
       </div>
 
@@ -176,17 +214,17 @@ setApplications(applicationsWithProfiles);
       <span className="rec-empty-text">No applications yet</span>
     </div>
   ) : (
-    <ul style={{ listStyle: "none", margin: 0, padding: "0 4px" }}>
+    <ul className="rec-app-list">
   {applications.slice(0, 5).map((app) => (
-    <li key={app.applicationId} style={{ padding: "14px 4px", borderBottom: "1px solid #F3F4F6" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-        <div>
-          <p style={{ margin: 0, fontWeight: 600, fontSize: 14, color: "#111827" }}>{app.applicantName}</p>
-          <p style={{ margin: "4px 0 0", fontSize: 12.5, color: "#6B7280" }}>
-            Applied to <span style={{ fontWeight: 500, color: "#374151" }}>{app.jobTitle}</span> · {app.status}
+    <li key={app.applicationId} className="rec-app-row">
+      <div className="rec-app-item">
+        <div className="rec-app-info">
+          <p className="rec-app-name">{app.applicantName}</p>
+          <p className="rec-app-sub">
+            Applied to <span className="rec-app-job">{app.jobTitle}</span> · {app.status}
           </p>
         </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      <div className="rec-app-actions">
         <button
           onClick={async (event) => {
             event.stopPropagation();
@@ -280,12 +318,43 @@ setApplications(applicationsWithProfiles);
               <span className="rec-panel-title">Top Posts</span>
               <button className="rec-see-all">See all →</button>
             </div>
-            <div className="rec-empty-panel">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
-              </svg>
-              <span className="rec-empty-text">No posts yet</span>
-            </div>
+            {jobs.length === 0 ? (
+              <div className="rec-empty-panel">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
+                </svg>
+                <span className="rec-empty-text">No posts yet</span>
+              </div>
+            ) : (
+              <div style={{ background: "#F9FAFB", padding: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                {jobs.slice(0, 3).map((job) => {
+                  const views = job.views ?? 0;
+                  const applicants = job.applicants ?? 0;
+                  const rate = views > 0 ? ((applicants / views) * 100).toFixed(1) : "0.0";
+                  return (
+                    <div key={job.id} style={{ background: "#ffffff", borderRadius: "10px", padding: "10px 12px", border: "1px solid #E5E7EB" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontWeight: 700, fontSize: "13px", color: "#111827" }}>{job.title}</span>
+                        <span style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "#6B7280" }}>
+                          <Eye size={13} color="#6B7280" /> {views}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "2px" }}>
+                        {applicants} applicants
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "8px" }}>
+                        <div style={{ flex: 1, height: "4px", borderRadius: "999px", background: "#E5E7EB", overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${Math.min(100, Number(rate))}%`, background: "#22C55E", borderRadius: "999px" }} />
+                        </div>
+                        <span style={{ fontSize: "11px", fontWeight: 600, color: "#22C55E" }}>
+                          {rate}% applied
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Recent Chats */}
@@ -294,18 +363,18 @@ setApplications(applicationsWithProfiles);
               <span className="rec-panel-title">Recent Chats</span>
               <button className="rec-see-all">See all →</button>
             </div>
-            <ul className="rec-chat-list">
+            <div style={{ background: "#F9FAFB", padding: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
               {REC_CHATS.map((c, i) => (
-                <li key={i} className="rec-chat-row">
-                  <div className="rec-chat-avatar">{c.letter}</div>
+                <div key={i} className="rec-chat-row" style={{ background: "#ffffff", borderRadius: "10px", padding: "10px 12px", border: "1px solid #E5E7EB" }}>
+                  <div className="rec-chat-avatar" style={{ background: "#047857", width: "36px", height: "36px" }}>{c.letter}</div>
                   <div className="rec-chat-info">
                     <span className="rec-chat-name">{c.name}</span>
                     <span className="rec-chat-sub">{c.sub}</span>
                   </div>
                   <span className="rec-chat-arrow">→</span>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -491,8 +560,81 @@ export function JobPostsPage() {
           </button>
         </div>
       ) : (
-        /* ── Dashboard table ── */
-        <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #E5E7EB", overflow: "hidden" }}>
+        /* ── Dashboard table (desktop) + Mobile card list ── */
+        <>
+        {/* Mobile card list — hidden on desktop via CSS */}
+        <div className="mobile-card-list">
+          {jobs.map((job) => {
+            const badgeClass =
+              job.status === "Active"
+                ? "mobile-card__badge mobile-card__badge--active"
+                : job.status === "Closed"
+                ? "mobile-card__badge mobile-card__badge--closed"
+                : "mobile-card__badge mobile-card__badge--draft";
+            return (
+              <div key={job.id} className="mobile-card">
+                {/* Top row: title + badge */}
+                <div className="mobile-card__top">
+                  <div>
+                    <p className="mobile-card__title">{job.title}</p>
+                    <p className="mobile-card__meta">
+                      {job.location}{job.commitment && job.commitment !== "—" ? ` · ${job.commitment}` : ""}
+                    </p>
+                  </div>
+                  <span className={badgeClass}>
+                    <span className="mobile-card__badge-dot">●</span>
+                    {job.status}
+                  </span>
+                </div>
+
+                {/* Stats row */}
+                <div className="mobile-card__stats">
+                  <div className="mobile-card__stat">
+                    <span className="mobile-card__stat-label">Views</span>
+                    <span className="mobile-card__stat-value">{job.views ?? 0}</span>
+                  </div>
+                  <div className="mobile-card__stat">
+                    <span className="mobile-card__stat-label">Applicants</span>
+                    <span className="mobile-card__stat-value">{job.applicants ?? 0}</span>
+                  </div>
+                  <div className="mobile-card__stat">
+                    <span className="mobile-card__stat-label">Posted</span>
+                    <span className="mobile-card__stat-value">{job.postedDate ?? "—"}</span>
+                  </div>
+                </div>
+
+                {/* Action icons */}
+                <div className="mobile-card__actions">
+                  {[
+                    { icon: <Eye size={15} />, title: "View" },
+                    { icon: <Pencil size={15} />, title: "Edit" },
+                    { icon: <Share2 size={15} />, title: "Share" },
+                    {
+                      icon: job.status === "Closed" ? <RotateCcw size={15} /> : <Ban size={15} />,
+                      title: job.status === "Closed" ? "Reopen" : "Close",
+                    },
+                  ].map(({ icon, title }) => (
+                    <button
+                      key={title}
+                      title={title}
+                      className="mobile-card__action-btn"
+                      onClick={
+                        title === "Close" || title === "Reopen"
+                          ? () => handleToggleJobStatus(job.id ?? "", job.status)
+                          : undefined
+                      }
+                    >
+                      {icon}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop table — hidden on mobile via CSS */}
+        <div className="job-posts-table" style={{ background: "#fff", borderRadius: 16, border: "1px solid #E5E7EB", overflow: "hidden" }}>
           {/* Table header */}
           <div style={{
             display: "grid",
@@ -589,6 +731,7 @@ export function JobPostsPage() {
             </div>
           ))}
         </div>
+        </>
       )}
     </main>
   );

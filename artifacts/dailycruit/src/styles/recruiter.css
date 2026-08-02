@@ -7,6 +7,7 @@
 }
 
 /* Top row: welcome + 3 metric cards */
+
 .rec-top-row {
   display: grid;
   grid-template-columns: 1.6fr 1fr 1fr 1fr;
@@ -34,7 +35,7 @@
 
 .rec-welcome-sub {
   font-size: 13px;
-  color: rgba(255,255,255,0.78);
+  color: rgba(255, 255, 255, 0.78);
   margin-top: 4px;
 }
 
@@ -110,6 +111,145 @@
 }
 
 /* Middle grid */
+/* Stats row wrapper - on desktop, display: contents makes stat cards direct grid children of .rec-top-row */
+.rec-stats-row {
+  display: contents;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .rec-main {
+    gap: 16px;
+  }
+
+  .rec-top-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .rec-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .rec-mid-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .rec-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Mobile Welcome Card */
+  .rec-welcome-card {
+    background: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 16px;
+    min-height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .rec-welcome-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .rec-welcome-sub {
+    font-size: 12px;
+    color: #6B7280;
+    margin-top: 2px;
+  }
+
+  .rec-new-post-btn {
+    align-self: center;
+    margin-top: 0;
+    background: #22C55E;
+    color: #ffffff;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 999px;
+    border: none;
+    flex-shrink: 0;
+  }
+
+  /* Mobile Metric Cards */
+  .rec-metric-card {
+    background: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: flex-start;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .rec-metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7280;
+    margin-top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rec-metric-value-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .rec-metric-value-row .rec-metric-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #22C55E;
+  }
+
+  .rec-posts-stats-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 2px;
+    font-size: 11px;
+    color: #6B7280;
+  }
+
+  .rec-posts-stats-mobile-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .rec-posts-stats-mobile .stat-num {
+    color: #22C55E;
+    font-weight: 700;
+    margin-right: 3px;
+  }
+}
+
 .rec-mid-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -177,6 +317,65 @@
   color: #9CA3AF;
 }
 
+/* Application list */
+.rec-app-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px;
+}
+
+.rec-app-row {
+  padding: 14px 4px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.rec-app-row:last-child {
+  border-bottom: none;
+}
+
+.rec-app-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.rec-app-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rec-app-name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 14px;
+  color: #111827;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.rec-app-sub {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: #6B7280;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.rec-app-job {
+  font-weight: 500;
+  color: #374151;
+}
+
+.rec-app-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
 /* Chat list */
 .rec-chat-list {
   list-style: none;
@@ -226,15 +425,208 @@
   font-size: 13px;
   font-weight: 600;
   color: #111827;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .rec-chat-sub {
   font-size: 12px;
   color: #9CA3AF;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .rec-chat-arrow {
   font-size: 14px;
   color: #D1D5DB;
   flex-shrink: 0;
+}
+
+/* ─── Mobile Card Pattern ─────────────────────────────────────────────────────
+   Reusable design tokens (copy these for stat cards & filter chips):
+     --mc-gap:            16px   (list gap between cards)
+     --mc-padding-v:      14px   (card vertical padding)
+     --mc-padding-h:      16px   (card horizontal padding)
+     --mc-radius:         14px   (card border-radius)
+     --mc-title-size:     14px / 700   (job title)
+     --mc-meta-size:      12px / 400   (location · type)
+     --mc-label-size:     11px / 500   (stat labels: VIEWS, APPLICANTS, POSTED)
+     --mc-value-size:     13px / 600   (stat values)
+     --mc-badge-pad:      4px 10px     (status badge padding)
+     --mc-badge-size:     11px / 600   (status badge font)
+     --mc-badge-radius:   999px
+     --mc-action-size:    30px × 30px  (icon button touch target)
+     --mc-action-gap:     8px          (gap between action icons)
+─────────────────────────────────────────────────────────────────────────────── */
+
+/* Hide mobile cards on desktop */
+.mobile-card-list {
+  display: none;
+}
+
+@media (max-width: 767px) {
+
+  /* Hide desktop table on mobile */
+  .job-posts-table {
+    display: none !important;
+  }
+
+  /* Show card list on mobile */
+  .mobile-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* --mc-gap */
+  }
+
+  /* Individual card */
+  .mobile-card {
+    background: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    /* --mc-radius */
+    padding: 14px 16px;
+    /* --mc-padding-v --mc-padding-h */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Top row: title block + status badge */
+  .mobile-card__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .mobile-card__title {
+    font-size: 14px;
+    /* --mc-title-size */
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .mobile-card__meta {
+    font-size: 12px;
+    /* --mc-meta-size */
+    color: #6B7280;
+    margin: 3px 0 0;
+  }
+
+  /* Status badge */
+  .mobile-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 999px;
+    /* --mc-badge-radius */
+    padding: 4px 10px;
+    /* --mc-badge-pad */
+    font-size: 11px;
+    /* --mc-badge-size */
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .mobile-card__badge--active {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+  }
+
+  .mobile-card__badge--closed {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+  }
+
+  .mobile-card__badge--draft {
+    background: #fef9f0;
+    color: #d97706;
+    border: 1px solid #fde68a;
+  }
+
+  .mobile-card__badge-dot {
+    font-size: 7px;
+    line-height: 1;
+  }
+
+  /* Stats row: views · applicants · date */
+  .mobile-card__stats {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .mobile-card__stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 8px;
+    border-right: 1px solid #F3F4F6;
+  }
+
+  .mobile-card__stat:first-child {
+    padding-left: 0;
+  }
+
+  .mobile-card__stat:last-child {
+    border-right: none;
+  }
+
+  .mobile-card__stat-label {
+    font-size: 11px;
+    /* --mc-label-size */
+    font-weight: 500;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .mobile-card__stat-value {
+    font-size: 13px;
+    /* --mc-value-size */
+    font-weight: 600;
+    color: #111827;
+  }
+
+  /* Actions row */
+  .mobile-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* --mc-action-gap */
+    padding-top: 2px;
+    border-top: 1px solid #F3F4F6;
+  }
+
+  .mobile-card__action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    /* --mc-action-size */
+    height: 30px;
+    border-radius: 8px;
+    background: none;
+    border: 1px solid #E5E7EB;
+    color: #6B7280;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .mobile-card__action-btn:hover {
+    background: #F3F4F6;
+    color: #374151;
+    border-color: #D1D5DB;
+  }
 }
