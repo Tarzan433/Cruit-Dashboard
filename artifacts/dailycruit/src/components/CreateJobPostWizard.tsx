@@ -167,7 +167,27 @@ export function CreateJobPostWizard({ onBack, onPublish }: Props) {
     }
   }
 
-//Continue button logic
+  // Derived: is the Continue button disabled for the current step?
+  const continueDisabled =
+    (currentStep === 0 && selectedType === null) ||
+    (currentStep === 1 && (!title.trim() || !description.trim())) ||
+    (currentStep === 2 && !city.trim()) ||
+    (currentStep === 3 && (!salaryType || !commitment));
+
+  // Keyboard: Enter on any <input> (not textarea/button) fires the primary action
+  function handleFormKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key !== "Enter") return;
+    const tag = (e.target as HTMLElement).tagName;
+    if (tag !== "INPUT") return;
+    e.preventDefault();
+    if (currentStep < STEPS.length - 1) {
+      handleContinue();
+    } else if (currentStep === STEPS.length - 1 && !published) {
+      handlePublishNow();
+    }
+  }
+
+  //Continue button logic
   function handleContinue() {
   if (currentStep === 1) {
     if (!title.trim() || !description.trim()) {
@@ -204,7 +224,7 @@ function handleAddTag() {
 }
 
   return (
-    <main className="main-content" style={{ background: "#f1f3f7", minHeight: "100vh", padding: "28px clamp(16px, 5vw, 32px)" }}>
+    <main className="main-content wizard-shell">
       {/* ── Back link ── */}
       <button
         onClick={onBack}
@@ -216,7 +236,7 @@ function handleAddTag() {
       >
         ← Job Posts
       </button>
-      <div className="content-container">
+      <div className="content-container wizard-card" onKeyDown={handleFormKeyDown}>
         {/* ── Page header ── */}
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
           <div style={{
@@ -1285,32 +1305,6 @@ function handleAddTag() {
                   {publishError}
                 </div>
               )}
-              {/* Primary actions */}
-              <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
-               <button
-  onClick={handleSaveDraft}
-  disabled={isPublishing}
-  style={{
-    flex: 1, padding: "12px 0", background: "#fff",
-    border: "1px solid #D1D5DB", borderRadius: 999,
-    fontSize: 14, fontWeight: 600, color: "#374151", cursor: isPublishing ? "not-allowed" : "pointer",
-  }}
->
-  Save as Draft
-</button>
-                <button
-                  onClick={handlePublishNow}
-                  disabled={isPublishing}
-                  style={{
-                    flex: 2, padding: "12px 0", background: isPublishing ? "#86efac" : "#22c55e",
-                    border: "none", borderRadius: 999,
-                    fontSize: 15, fontWeight: 700, color: "#fff", cursor: isPublishing ? "not-allowed" : "pointer",
-                    animation: "pulse-publish 2.4s ease-in-out infinite",
-                  }}
-                >
-                  {isPublishing ? "Publishing..." : "🚀 Publish"}
-                </button>
-              </div>
             </div>)
           )
         )}

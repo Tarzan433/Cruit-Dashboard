@@ -3341,3 +3341,82 @@ body {
     grid-column: 1 / -1;
   }
 }
+
+/* ── Wizard Shell ──────────────────────────────────────────────────────────── */
+/* Full-height viewport using dvh to handle mobile browser chrome expand/collapse */
+.wizard-shell {
+  min-height: 100dvh;
+  background: #f1f3f7;
+  padding: 28px clamp(16px, 5vw, 32px);
+  box-sizing: border-box;
+}
+
+/* Mobile: extra bottom padding — clears the fixed action dock (≈56px) + fixed tab bar (72px) */
+@media (max-width: 767px) {
+  .wizard-shell {
+    padding-bottom: 160px;
+  }
+}
+
+/* ── Wizard Card (desktop elevated card wrapper) ────────────────────────────── */
+@media (min-width: 768px) {
+  .wizard-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    padding: 32px;
+  }
+}
+
+/* ── Wizard Card Footer (desktop action buttons inside the card) ─────────────── */
+.wizard-card-footer {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .wizard-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid #E5E7EB;
+    margin-top: 24px;
+  }
+  /* Skip link lives in its own footer row without a divider */
+  .wizard-card-footer--skip {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+    justify-content: center;
+  }
+}
+
+/* ── Wizard Action Dock (mobile — fixed above the global tab bar) ─────────────── */
+.wizard-action-dock {
+  display: none; /* hidden on desktop */
+}
+
+@media (max-width: 767px) {
+  .wizard-action-dock {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: fixed;
+    bottom: 72px; /* sits directly above the 72 px mobile tab bar */
+    left: 0;
+    right: 0;
+    z-index: 500;
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(229, 231, 235, 0.8);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    padding: 12px 16px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .wizard-dock-row {
+    display: flex;
+    gap: 10px;
+  }
+}
