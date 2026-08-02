@@ -17,7 +17,7 @@
 
 /* Welcome card */
 .rec-welcome-card {
-  background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+  background: #22C55E;
   border-radius: 14px;
   padding: 24px 22px 20px;
   display: flex;
