@@ -165,10 +165,10 @@ setApplications(applicationsWithProfiles);
             </div>
             <div className="rec-posts-stats-mobile mobile-only">
               <div className="rec-posts-stats-mobile-row">
-                <span><span className="stat-num">{activeCount}</span>Active</span>
-                <span><span className="stat-num">{draftCount}</span>Draft</span>
+                <span><span className="stat-num text-[color:var(--auth-text-muted)]">{activeCount}</span>Active</span>
+                <span><span className="stat-num text-[color:var(--auth-text-muted)]">{draftCount}</span>Draft</span>
               </div>
-              <div><span className="stat-num">{closedCount}</span>Archived</div>
+              <div><span className="stat-num text-[color:var(--auth-text-muted)]">{closedCount}</span>Archived</div>
             </div>
           </div>
 
