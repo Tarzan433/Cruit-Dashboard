@@ -1,10 +1,21 @@
 import { useState, useEffect } from "react";
-import type { PublishedJob } from "../components/CreateJobPostWizard";
+import { auth } from "../firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { subscribeToActiveJobs } from "../services/jobService";
+import { applyToJob, getFriendlyErrorMessage, hasAppliedToJob } from "../services/applicationService";
+import { JobCard, type JobCardData } from "../components/JobCard";
+import { JobDetailsDrawer } from "../components/JobDetailsDrawer";
+import { CompanyViewPanel } from "../components/CompanyViewPanel";
+import { SearchJobsPage } from "../components/SearchJobsPage";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type HomeJob = {
   id: number;
+  jobId?: string;
+  recruiterId?: string;
+  company?: string;
+  companyId?: string | null;
   title: string;
   tags: string[];
   description: string;
@@ -17,264 +28,285 @@ export type HomeJob = {
 
 // ─── Shared jobs loader ────────────────────────────────────────────────────────
 
-function loadSharedJobs(): HomeJob[] {
-  try {
-    const raw = localStorage.getItem("dailycruit_jobs");
-    if (!raw) return [];
-    const jobs = JSON.parse(raw) as PublishedJob[];
-    return jobs
-      .filter((j) => j.status === "Active")
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .map((j) => ({
-        id: j.createdAt,
-        title: j.title,
-        tags: [j.commitment, j.workMode].filter((t) => t && t !== "—" && t !== "onsite" && t !== "remote" && t !== "hybrid").concat(
-          j.workMode === "remote" ? ["Remote"] : j.workMode === "hybrid" ? ["Hybrid"] : ["On-site"]
-        ),
-        description: j.description,
-        location: j.location || j.workMode,
-        date: j.postedDate,
-        salary: j.salary,
-        views: j.views,
-        bullets: j.skills.length > 0
-          ? j.skills.map((s) => `Skill required: ${s}`)
-          : ["Apply now to learn more about this opportunity."],
-      }));
-  } catch {
-    return [];
-  }
+function toHomeJob(job: { id?: string; recruiterId?: string; company?: string; companyId?: string | null; title: string; description: string; location: string; salary: string; postedDate?: string; commitment?: string; workMode?: string; skills?: string[]; views?: number; createdAt?: number; }): HomeJob {
+  return {
+    id: Number(job.createdAt ?? 0),
+    jobId: job.id,
+    recruiterId: job.recruiterId,
+    company: job.company,
+    companyId: job.companyId ?? null,
+    title: job.title,
+    tags: [job.commitment, job.workMode]
+      .filter((t): t is string => Boolean(t) && t !== "—" && t !== "onsite" && t !== "remote" && t !== "hybrid")
+      .concat(job.workMode === "remote" ? ["Remote"] : job.workMode === "hybrid" ? ["Hybrid"] : ["On-site"]),
+    description: job.description,
+    location: job.location || job.workMode || "Remote",
+    date: job.postedDate || "Just now",
+    salary: job.salary,
+    views: job.views ?? 0,
+    bullets: job.skills && job.skills.length > 0
+      ? job.skills.map((s) => `Skill required: ${s}`)
+      : ["Apply now to learn more about this opportunity."],
+  };
 }
 
-// ─── Data ────────────────────────────────────────────────────────────────────
 
-export const HOME_JOBS: HomeJob[] = [
-  {
-    id: 1,
-    title: "🚀 Work From Home Opportunity for Students & Freshers IN",
-    tags: ["Full time", "Remote"],
-    description:
-      "Join a fast-growing startup and build real-world skills from home. Perfect for recent graduates and students looking for flexible remote work.",
-    location: "Remote",
-    date: "07 Jun 2026",
-    salary: "40$/monthly",
-    views: 21,
-    bullets: [
-      "Work flexible hours from the comfort of your home",
-      "Gain hands-on experience with real client projects",
-      "Mentorship and guidance from senior team members",
-      "Weekly pay with performance bonuses",
-      "Open to students and freshers with 0–1 year of experience",
-    ],
-  },
-  {
-    id: 2,
-    title: "💼 Junior React Developer — Remote First Team",
-    tags: ["Full time", "Remote"],
-    description:
-      "We're looking for an entry-level React developer to join our distributed team. Strong JavaScript fundamentals required.",
-    location: "Remote",
-    date: "10 Jun 2026",
-    salary: "120$/monthly",
-    views: 43,
-    bullets: [
-      "Build reusable UI components with React and TypeScript",
-      "Collaborate daily with designers and backend engineers",
-      "Async-first culture with flexible working hours",
-      "Equipment stipend provided on joining",
-      "Fast-track growth with quarterly reviews",
-    ],
-  },
-  {
-    id: 3,
-    title: "📊 Data Entry Specialist — Part Time",
-    tags: ["Part time", "Remote"],
-    description:
-      "Handle structured data entry tasks accurately and efficiently. Great for students who need a steady part-time income.",
-    location: "Remote",
-    date: "12 Jun 2026",
-    salary: "25$/monthly",
-    views: 67,
-    bullets: [
-      "Accurate data entry into spreadsheets and internal tools",
-      "2–4 hours per day, Monday to Friday",
-      "Training provided — no prior experience needed",
-      "Paid weekly via bank transfer or PayPal",
-      "Opportunity to grow into a full-time analyst role",
-    ],
-  },
-];
 
-// ─── Icon (local copy — only PlusIcon is needed here) ────────────────────────
-
-function PlusIcon({ size = 16 }: { size?: number }) {
+function HomeSearchIcon({ size = 18 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="7" />
+      <line x1="16.5" y1="16.5" x2="22" y2="22" />
     </svg>
   );
 }
 
-// ─── Job Detail Sidebar ───────────────────────────────────────────────────────
+type HomePageProps = {
+  onCreateJob: () => void;
+  savedJobIds: string[];
+  onToggleSavedJob: (jobId: string, jobData?: { title?: string; company?: string; location?: string; salary?: string; employmentType?: string }) => Promise<boolean>;
+};
 
-function JobDetailSidebar({ job, onClose }: { job: HomeJob; onClose: () => void }) {
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
-
-  return (
-    <>
-      <div className="sidebar-overlay" onClick={onClose} />
-      <aside className="job-sidebar">
-        <div className="job-sidebar-header">
-          <h3 className="job-sidebar-title">{job.title}</h3>
-          <button className="job-sidebar-close" onClick={onClose} title="Close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="job-sidebar-stats">
-          <span className="sidebar-stat">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            {job.location}
-          </span>
-          <span className="sidebar-stat">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            {job.views} views
-          </span>
-        </div>
-
-        <div className="job-sidebar-meta">
-          <div className="meta-block">
-            <span className="meta-label">Salary</span>
-            <span className="meta-value salary-value">{job.salary}</span>
-          </div>
-          <div className="meta-block">
-            <span className="meta-label">Posted</span>
-            <span className="meta-value">{job.date}</span>
-          </div>
-        </div>
-
-        <div className="job-sidebar-tags">
-          {job.tags.map((t) => (
-            <span key={t} className="home-tag">{t}</span>
-          ))}
-        </div>
-
-        <div className="job-sidebar-section">
-          <h4 className="sidebar-section-title">DESCRIPTION</h4>
-          <ul className="sidebar-bullets">
-            {job.bullets.map((b, i) => (
-              <li key={i}>✅ {b}</li>
-            ))}
-          </ul>
-        </div>
-
-        <button className="sidebar-apply-btn">Apply Now →</button>
-      </aside>
-    </>
-  );
-}
-
-// ─── Home Job Card ────────────────────────────────────────────────────────────
-
-function HomeJobCard({ job, onClick }: { job: HomeJob; onClick: () => void }) {
-  return (
-    <div className="home-job-card" onClick={onClick}>
-      <div className="home-job-card-inner">
-        <div className="home-job-top">
-          <h3 className="home-job-title">{job.title}</h3>
-          <div className="home-job-tags">
-            {job.tags.map((t) => (
-              <span key={t} className="home-tag">{t}</span>
-            ))}
-          </div>
-        </div>
-        <p className="home-job-desc">{job.description}</p>
-        <div className="home-job-meta">
-          <span className="home-meta-item">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            {job.location}
-          </span>
-          <span className="home-meta-item">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            {job.date}
-          </span>
-          <span className="home-meta-salary">{job.salary}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Home Page ────────────────────────────────────────────────────────────────
-
-type HomeFilter = "new" | "expiring" | "nearme";
-
-export default function HomePage({ onCreateJob }: { onCreateJob: () => void }) {
-  const [activeFilter, setActiveFilter] = useState<HomeFilter>("new");
+export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }: HomePageProps) {
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [selectedJob, setSelectedJob] = useState<HomeJob | null>(null);
   const [sharedJobs, setSharedJobs] = useState<HomeJob[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isApplied, setIsApplied] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [savingJobIds, setSavingJobIds] = useState<Record<string, boolean>>({});
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    setSharedJobs(loadSharedJobs());
+    let mounted = true;
+
+    const unsubscribe = subscribeToActiveJobs(
+      (jobs) => {
+        if (!mounted) return;
+        setSharedJobs(jobs.map(toHomeJob));
+        setIsLoading(false);
+        setErrorMessage(null);
+      },
+      () => {
+        if (!mounted) return;
+        setErrorMessage("We couldn't load jobs right now. Please try again.");
+        setIsLoading(false);
+      }
+    );
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
-  const filters: { id: HomeFilter; label: string }[] = [
-    { id: "new", label: "New" },
-    { id: "expiring", label: "Expiring" },
-    { id: "nearme", label: "Near me" },
-  ];
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async () => {
+      if (!selectedJob?.jobId) return;
+      try {
+        setIsApplied(await hasAppliedToJob(selectedJob.jobId));
+      } catch {
+        setIsApplied(false);
+      }
+    });
 
-  // Recruiter-published jobs first (newest), then static mock jobs
-  const allJobs: HomeJob[] = [...sharedJobs, ...HOME_JOBS];
+    return () => unsubscribeAuth();
+  }, [selectedJob?.jobId]);
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timeout = window.setTimeout(() => setToastMessage(null), 2600);
+    return () => window.clearTimeout(timeout);
+  }, [toastMessage]);
+
+  async function handleToggleSaved(job: HomeJob) {
+    if (!job.jobId) return;
+
+    setSavingJobIds((prev) => ({ ...prev, [job.jobId!]: true }));
+
+    try {
+      const nextSaved = await onToggleSavedJob(job.jobId, {
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        salary: job.salary,
+        employmentType: job.tags.find((tag) => tag.toLowerCase().includes("full")) ?? "Full-time",
+      });
+
+      setToastMessage(nextSaved ? `Saved ${job.title}.` : `Removed ${job.title} from saved jobs.`);
+    } catch (error) {
+      setToastMessage(error instanceof Error ? error.message : "We couldn't update your saved jobs right now. Please try again.");
+    } finally {
+      setSavingJobIds((prev) => ({ ...prev, [job.jobId!]: false }));
+    }
+  }
+
+  async function handleApplyToSelectedJob() {
+    if (!selectedJob?.jobId) return;
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      setToastMessage("Please sign in before applying to a job.");
+      return;
+    }
+
+    setIsApplying(true);
+
+    try {
+      await applyToJob({
+        jobId: selectedJob.jobId,
+        recruiterId: selectedJob.recruiterId ?? "",
+        applicantId: userId,
+        jobTitle: selectedJob.title,
+        company: selectedJob.company ?? selectedJob.title,
+        location: selectedJob.location,
+        salary: selectedJob.salary,
+        employmentType: selectedJob.tags.find((tag) => tag.toLowerCase().includes("full")) ?? "Full-time",
+        experience: "Not specified",
+      });
+      setIsApplied(true);
+      setToastMessage(`Application submitted for ${selectedJob.title}.`);
+    } catch (error) {
+      setToastMessage(getFriendlyErrorMessage(error));
+    } finally {
+      setIsApplying(false);
+    }
+  }
+
+  const allJobs: HomeJob[] = [...sharedJobs];
+
+  const mapToCardData = (job: HomeJob): JobCardData => ({
+    id: job.jobId ?? String(job.id),
+    recruiterId: job.recruiterId,
+    title: job.title,
+    company: job.company,
+    companyId: job.companyId,
+    location: job.location,
+    posted: job.date,
+    salary: job.salary,
+    tags: job.tags,
+    description: job.description,
+    views: job.views,
+    bullets: job.bullets,
+  });
 
   return (
     <>
       <main className="main-content home-main">
-        <div className="home-welcome">
-          <div>
-            <h1 className="home-heading">Welcome, Tarzan 👋</h1>
-            <p className="home-subheading">Find your next opportunity</p>
+        <div className="content-container">
+          <div className="home-welcome">
+            <div>
+              <h1 className="home-heading">Welcome, Tarzan 👋</h1>
+              <p className="home-subheading">Find your next opportunity</p>
+            </div>
           </div>
-          <button className="create-btn-top" style={{ position: "static", marginLeft: "auto" }} onClick={onCreateJob}>
-            <PlusIcon size={15} />
-            Create job post
-          </button>
-        </div>
 
-        <div className="home-filter-row">
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              className={`home-filter-btn${activeFilter === f.id ? " home-filter-active" : ""}`}
-              onClick={() => setActiveFilter(f.id)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+          <div className={`home-search-shell${isSearchExpanded ? " home-search-expanded" : ""}`}>
+          <div className="home-search-trigger" role="searchbox">
+            <span className="home-search-icon">
+              <HomeSearchIcon size={18} />
+            </span>
+            <input
+              className="home-search-input"
+              type="text"
+              placeholder="Search jobs, companies, or locations"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              onFocus={() => setIsSearchExpanded(true)}
+              onClick={() => setIsSearchExpanded(true)}
+            />
+            {isSearchExpanded && (
+              <button
+                type="button"
+                className="home-search-close"
+                aria-label="Close search"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsSearchExpanded(false);
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
 
-        <div className="home-job-list">
-          {allJobs.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "48px 0", color: "#6B7280" }}>
-              <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No jobs available yet.</p>
-              <p style={{ fontSize: 14 }}>Check back later for new opportunities.</p>
+          {isSearchExpanded ? (
+            <div className="home-search-expanded-panel">
+              <SearchJobsPage
+                savedJobIds={savedJobIds}
+                onToggleSavedJob={onToggleSavedJob}
+                query={searchQuery}
+                onQueryChange={setSearchQuery}
+                showSearchInput={false}
+              />
             </div>
           ) : (
-            allJobs.map((job) => (
-              <HomeJobCard key={job.id} job={job} onClick={() => setSelectedJob(job)} />
-            ))
+            <>
+              <div className="home-job-list">
+                {errorMessage && (
+                  <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: "#fef2f2", color: "#b91c1c", fontSize: 13, border: "1px solid #fecaca" }}>
+                    {errorMessage}
+                  </div>
+                )}
+                {toastMessage && (
+                  <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: toastMessage.includes("already") ? "#fef3c7" : "#f0fdf4", color: toastMessage.includes("already") ? "#92400e" : "#166534", fontSize: 13, border: `1px solid ${toastMessage.includes("already") ? "#fde68a" : "#bbf7d0"}` }}>
+                    {toastMessage}
+                  </div>
+                )}
+                {isLoading ? (
+                  <div style={{ textAlign: "center", padding: "48px 0", color: "#6B7280" }}>
+                    <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Loading jobs...</p>
+                    <p style={{ fontSize: 14 }}>Please wait while we load the latest opportunities.</p>
+                  </div>
+                ) : allJobs.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "48px 0", color: "#6B7280" }}>
+                    <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No jobs available yet.</p>
+                    <p style={{ fontSize: 14 }}>Check back later for new opportunities.</p>
+                  </div>
+                ) : (
+                  allJobs.map((job) => {
+                    const cardJob = mapToCardData(job);
+                    return (
+                      <JobCard
+                        key={cardJob.id}
+                        job={cardJob}
+                        onClick={() => setSelectedJob(job)}
+                        onToggleSave={() => handleToggleSaved(job)}
+                        isSaved={savedJobIds.includes(job.jobId ?? "")}
+                        isSaving={savingJobIds[job.jobId ?? ""] ?? false}
+                        showApplyButton={false}
+                        onViewCompany={(companyId) => setSelectedCompanyId(companyId)}
+                      />
+                    );
+                  })
+                )}
+              </div>
+            </>
           )}
+          </div>
         </div>
       </main>
 
       {selectedJob && (
-        <JobDetailSidebar job={selectedJob} onClose={() => setSelectedJob(null)} />
+        <JobDetailsDrawer
+          job={mapToCardData(selectedJob)}
+          onClose={() => setSelectedJob(null)}
+          onApply={handleApplyToSelectedJob}
+          isApplied={isApplied}
+          isApplying={isApplying}
+          isSaved={savedJobIds.includes(selectedJob.jobId ?? "")}
+          isSaving={savingJobIds[selectedJob.jobId ?? ""] ?? false}
+          onToggleSave={() => handleToggleSaved(selectedJob)}
+        />
+      )}
+
+      {selectedCompanyId && (
+        <CompanyViewPanel
+          companyId={selectedCompanyId}
+          onClose={() => setSelectedCompanyId(null)}
+        />
       )}
     </>
   );

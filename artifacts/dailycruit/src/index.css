@@ -74,6 +74,14 @@ body {
   gap: 2px;
 }
 
+.top-nav-tabs {
+  display: flex;
+}
+
+.mobile-tabs-bar {
+  display: none;
+}
+
 .nav-link {
   display: flex;
   align-items: center;
@@ -178,6 +186,75 @@ body {
 /* Main content */
 .main-content {
   margin-top: 64px;
+}
+
+/* Shared centered content wrapper */
+.content-container {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.content-container--grid {
+  gap: 20px;
+}
+
+@media (max-width: 767px) {
+  .top-nav-tabs {
+    display: none;
+  }
+
+  .mobile-tabs-bar {
+    display: flex !important;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 72px;
+    align-items: center;
+    justify-content: space-around;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #ffffff;
+    border-top: 1px solid #E5E7EB;
+    box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+  }
+
+  .mobile-tabs-bar .nav-pill {
+    width: 100%;
+    justify-content: space-around;
+    background: transparent;
+    padding: 0;
+    gap: 8px;
+  }
+
+  .mobile-tabs-bar .nav-link {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 6px;
+    border-radius: 12px;
+    font-size: 11px;
+    line-height: 1.1;
+  }
+
+  .mobile-tabs-bar .nav-link.active {
+    background: #ECFDF3;
+    color: #166534;
+    box-shadow: none;
+  }
+
+  .main-content {
+    padding-bottom: 88px;
+  }
+}
+
+.main-content {
   min-height: calc(100vh - 64px);
   padding: 28px 32px;
   position: relative;
@@ -365,6 +442,78 @@ body {
 }
 
 /* Search input container (position:relative holds icons) */
+.home-search-shell {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.home-search-trigger {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  margin: 0 auto 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  height: 52px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #D1D5DB;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.home-search-trigger:focus-within {
+  border-color: #22C55E;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+}
+
+.home-search-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
+.home-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111827;
+}
+
+.home-search-input::placeholder {
+  color: #9CA3AF;
+}
+
+.home-search-close {
+  border: none;
+  background: transparent;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.home-search-close:hover {
+  background: #F3F4F6;
+}
+
+.home-search-expanded-panel {
+  width: 100%;
+}
+
+.home-search-expanded-panel .search-page {
+  padding-top: 0;
+}
+
 .search-input-container {
   position: relative;
   width: 560px;
@@ -502,6 +651,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-width: 700px;
 }
 
 .results-count {
@@ -687,7 +837,7 @@ body {
 /* ─── Profile page ────────────────────────────────────────────────────────── */
 
 .profile-main {
-  max-width: 900px;
+  max-width: 980px;
   margin: 0 auto;
   padding-top: 24px;
   display: flex;
@@ -715,22 +865,23 @@ body {
   border-color: #9CA3AF;
 }
 
-/* Alert banner */
+/* Visual refinement: trims the warning banner height and spacing while keeping the same yellow warning treatment. */
 .profile-alert-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   background: #FFFBEB;
   border: 1.5px dashed #FCD34D;
-  border-radius: 12px;
-  padding: 14px 18px;
+  border-radius: 14px;
+  padding: 10px 16px;
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.08);
 }
 
 .alert-text {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .alert-text strong {
@@ -741,10 +892,11 @@ body {
 .alert-text span {
   font-size: 13px;
   color: #B45309;
+  line-height: 1.45;
 }
 
 .alert-complete-btn {
-  padding: 8px 18px;
+  padding: 8px 16px;
   background: #F59E0B;
   color: #ffffff;
   border: none;
@@ -762,62 +914,68 @@ body {
   background: #D97706;
 }
 
-/* Profile header card */
+/* Visual refinement: makes the main profile card feel more premium with wider spacing, softer shadow, and better proportions. */
 .profile-header-card {
   background: #ffffff;
   border: 1px solid #E5E7EB;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 18px;
+  padding: 28px 30px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 28px;
   flex-wrap: wrap;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
 }
 
 .profile-header-left {
   display: flex;
-  align-items: flex-start;
-  gap: 18px;
+  align-items: center;
+  gap: 20px;
+  flex: 1 1 320px;
 }
 
 .profile-avatar-lg {
-  width: 72px;
-  height: 72px;
+  width: 82px;
+  height: 82px;
   border-radius: 50%;
   background: #7C3AED;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   color: #ffffff;
   flex-shrink: 0;
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.2);
 }
 
 .profile-info-block {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  min-width: 0;
 }
 
 .profile-name {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: #111827;
   line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .profile-handle {
   font-size: 13px;
   color: #9CA3AF;
+  line-height: 1.2;
 }
 
 .profile-add-headline {
   align-self: flex-start;
   font-size: 13px;
   color: #22C55E;
-  font-weight: 500;
+  font-weight: 600;
   font-family: inherit;
   background: transparent;
   border: none;
@@ -833,9 +991,11 @@ body {
 .profile-meta-line {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 13px;
   color: #6B7280;
+  flex-wrap: wrap;
+  line-height: 1.5;
 }
 
 .meta-dot {
@@ -852,7 +1012,7 @@ body {
   padding: 3px 10px;
   border-radius: 999px;
   align-self: flex-start;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 /* Completion tracker */
@@ -860,7 +1020,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-width: 200px;
+  min-width: 220px;
+  flex: 0 1 240px;
 }
 
 .completion-label-row {
@@ -871,7 +1032,7 @@ body {
 
 .completion-label {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: #374151;
 }
 
@@ -900,7 +1061,7 @@ body {
   background: #FEF3C7;
   color: #92400E;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 3px 10px;
   border-radius: 999px;
   align-self: flex-start;
@@ -910,22 +1071,79 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 9px 16px;
   border: 1.5px solid #E5E7EB;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #ffffff;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   font-family: inherit;
   color: #374151;
   cursor: pointer;
   align-self: flex-start;
-  transition: background 0.12s ease, border-color 0.12s ease;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
 }
 
 .profile-edit-btn:hover {
   background: #F9FAFB;
   border-color: #9CA3AF;
+  transform: translateY(-1px);
+}
+
+/* Responsive refinement: keeps the banner and header card balanced on tablet and mobile without introducing overflow. */
+@media (max-width: 768px) {
+  .profile-header-card {
+    padding: 24px 20px;
+    gap: 20px;
+  }
+
+  .profile-header-left {
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .profile-header-right {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-alert-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 14px;
+  }
+
+  .alert-complete-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .profile-header-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .profile-header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .profile-avatar-lg {
+    width: 76px;
+    height: 76px;
+  }
+
+  .profile-name {
+    font-size: 20px;
+  }
+
+  .profile-meta-line {
+    gap: 6px;
+  }
 }
 
 /* Tab nav */
@@ -1097,6 +1315,263 @@ body {
   text-align: center;
   color: #9CA3AF;
   font-size: 14px;
+}
+
+/* ─── Profile edit modal ────────────────────────────────────────────────── */
+
+.profile-toast {
+  position: sticky;
+  top: 16px;
+  z-index: 120;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  width: fit-content;
+  align-self: flex-start;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+}
+
+.profile-toast-success {
+  background: #ECFDF3;
+  color: #166534;
+}
+
+.profile-toast-error {
+  background: #FEF2F2;
+  color: #B91C1C;
+}
+
+.profile-edit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.profile-edit-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  width: min(780px, 100%);
+  max-height: min(90vh, 900px);
+  overflow-y: auto;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+  animation: profile-edit-in 0.2s ease;
+}
+
+@keyframes profile-edit-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.profile-edit-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.profile-edit-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.profile-edit-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.profile-edit-close {
+  border: none;
+  background: #F3F4F6;
+  color: #374151;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.profile-edit-form {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profile-edit-section {
+  background: #FAFAFA;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.profile-edit-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #6B7280;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.profile-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.profile-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-edit-field-full {
+  grid-column: 1 / -1;
+}
+
+.profile-edit-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.profile-edit-input,
+.profile-edit-textarea {
+  width: 100%;
+  border: 1px solid #D1D5DB;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  color: #111827;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.profile-edit-input:focus,
+.profile-edit-textarea:focus {
+  outline: none;
+  border-color: #22C55E;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+}
+
+.profile-edit-textarea {
+  resize: vertical;
+  min-height: 88px;
+}
+
+.profile-edit-error {
+  font-size: 12px;
+  color: #DC2626;
+}
+
+.profile-edit-skill-row {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-edit-inline-btn {
+  border: none;
+  border-radius: 10px;
+  background: #22C55E;
+  color: #ffffff;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.profile-edit-skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.profile-edit-skill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: #DCFCE7;
+  color: #166534;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.profile-edit-skill-chip button {
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.profile-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.profile-edit-cancel-btn,
+.profile-edit-save-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-edit-cancel-btn {
+  background: #F3F4F6;
+  color: #374151;
+}
+
+.profile-edit-save-btn {
+  background: #22C55E;
+  color: #ffffff;
+  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-edit-save-btn:disabled,
+.profile-edit-cancel-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.profile-edit-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.5);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* ─── Account Type Modal ─────────────────────────────────────────────────── */
@@ -1665,6 +2140,171 @@ body {
   background: #16A34A;
 }
 
+/* ─── Achievements Tab ───────────────────────────────────────────────────── */
+
+.achievement-tab-card {
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.achievement-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.achievement-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+}
+
+.achievement-subtitle {
+  margin: 0;
+  color: #6B7280;
+  font-size: 13px;
+}
+
+.achievement-refresh-btn {
+  border: 1px solid #D1FAE5;
+  background: #F0FDF4;
+  color: #16A34A;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.achievement-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.achievement-progress-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.achievement-progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: #E5E7EB;
+  overflow: hidden;
+}
+
+.achievement-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22C55E 0%, #4ADE80 100%);
+  transition: width 0.25s ease;
+}
+
+.achievement-loading {
+  padding: 20px 0;
+  color: #6B7280;
+  font-size: 14px;
+}
+
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.achievement-card {
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  padding: 16px;
+  background: #FAFAFA;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.achievement-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.achievement-card-unlocked {
+  background: linear-gradient(135deg, #F0FDF4 0%, #ffffff 100%);
+  border-color: #BBF7D0;
+  animation: achievement-pop 0.3s ease;
+}
+
+@keyframes achievement-pop {
+  0% {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.achievement-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.achievement-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.achievement-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.achievement-badge-unlocked {
+  background: #DCFCE7;
+  color: #16A34A;
+}
+
+.achievement-card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.achievement-card-description {
+  margin: 0;
+  font-size: 13px;
+  color: #6B7280;
+  line-height: 1.45;
+}
+
 /* ─── Profile dropdown ────────────────────────────────────────────────────── */
 
 .profile-dropdown-wrapper {
@@ -1799,6 +2439,33 @@ body {
   height: calc(100vh - 64px);
   margin-top: 64px;
   overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .chat-layout {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 64px);
+    margin-top: 64px;
+  }
+
+  .chat-left,
+  .chat-right {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+    height: 100%;
+  }
+
+  .chat-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-right {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 /* Left panel */
@@ -1953,6 +2620,11 @@ body {
 }
 
 /* Chat list empty state */
+.chat-empty-state-shell {
+  flex: 1;
+  min-height: 0;
+}
+
 .chat-list-empty {
   flex: 1;
   display: flex;
@@ -1988,6 +2660,11 @@ body {
   flex-direction: column;
   background: #F0F2F5;
   min-width: 0;
+}
+
+.chat-right-content {
+  flex: 1;
+  min-height: 0;
 }
 
 .chat-right-default {
@@ -2324,17 +3001,62 @@ body {
 }
 
 /* ─── Responsive ──────────────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .nav-link span.nav-label {
-    display: none;
+@media (max-width: 767px) {
+  /* Keep the navbar at the top on mobile. Previously this block moved
+     the entire `.navbar` to the bottom and hid the logo/right icons,
+     which made the top-bar (logo, chat, bell, profile) disappear.
+     We only want to hide the tabs, not the surrounding navbar. */
+
+  .navbar-logo {
+    /* ensure logo remains visible on mobile */
+    display: flex;
+    align-items: center;
   }
 
-  .navbar-logo .logo-text {
-    display: none;
+  .nav-pill {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: space-between;
+    padding: 4px;
+    background: transparent;
+    gap: 4px;
+  }
+
+  .nav-link {
+    gap: 4px;
+    padding: 8px 10px;
+    min-height: 44px;
+    font-size: 10px;
+    line-height: 1.1;
+    flex: 1 1 0;
+    justify-content: center;
+    border-radius: 12px;
+    background: transparent;
+  }
+
+  .nav-link.active {
+    background: #F3F4F6;
+    box-shadow: none;
+  }
+
+  .nav-link .nav-icon {
+    font-size: 16px;
+  }
+
+  .nav-link span.nav-label {
+    display: inline;
+    white-space: nowrap;
+  }
+
+  .navbar-right {
+    /* keep right-side icons visible on mobile */
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .main-content {
-    padding: 20px 16px;
+    padding: 20px 16px 96px;
   }
 
   .create-btn-top {
@@ -2342,5 +3064,359 @@ body {
     top: 20px;
     padding: 8px 14px;
     font-size: 13px;
+  }
+
+  .chat-empty-state-shell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    height: 64px;
+    border-bottom: 1px solid #E5E7EB;
+    border-top: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* ─── Profile Photo Upload ──────────────────────────────────────────────────── */
+
+.profile-photo-wrapper {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.profile-avatar-photo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 2px solid #E5E7EB;
+}
+
+/* Pencil button overlaid on the avatar */
+.profile-photo-pencil {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #7C3AED;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease;
+  z-index: 2;
+}
+
+.profile-photo-pencil:hover {
+  background: #6D28D9;
+}
+
+/* Invisible backdrop to close menu on outside click */
+.profile-photo-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+/* Popup menu */
+.profile-photo-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+  z-index: 20;
+}
+
+.profile-photo-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #374151;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease;
+}
+
+.profile-photo-menu-item:hover {
+  background: #F3F4F6;
+}
+
+/* Preview modal backdrop */
+.profile-photo-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Preview modal box */
+.profile-photo-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px 24px;
+  max-width: 360px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.profile-photo-modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  align-self: flex-start;
+}
+
+.profile-photo-preview-img {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #E5E7EB;
+}
+
+/* Error message inside modal */
+.profile-photo-error {
+  font-size: 13px;
+  color: #DC2626;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 7px;
+  padding: 9px 12px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Inline error (shown when validation rejects a file before preview) */
+.profile-photo-inline-error {
+  font-size: 13px;
+  color: #DC2626;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 12px 0 0;
+  text-align: center;
+}
+
+/* Modal action buttons */
+.profile-photo-modal-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.profile-photo-cancel-btn {
+  flex: 1;
+  padding: 10px 0;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 999px;
+  background: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.profile-photo-cancel-btn:hover:not(:disabled) {
+  background: #F9FAFB;
+  border-color: #9CA3AF;
+}
+
+.profile-photo-cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.profile-photo-save-btn {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 999px;
+  background: #7C3AED;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease;
+}
+
+.profile-photo-save-btn:hover:not(:disabled) {
+  background: #6D28D9;
+}
+
+.profile-photo-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading spinner inside Save button */
+.profile-photo-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin-photo 0.7s linear infinite;
+}
+
+@keyframes spin-photo {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Job Post Wizard ─────────────────────────────────────────────────────── */
+
+/* Hide scrollbar on stepper scroll container while keeping scroll functional */
+.wizard-stepper-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.wizard-stepper-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Salary row: 4 columns on desktop, responsive on narrow mobile */
+@media (max-width: 540px) {
+  .wizard-salary-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  /* "to" divider — hide on narrow screens where it would orphan into its own row */
+  .wizard-salary-row > :nth-child(2) {
+    display: none;
+  }
+  /* Salary type select — span full row width */
+  .wizard-salary-row > :nth-child(4) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── Wizard Shell ──────────────────────────────────────────────────────────── */
+/* Full-height viewport using dvh to handle mobile browser chrome expand/collapse */
+.wizard-shell {
+  min-height: 100dvh;
+  background: #f1f3f7;
+  padding: 28px clamp(16px, 5vw, 32px);
+  box-sizing: border-box;
+}
+
+/* Mobile: extra bottom padding — clears the fixed action dock (≈56px) + fixed tab bar (72px) */
+@media (max-width: 767px) {
+  .wizard-shell {
+    padding-bottom: 160px;
+  }
+}
+
+/* ── Wizard Card (desktop elevated card wrapper) ────────────────────────────── */
+@media (min-width: 768px) {
+  .wizard-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    padding: 32px;
+  }
+}
+
+/* ── Wizard Card Footer (desktop action buttons inside the card) ─────────────── */
+.wizard-card-footer {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .wizard-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid #E5E7EB;
+    margin-top: 24px;
+  }
+  /* Skip link lives in its own footer row without a divider */
+  .wizard-card-footer--skip {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+    justify-content: center;
+  }
+}
+
+/* ── Wizard Action Dock (mobile — fixed above the global tab bar) ─────────────── */
+.wizard-action-dock {
+  display: none; /* hidden on desktop */
+}
+
+@media (max-width: 767px) {
+  .wizard-action-dock {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: fixed;
+    bottom: 72px; /* sits directly above the 72 px mobile tab bar */
+    left: 0;
+    right: 0;
+    z-index: 500;
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(229, 231, 235, 0.8);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    padding: 12px 16px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .wizard-dock-row {
+    display: flex;
+    gap: 10px;
   }
 }

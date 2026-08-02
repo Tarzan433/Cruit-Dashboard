@@ -69,9 +69,11 @@ catalog:
 autoInstallPeers: false
 
 allowBuilds:
+  '@firebase/util': false
   '@swc/core': true
   esbuild: true
   msw: true
+  protobufjs: false
   unrs-resolver: true
 
 overrides:

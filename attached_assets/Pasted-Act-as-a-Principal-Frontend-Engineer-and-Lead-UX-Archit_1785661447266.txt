@@ -1,0 +1,23 @@
+Act as a Principal Frontend Engineer and Lead UX Architect. The current Job Creation Wizard step container hides primary form actions ("Back" / "Continue" buttons) beneath the fixed bottom tab bar on mobile, lacks proper viewport boundary handling, and doesn't scale seamlessly to desktop screens.
+
+Refactor the view into a production-grade, highly responsive Layout Architecture using the following technical requirements:
+
+1. **App Shell & Layout Boundaries:**
+   - Establish a full-height viewport container using dynamic viewport units (`h-[100dvh]`) to prevent layout shifting on mobile browsers when URL bars collapse/expand.
+   - Enforce an App Shell structure: Top Navigation Header (fixed), Global Bottom Tab Bar (fixed on mobile), and the Middle Viewport (scrollable content area).
+   - The middle content container must use `flex-1 overflow-y-auto` with webkit smooth scrolling and explicit bottom padding (`pb-32` on mobile) so scrollable content never collides with fixed overlays.
+
+2. **Sticky Action Dock (Form Controls):**
+   - Place the primary step controls ("Back" / "Continue" / "Submit") inside a dedicated `FormActionDock` component.
+   - **Mobile behavior:** Pin this dock sticky to the bottom of the viewport, layered immediately above the global bottom tab bar (`bottom-[64px]` or dynamic tab height equivalent) with a higher `z-index`. 
+   - Apply backdrop blur (`backdrop-blur-md bg-background/90`) and a subtle top border/shadow to visually elevate the action dock above scrolling form content.
+   - Incorporate native safe-area inset accounting: `padding-bottom: max(1rem, env(safe-area-inset-bottom))`.
+
+3. **Responsive Desktop Adaptation (`md:` breakpoint and up):**
+   - Completely hide the global mobile bottom tab bar on screens `>= 768px`.
+   - Wrap the Job Creation Wizard inside a centered, max-width card (`max-w-2xl` / `max-w-3xl`) with elevated shadow (`shadow-md`), rounded corners (`rounded-xl`), and crisp border definition (`border border-border`).
+   - On desktop, integrate the "Back" and "Continue" buttons directly inside the Card Footer component instead of pinning them to the bottom of the screen viewport.
+
+4. **Form UX & Accessibility (a11y):**
+   - Ensure "Continue" remains disabled or shows a loading state if mandatory inputs (`JOB TITLE *`, `DESCRIPTION *`) fail validation.
+   - Maintain keyboard accessibility: preserve DOM focus ring visibility, ensure standard `Tab` / `Shift+Tab` sequence passes through form fields to the primary action buttons, and bind the `Enter` key on non-multiline inputs to trigger the primary form action.

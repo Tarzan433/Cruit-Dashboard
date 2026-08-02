@@ -1,0 +1,176 @@
+Act as a senior frontend architect and UI/UX engineer responsible for preparing DailyCruit for production.
+
+TASK:
+Refactor ONLY the responsive layout of the Recruiter Home dashboard so it behaves like a professionally designed production application on desktop, tablet, and mobile.
+
+IMPORTANT:
+Do NOT change the application's functionality, business logic, Firebase logic, Firestore queries, authentication, routing, data structures, component behavior, or existing features.
+
+Do NOT rebuild the dashboard from scratch.
+
+Do NOT create a separate duplicated mobile dashboard.
+
+Reuse the existing components and data and make the layout responsive through clean CSS/Tailwind responsive rules.
+
+CURRENT PROBLEM:
+The desktop dashboard looks good, but on narrow mobile screens the "Recent Applications" section becomes squeezed into a very narrow column beside "Top Posts". This causes poor readability, excessive compression, and an unprofessional mobile experience.
+
+DESIRED RESPONSIVE ARCHITECTURE:
+
+DESKTOP:
+Preserve the current desktop composition as much as possible.
+
+Use a balanced two-column dashboard:
+
+LEFT COLUMN:
+- Recent Applications
+
+RIGHT COLUMN:
+- Top Posts
+- Recent Chats underneath Top Posts
+
+The existing desktop visual hierarchy, card styling, spacing, colors, typography, and proportions should remain intact unless a small adjustment is necessary for responsiveness.
+
+TABLET:
+Use an adaptive two-column layout only when there is genuinely enough horizontal space.
+
+Do not allow either column to become excessively narrow.
+
+If the available width becomes insufficient for a comfortable two-column layout, transition to a single-column layout.
+
+MOBILE:
+At approximately 768px and below, switch the dashboard content to a true single-column layout.
+
+The order must be:
+
+1. Recent Applications
+2. Top Posts
+3. Recent Chats
+
+Each section must use essentially the full available screen width while maintaining comfortable horizontal padding.
+
+Do NOT keep Recent Applications and Top Posts side-by-side on narrow screens.
+
+MOBILE UX REQUIREMENTS:
+- No horizontal scrolling.
+- No clipped content.
+- No overlapping cards.
+- No squeezed columns.
+- No fixed desktop widths.
+- No elements extending outside the viewport.
+- Maintain comfortable spacing between sections.
+- Maintain readable typography.
+- Maintain touch-friendly buttons and interactive elements.
+- Preserve the fixed mobile bottom navigation without allowing it to cover dashboard content.
+- Add sufficient bottom padding to the page so the final content remains accessible above the bottom navigation.
+- Cards should naturally expand to the available width.
+- Long applicant names, job names, and chat content must not break the layout.
+- Use proper wrapping/truncation where appropriate.
+
+RESPONSIVE BREAKPOINT PHILOSOPHY:
+Do not blindly use one breakpoint simply because it is convenient.
+
+The layout should respond to available space.
+
+Target behavior:
+- Large desktop → 2 columns
+- Normal desktop → 2 columns
+- Tablet → 2 columns only if both columns remain usable
+- Narrow tablet/mobile → 1 column
+- Mobile → 1 column
+
+VISUAL CONSISTENCY:
+Preserve the existing DailyCruit design system:
+- Existing green brand color
+- Existing typography
+- Existing border radius
+- Existing shadows
+- Existing card appearance
+- Existing icons
+- Existing button styles
+- Existing navigation
+- Existing "See all" links
+
+Do not introduce a new color palette or redesign unrelated components.
+
+METRIC CARDS:
+Do not change the current metric card layout unless required for responsive behavior.
+
+Keep:
+- Total Views
+- Total Posts
+- Applications
+
+Preserve their current styling and green metric numbers on mobile.
+
+DESKTOP SAFETY:
+The desktop screenshot currently looks good.
+
+Therefore, do not make broad desktop changes just to solve the mobile problem.
+
+Make the smallest clean architectural changes necessary to achieve proper responsiveness.
+
+IMPLEMENTATION QUALITY:
+Before editing, inspect the existing Recruiter Home component and identify:
+- the parent dashboard grid/container
+- Recent Applications component
+- Top Posts component
+- Recent Chats component
+- mobile navigation
+- any fixed widths/min-widths causing the compression
+
+Fix the root cause rather than adding visual hacks.
+
+Avoid:
+- excessive absolute positioning
+- arbitrary pixel widths
+- negative margins used as hacks
+- duplicated mobile markup
+- JavaScript-based viewport detection when CSS responsive layout is sufficient
+- hiding important content merely to make the screen fit
+
+Prefer:
+- CSS Grid/Flexbox
+- minmax()
+- responsive grid columns
+- width: 100%
+- min-width: 0 where required
+- appropriate gap values
+- responsive padding
+- natural content flow
+
+VALIDATION:
+After making the changes, test the Recruiter Home dashboard at approximately:
+
+375px
+390px
+414px
+768px
+1024px
+1280px
+1440px
+
+At each size verify:
+- no horizontal overflow
+- no clipped content
+- no overlapping elements
+- Recent Applications is readable
+- Top Posts is readable
+- Recent Chats is readable
+- metric cards remain usable
+- navigation remains usable
+- bottom navigation does not cover content
+- desktop layout remains visually consistent
+
+IMPORTANT FINAL RULE:
+Do not modify Firebase/backend functionality or unrelated pages.
+
+This task is strictly a responsive layout refactor of the Recruiter Home dashboard.
+
+After implementation, briefly report:
+1. Which layout/container caused the mobile compression.
+2. What responsive structure you changed.
+3. Which breakpoints/strategy you used.
+4. What you verified on desktop and mobile.
+
+Do not make additional aesthetic changes beyond this scope.

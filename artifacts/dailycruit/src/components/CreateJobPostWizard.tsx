@@ -1,5 +1,5 @@
 // ─── CreateJobPostWizard.tsx ──────────────────────────────────────────────────
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 // The 6 steps shown in the progress bar
 const STEPS = ["Type", "Details", "Location", "Terms", "Requirements", "Review"];
@@ -17,7 +17,7 @@ export interface PublishedJob {
   commitment: string;
   workMode: string;
   skills: string[];
-  status: "Active" | "Paused";
+  status: "Active" | "Paused" | "Draft" | "Closed";
   views: number;
   applicants: number;
   postedDate: string;
@@ -26,7 +26,7 @@ export interface PublishedJob {
 
 interface Props {
   onBack: () => void;
-  onPublish: (job: PublishedJob) => void;
+  onPublish: (job: PublishedJob) => Promise<void> | void;
 }
 
 type WorkType = "remote" | "hybrid" | "onsite";
@@ -70,11 +70,141 @@ export function CreateJobPostWizard({ onBack, onPublish }: Props) {
 
   // Step 6 — Publish state
   const [published, setPublished] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
-//Continue button logic
+  // Stepper scroll refs — auto-scroll active step into view on mobile
+  const stepperScrollRef = useRef<HTMLDivElement>(null);
+  const stepItemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  useEffect(() => {
+    const container = stepperScrollRef.current;
+    const el = stepItemRefs.current[currentStep];
+    if (!container || !el) return;
+    const targetScrollLeft = el.offsetLeft - container.clientWidth / 2 + el.offsetWidth / 2;
+    container.scrollTo({ left: Math.max(0, targetScrollLeft), behavior: "smooth" });
+  }, [currentStep]);
+
+  function buildPublishedJob(status: "Active" | "Draft" = "Active"): PublishedJob {
+    const now = Date.now();
+    const today = new Date(now).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+    return {
+      id: now.toString(),
+      title: title || "Untitled Job",
+      companyName: "Your Company",
+      description: description || "An exciting opportunity posted on DailyCruit.",
+      location: [city, country].filter(Boolean).join(", ") || workType,
+      salary: salaryMin || salaryMax
+        ? `€${salaryMin}${salaryMax ? `–€${salaryMax}` : ""}${salaryType ? ` / ${salaryType}` : ""}`
+        : "—",
+      commitment: commitment || "—",
+      workMode: workType,
+      skills: [...skills],
+      status,
+      views: 0,
+      applicants: 0,
+      postedDate: today,
+      createdAt: now,
+    };
+  }
+
+  function validateRequiredFields() {
+    const errors: string[] = [];
+
+    if (!selectedType) {
+      errors.push("Please choose a job type.");
+    }
+    if (!title.trim()) {
+      errors.push("Add a job title.");
+    }
+    if (!description.trim()) {
+      errors.push("Add a job description.");
+    }
+    if (!city.trim()) {
+      errors.push("Add the city where the job is based.");
+    }
+    if (!salaryType) {
+      errors.push("Select a salary type.");
+    }
+    if (!commitment) {
+      errors.push("Choose a commitment type.");
+    }
+
+    return errors;
+  }
+
+   async function handlePublishNow() {
+    const validationErrors = validateRequiredFields();
+    if (validationErrors.length > 0) {
+      setPublishError(validationErrors[0]);
+      setShowErrors(true);
+      return;
+    }
+
+    setPublishError(null);
+    setIsPublishing(true);
+
+    try {
+      await onPublish(buildPublishedJob());
+      setPublished(true);
+    } catch (error) {
+      setPublishError(error instanceof Error ? error.message : "We couldn't publish your job right now. Please try again.");
+    } finally {
+      setIsPublishing(false);
+    }
+  }
+
+  async function handleSaveDraft() {
+    setPublishError(null);
+    setIsPublishing(true);
+    try {
+      await onPublish(buildPublishedJob("Draft"));
+      setPublished(true);
+    } catch (error) {
+      setPublishError(error instanceof Error ? error.message : "We couldn't save your draft. Please try again.");
+    } finally {
+      setIsPublishing(false);
+    }
+  }
+
+  // Derived: is the Continue button disabled for the current step?
+  const continueDisabled =
+    (currentStep === 0 && selectedType === null) ||
+    (currentStep === 1 && (!title.trim() || !description.trim())) ||
+    (currentStep === 2 && !city.trim()) ||
+    (currentStep === 3 && (!salaryType || !commitment));
+
+  // Keyboard: Enter on any <input> (not textarea/button) fires the primary action
+  function handleFormKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key !== "Enter") return;
+    const tag = (e.target as HTMLElement).tagName;
+    if (tag !== "INPUT") return;
+    e.preventDefault();
+    if (currentStep < STEPS.length - 1) {
+      handleContinue();
+    } else if (currentStep === STEPS.length - 1 && !published) {
+      handlePublishNow();
+    }
+  }
+
+  //Continue button logic
   function handleContinue() {
   if (currentStep === 1) {
     if (!title.trim() || !description.trim()) {
+      setShowErrors(true);
+      return;
+    }
+    setShowErrors(false);
+  }
+  if (currentStep === 2) {
+    if (!city.trim()) {
+      setShowErrors(true);
+      return;
+    }
+    setShowErrors(false);
+  }
+  if (currentStep === 3) {
+    if (!salaryType || !commitment) {
       setShowErrors(true);
       return;
     }
@@ -94,8 +224,7 @@ function handleAddTag() {
 }
 
   return (
-    <main className="main-content" style={{ background: "#f1f3f7", minHeight: "100vh", padding: "28px 32px" }}>
-
+    <main className="main-content wizard-shell">
       {/* ── Back link ── */}
       <button
         onClick={onBack}
@@ -107,13 +236,13 @@ function handleAddTag() {
       >
         ← Job Posts
       </button>
-
-      {/* ── Page header ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: 12,
-          background: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
+      <div className="content-container wizard-card" onKeyDown={handleFormKeyDown}>
+        {/* ── Page header ── */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: 12,
+            background: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
           </svg>
@@ -127,12 +256,21 @@ function handleAddTag() {
       </div>
 
       {/* ── Step progress bar ── */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 0, marginBottom: 36, maxWidth: 560 }}>
+      <div
+        ref={stepperScrollRef}
+        className="wizard-stepper-scroll"
+        style={{ width: "100%", overflowX: "auto", marginBottom: 36 }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 0, minWidth: "max(100%, 360px)" }}>
         {STEPS.map((label, i) => {
           const isDone = i < currentStep;
           const isActive = i === currentStep;
           return (
-            <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, minWidth: 60 }}>
+            <div
+              key={label}
+              ref={(el) => { stepItemRefs.current[i] = el; }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, minWidth: 60 }}
+            >
               {/* circle + connecting line row */}
               <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
                 {/* left line */}
@@ -174,10 +312,11 @@ function handleAddTag() {
             </div>
           );
         })}
-      </div>
+        </div> {/* closes inner flex row */}
+      </div> {/* closes stepper scroll container */}
 
       {/* ── Step content ── */}
-      <div style={{ maxWidth: 560 }}>
+      <div style={{ maxWidth: 560, width: "100%" }}>
 
         {/* STEP 1 — Type */}
         {currentStep === 0 && (
@@ -465,6 +604,9 @@ function handleAddTag() {
         <p style={{ fontSize: 11, color: "#9CA3AF", marginTop: 5, margin: "5px 0 0" }}>
           Enter the city where the job is based
         </p>
+        {showErrors && !city.trim() && (
+          <p style={{ color: "#ef4444", fontSize: 12, marginTop: 5 }}>City is required</p>
+        )}
       </div>
     </div>
 
@@ -568,7 +710,7 @@ function handleAddTag() {
 
     {/* Row 1: Salary range + Salary Type */}
     <div style={{ marginBottom: 20 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr 1fr", gap: 8, alignItems: "end" }}>
+      <div className="wizard-salary-row" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr 1fr", gap: 8, alignItems: "end" }}>
         {/* Salary Min */}
         <div>
           <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
@@ -655,6 +797,9 @@ function handleAddTag() {
           </div>
         </div>
       </div>
+      {showErrors && !salaryType && (
+        <p style={{ color: "#ef4444", fontSize: 12, marginTop: 5 }}>Salary type is required</p>
+      )}
     </div>
 
     {/* Commitment */}
@@ -683,6 +828,9 @@ function handleAddTag() {
           );
         })}
       </div>
+      {showErrors && !commitment && (
+        <p style={{ color: "#ef4444", fontSize: 12, marginTop: 8 }}>Choose a commitment type</p>
+      )}
     </div>
 
     {/* Benefits */}
@@ -778,7 +926,9 @@ function handleAddTag() {
 {currentStep === 4 && (
   <div>
     <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 4 }}>Requirements</h3>
-    <p style={{ fontSize: 13, color: "#9CA3AF", fontStyle: "italic", marginBottom: 24, marginTop: 0 }}>
+    <p
+      style={{ fontSize: 13, color: "#9CA3AF", fontStyle: "italic", marginBottom: 24, marginTop: 0 }}
+      className="font-bold text-[color:var(--auth-input-focus-border)]">
       All optional — you can skip this step
     </p>
 
@@ -979,7 +1129,7 @@ function handleAddTag() {
         {currentStep === STEPS.length - 1 && (
           published ? (
             /* ── Success state ── */
-            <div style={{ textAlign: "center", padding: "40px 0" }}>
+            (<div style={{ textAlign: "center", padding: "40px 0" }}>
               <div style={{
                 width: 64, height: 64, borderRadius: "50%", background: "#22c55e",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -992,28 +1142,7 @@ function handleAddTag() {
                 Your job is now live and visible to candidates.
               </p>
               <button
-                onClick={() => {
-                  const now = Date.now();
-                  const today = new Date(now).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-                  onPublish({
-                    id: now.toString(),
-                    title: title || "Untitled Job",
-                    companyName: "Your Company",
-                    description: description || "An exciting opportunity posted on DailyCruit.",
-                    location: [city, country].filter(Boolean).join(", ") || workType,
-                    salary: salaryMin || salaryMax
-                      ? `€${salaryMin}${salaryMax ? `–€${salaryMax}` : ""}${salaryType ? ` / ${salaryType}` : ""}`
-                      : "—",
-                    commitment: commitment || "—",
-                    workMode: workType,
-                    skills: [...skills],
-                    status: "Active",
-                    views: 0,
-                    applicants: 0,
-                    postedDate: today,
-                    createdAt: now,
-                  });
-                }}
+                onClick={onBack}
                 style={{
                   display: "block", width: "100%", padding: "13px 0",
                   background: "#22c55e", color: "#fff", border: "none",
@@ -1037,14 +1166,13 @@ function handleAddTag() {
               >
                 Create another job post
               </button>
-            </div>
+            </div>)
           ) : (
             /* ── Review UI ── */
-            <div>
+            (<div>
               <h3 style={{ fontSize: 22, fontWeight: 700, color: "#111827", marginBottom: 16 }}>
                 Review &amp; Publish
               </h3>
-
               {/* Job preview card */}
               <div style={{
                 background: "#fff", border: "1px solid #E5E7EB",
@@ -1151,7 +1279,6 @@ function handleAddTag() {
                   This is how your job post will appear to candidates.
                 </p>
               </div>
-
               {/* Edit links */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 16px", marginBottom: 24 }}>
                 {[
@@ -1173,31 +1300,12 @@ function handleAddTag() {
                   </button>
                 ))}
               </div>
-
-              {/* Primary actions */}
-              <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
-                <button
-                  style={{
-                    flex: 1, padding: "12px 0", background: "#fff",
-                    border: "1px solid #D1D5DB", borderRadius: 999,
-                    fontSize: 14, fontWeight: 600, color: "#374151", cursor: "pointer",
-                  }}
-                >
-                  Save as Draft
-                </button>
-                <button
-                  onClick={() => setPublished(true)}
-                  style={{
-                    flex: 2, padding: "12px 0", background: "#22c55e",
-                    border: "none", borderRadius: 999,
-                    fontSize: 15, fontWeight: 700, color: "#fff", cursor: "pointer",
-                    animation: "pulse-publish 2.4s ease-in-out infinite",
-                  }}
-                >
-                  🚀 Publish
-                </button>
-              </div>
-            </div>
+              {publishError && (
+                <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: "#fef2f2", color: "#b91c1c", fontSize: 13, border: "1px solid #fecaca" }}>
+                  {publishError}
+                </div>
+              )}
+            </div>)
           )
         )}
 
@@ -1263,8 +1371,8 @@ function handleAddTag() {
             </button>
           </div>
         )}
-    </div> {/* closes Step content div */}
-
-</main>
-);
+      </div> {/* closes Step content div */}
+      </div> {/* closes content-container */}
+    </main>
+  );
 }  

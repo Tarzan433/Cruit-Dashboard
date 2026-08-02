@@ -1,0 +1,89 @@
+Implement a complete profile photo update feature in the existing React application.
+
+IMPORTANT:
+- Modify the existing codebase.
+- Do NOT rewrite the application.
+- Preserve all existing UI, styling and functionality.
+- Keep the existing circular profile image and pencil edit button exactly as they are.
+
+Requirements:
+
+1. When the user clicks/taps the pencil (edit) button:
+   - Open a menu or bottom sheet with two options:
+     • Upload from device
+     • Take a photo (use the device camera if supported)
+
+2. Upload from device:
+   - Open the file picker.
+   - Accept only image files.
+   - Supported formats:
+     - JPG
+     - JPEG
+     - PNG
+     - WEBP
+
+3. Take a photo:
+   - On supported mobile devices, open the camera using the file input with the appropriate camera capture option.
+   - If the device/browser does not support direct camera capture, gracefully fall back to the normal file picker.
+
+4. After the user selects or captures an image:
+   - Show a preview.
+   - Allow the user to:
+     - Save
+     - Cancel
+
+5. Validate the selected image:
+   - Maximum size: 5 MB.
+   - Reject non-image files.
+   - Display a user-friendly error message if validation fails.
+
+6. When Save is pressed:
+   - Update the profile picture immediately in the UI.
+   - Persist the image using the application's current storage mechanism.
+
+7. IMPORTANT ARCHITECTURE REQUIREMENT:
+   - Do NOT access localStorage directly from the React component.
+   - Create a dedicated service (for example: `profileImageService.ts`) responsible for:
+     - Saving the profile image
+     - Loading the profile image
+     - Updating the profile image
+     - Removing the profile image if needed
+   - The React components should communicate only with this service.
+   - Design the service so that replacing localStorage with Firebase Storage later requires changing only this service, without modifying any UI components.
+   - Keep the service clean, reusable, and well documented.
+
+8. When Cancel is pressed:
+   - Do not update the profile picture.
+
+9. While the image is being processed:
+   - Show a loading indicator.
+   - Disable the Save button.
+
+10. If loading or saving fails:
+   - Show a clear error message.
+   - Keep the previous profile picture.
+
+11. Keep the existing profile picture if the user closes the dialog without saving.
+
+12. Clean up object URLs and other temporary resources to prevent memory leaks.
+
+13. Write clean, reusable code.
+   - Extract image upload logic into reusable hooks or utilities where appropriate.
+   - Use TypeScript types where applicable.
+   - Follow the existing project structure and coding style.
+
+14. Preserve responsiveness for desktop and mobile.
+
+15. Do not break any existing profile functionality.
+
+16. Future Firebase Compatibility:
+   - Structure the code so that migrating to Firebase Storage later is straightforward.
+   - Do not hardcode localStorage throughout the app.
+   - Keep storage operations isolated in the dedicated service.
+   - Add clear comments indicating where Firebase Storage upload, download, and delete operations should later be implemented.
+
+Finally:
+- Explain every file that was modified.
+- Explain how the feature works.
+- Explain why the storage service was created.
+- Identify the exact file that will need to be modified in the future to migrate from localStorage to Firebase Storage, while leaving the UI unchanged.

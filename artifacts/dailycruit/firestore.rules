@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /jobs/{jobId} {
+      allow read: if resource.data.isActive == true || (request.auth != null && request.auth.uid == resource.data.recruiterId);
+      allow create: if request.auth != null
+        && request.resource.data.recruiterId == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.company is string
+        && request.resource.data.location is string
+        && request.resource.data.salary is string
+        && request.resource.data.employmentType is string
+        && request.resource.data.description is string
+        && request.resource.data.isActive is bool;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.recruiterId;
+    }
+
+    match /companies/{companyId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.createdBy
+        && request.resource.data.name is string
+        && request.resource.data.createdAt is timestamp;
+      allow update, delete: if request.auth != null
+        && (
+          request.auth.uid == resource.data.createdBy
+          || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId == companyId
+        );
+    }
+  }
+}
