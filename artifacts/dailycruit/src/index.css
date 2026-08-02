@@ -3315,3 +3315,29 @@ body {
 @keyframes spin-photo {
   to { transform: rotate(360deg); }
 }
+
+/* ─── Job Post Wizard ─────────────────────────────────────────────────────── */
+
+/* Hide scrollbar on stepper scroll container while keeping scroll functional */
+.wizard-stepper-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.wizard-stepper-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Salary row: 4 columns on desktop, responsive on narrow mobile */
+@media (max-width: 540px) {
+  .wizard-salary-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  /* "to" divider — hide on narrow screens where it would orphan into its own row */
+  .wizard-salary-row > :nth-child(2) {
+    display: none;
+  }
+  /* Salary type select — span full row width */
+  .wizard-salary-row > :nth-child(4) {
+    grid-column: 1 / -1;
+  }
+}

@@ -1,5 +1,5 @@
 // ─── CreateJobPostWizard.tsx ──────────────────────────────────────────────────
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 // The 6 steps shown in the progress bar
 const STEPS = ["Type", "Details", "Location", "Terms", "Requirements", "Review"];
@@ -72,6 +72,17 @@ export function CreateJobPostWizard({ onBack, onPublish }: Props) {
   const [published, setPublished] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
+
+  // Stepper scroll refs — auto-scroll active step into view on mobile
+  const stepperScrollRef = useRef<HTMLDivElement>(null);
+  const stepItemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  useEffect(() => {
+    const container = stepperScrollRef.current;
+    const el = stepItemRefs.current[currentStep];
+    if (!container || !el) return;
+    const targetScrollLeft = el.offsetLeft - container.clientWidth / 2 + el.offsetWidth / 2;
+    container.scrollTo({ left: Math.max(0, targetScrollLeft), behavior: "smooth" });
+  }, [currentStep]);
 
   function buildPublishedJob(status: "Active" | "Draft" = "Active"): PublishedJob {
     const now = Date.now();
@@ -193,7 +204,7 @@ function handleAddTag() {
 }
 
   return (
-    <main className="main-content" style={{ background: "#f1f3f7", minHeight: "100vh", padding: "28px 32px" }}>
+    <main className="main-content" style={{ background: "#f1f3f7", minHeight: "100vh", padding: "28px clamp(16px, 5vw, 32px)" }}>
       {/* ── Back link ── */}
       <button
         onClick={onBack}
@@ -225,12 +236,21 @@ function handleAddTag() {
       </div>
 
       {/* ── Step progress bar ── */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 0, marginBottom: 36, maxWidth: 560 }}>
+      <div
+        ref={stepperScrollRef}
+        className="wizard-stepper-scroll"
+        style={{ width: "100%", overflowX: "auto", marginBottom: 36 }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 0, minWidth: "max(100%, 360px)" }}>
         {STEPS.map((label, i) => {
           const isDone = i < currentStep;
           const isActive = i === currentStep;
           return (
-            <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, minWidth: 60 }}>
+            <div
+              key={label}
+              ref={(el) => { stepItemRefs.current[i] = el; }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, minWidth: 60 }}
+            >
               {/* circle + connecting line row */}
               <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
                 {/* left line */}
@@ -272,10 +292,11 @@ function handleAddTag() {
             </div>
           );
         })}
-      </div>
+        </div> {/* closes inner flex row */}
+      </div> {/* closes stepper scroll container */}
 
       {/* ── Step content ── */}
-      <div style={{ maxWidth: 560 }}>
+      <div style={{ maxWidth: 560, width: "100%" }}>
 
         {/* STEP 1 — Type */}
         {currentStep === 0 && (
@@ -669,7 +690,7 @@ function handleAddTag() {
 
     {/* Row 1: Salary range + Salary Type */}
     <div style={{ marginBottom: 20 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr 1fr", gap: 8, alignItems: "end" }}>
+      <div className="wizard-salary-row" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr 1fr", gap: 8, alignItems: "end" }}>
         {/* Salary Min */}
         <div>
           <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>

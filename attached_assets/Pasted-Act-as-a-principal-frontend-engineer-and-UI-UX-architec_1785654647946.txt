@@ -1,0 +1,297 @@
+Act as a principal frontend engineer and UI/UX architect with decades of experience building production-grade responsive web applications.
+
+You are working on the DailyCruit Job Post creation wizard.
+
+YOUR TASK:
+Fix the responsive behavior of the job-posting progress stepper so the entire wizard works professionally across mobile, tablet, and desktop.
+
+IMPORTANT:
+This is a RESPONSIVE LAYOUT REFACTOR, not a redesign of the job-posting functionality.
+
+Before making any changes, inspect the existing implementation and identify the actual cause of the mobile clipping.
+
+Do not guess.
+Do not immediately add overflow-hidden.
+Do not use arbitrary negative margins.
+Do not shrink the UI until everything happens to fit.
+
+==================================================
+CURRENT PROBLEM
+==================================================
+
+On narrow mobile screens, the horizontal job-posting progress stepper is wider than the viewport.
+
+The current steps are approximately:
+
+Type → Details → Location → Terms → Requirements → Review
+
+On mobile, the rightmost steps are clipped and cannot be properly viewed.
+
+The page should remain completely usable without horizontal page scrolling.
+
+==================================================
+DESIRED RESPONSIVE BEHAVIOR
+==================================================
+
+DESKTOP:
+
+Preserve the current desktop progress-stepper design as closely as possible.
+
+The steps should remain horizontally arranged:
+
+✓ Type → ✓ Details → ✓ Location → ✓ Terms → ⑤ Requirements → Review
+
+Do not unnecessarily redesign or resize the desktop version.
+
+TABLET:
+
+Allow the horizontal stepper to remain horizontal when there is sufficient width.
+
+If the available width becomes insufficient, transition gracefully to the mobile behavior.
+
+MOBILE:
+
+Do NOT attempt to force all six steps into the viewport by making the circles, labels, or text extremely small.
+
+Instead, create a contained horizontal scrolling region specifically for the progress stepper.
+
+Conceptually:
+
+┌─────────────────────────────────┐
+│ ✓   ✓   ✓   ✓   ⑤   ○      →  │
+│ Type Details Location Terms ... │
+└─────────────────────────────────┘
+
+Only the stepper region may scroll horizontally.
+
+The REST OF THE PAGE must NEVER horizontally scroll.
+
+The viewport must remain fixed to the device width.
+
+==================================================
+STEPPER REQUIREMENTS
+==================================================
+
+1. Every step must remain accessible.
+
+2. The active step must always be visible.
+
+3. When the user moves from one step to another, automatically scroll the stepper enough to reveal the active step when necessary.
+
+4. Do not make the step labels unreadably small.
+
+5. Do not remove steps.
+
+6. Do not hide "Review" simply because the screen is narrow.
+
+7. Maintain the existing DailyCruit green styling for completed steps.
+
+8. Maintain a clear visual distinction between:
+   - completed steps
+   - current/active step
+   - upcoming steps
+
+9. Keep adequate spacing between step indicators and labels.
+
+10. The horizontal scrolling must be confined to the stepper container.
+
+11. Prevent the stepper from causing document-level horizontal overflow.
+
+==================================================
+MOBILE FORM LAYOUT
+==================================================
+
+While fixing the stepper, verify that the actual form below it also behaves correctly on mobile.
+
+For narrow screens:
+
+- Use a single-column form layout.
+- Inputs should use the available width.
+- Buttons must remain easily tappable.
+- Labels must remain readable.
+- Chips/options must wrap naturally when necessary.
+- No fixed desktop widths.
+- No content should extend outside the viewport.
+- No overlapping elements.
+- No clipped controls.
+
+The current Requirements screen should remain visually consistent with the existing DailyCruit design.
+
+For example:
+
+Requirements
+All optional — you can skip this step
+
+SKILLS REQUIRED
+[ e.g. React, Photoshop... ] [Add]
+
+EXPERIENCE LEVEL
+[Internship] [Junior] [Mid-level]
+
+Do not redesign these controls unless a responsive issue requires it.
+
+==================================================
+DESIGN SYSTEM
+==================================================
+
+Preserve the existing DailyCruit design language:
+
+- Existing green brand color
+- Existing typography
+- Existing card styling
+- Existing border radius
+- Existing icons
+- Existing spacing system where appropriate
+- Existing button styles
+- Existing mobile bottom navigation
+- Existing header
+
+Do not introduce a new design system.
+
+Do not change unrelated pages.
+
+==================================================
+IMPORTANT ENGINEERING REQUIREMENTS
+==================================================
+
+First inspect:
+
+- The stepper component
+- Its parent containers
+- display: flex/grid behavior
+- width/min-width constraints
+- flex-shrink/flex-grow behavior
+- overflow rules
+- padding and gap values
+- responsive breakpoints
+- any fixed widths
+- any absolute positioning
+- mobile navigation positioning
+
+Find the ROOT CAUSE of the clipping.
+
+Then implement the smallest clean architectural fix.
+
+Prefer:
+
+- CSS Grid/Flexbox
+- responsive breakpoints
+- width: 100%
+- min-width: 0
+- max-width: 100%
+- overflow-x: auto ONLY on the stepper container
+- scroll snapping if appropriate
+- responsive spacing
+- natural content flow
+
+Avoid:
+
+- JavaScript viewport detection when CSS is sufficient
+- duplicated desktop/mobile markup
+- arbitrary pixel hacks
+- negative margins
+- excessive absolute positioning
+- shrinking fonts merely to make content fit
+- hiding steps
+- hiding overflow on the entire page as a workaround
+- changing unrelated functionality
+
+==================================================
+BOTTOM NAVIGATION
+==================================================
+
+The existing mobile bottom navigation must remain fixed and usable.
+
+Ensure:
+
+- The stepper does not overlap it.
+- Form content can be scrolled completely above it.
+- The bottom navigation does not cover the final form controls or buttons.
+- Add appropriate bottom spacing to the page if necessary.
+
+==================================================
+FUNCTIONALITY PROTECTION
+==================================================
+
+DO NOT modify:
+
+- Firebase
+- Firestore
+- Authentication
+- Job-posting business logic
+- Form state
+- Validation
+- Data structures
+- API calls
+- Routing
+- Step navigation logic
+- Save/submit functionality
+
+Unless a tiny change is absolutely required to make the stepper automatically reveal the active step, keep the JavaScript/business logic untouched.
+
+==================================================
+VALIDATION
+==================================================
+
+After implementing the fix, test the complete Job Post wizard at:
+
+375px
+390px
+414px
+768px
+1024px
+1280px
+1440px
+
+Specifically verify:
+
+✓ No document-level horizontal scrolling
+✓ No clipped progress steps
+✓ Review step remains accessible
+✓ Active step is automatically visible
+✓ Step labels remain readable
+✓ Form controls remain inside viewport
+✓ No overlapping content
+✓ No clipped buttons
+✓ Bottom navigation does not cover content
+✓ Desktop appearance remains essentially unchanged
+✓ Tablet layout remains comfortable
+✓ Mobile layout feels intentionally designed rather than compressed
+
+Do not stop after checking only the Requirements screen.
+
+Check the stepper across multiple wizard steps, including:
+
+Type
+Details
+Location
+Terms
+Requirements
+Review
+
+==================================================
+FINAL QUALITY STANDARD
+==================================================
+
+The result should feel like a production-quality job-posting wizard from a professional SaaS/product company.
+
+The goal is NOT:
+
+"Make everything fit on the phone."
+
+The goal is:
+
+"Design the layout so that the interface naturally adapts to the available space while preserving usability, hierarchy, accessibility, and visual consistency."
+
+Before finishing, review your own changes and remove any temporary/debug code or visual-editor artifacts.
+
+Do not make unrelated improvements.
+
+After completing the task, report briefly:
+
+1. The root cause of the mobile clipping.
+2. The exact responsive strategy implemented.
+3. How the active step is kept visible.
+4. What desktop behavior was preserved.
+5. What mobile widths were tested.
+6. Whether any unrelated files/components were changed.
