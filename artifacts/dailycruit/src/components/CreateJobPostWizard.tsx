@@ -194,7 +194,6 @@ function handleAddTag() {
 
   return (
     <main className="main-content" style={{ background: "#f1f3f7", minHeight: "100vh", padding: "28px 32px" }}>
-
       {/* ── Back link ── */}
       <button
         onClick={onBack}
@@ -206,7 +205,6 @@ function handleAddTag() {
       >
         ← Job Posts
       </button>
-
       <div className="content-container">
         {/* ── Page header ── */}
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
@@ -887,7 +885,9 @@ function handleAddTag() {
 {currentStep === 4 && (
   <div>
     <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 4 }}>Requirements</h3>
-    <p style={{ fontSize: 13, color: "#9CA3AF", fontStyle: "italic", marginBottom: 24, marginTop: 0 }}>
+    <p
+      style={{ fontSize: 13, color: "#9CA3AF", fontStyle: "italic", marginBottom: 24, marginTop: 0 }}
+      className="font-bold text-[color:var(--auth-input-focus-border)]">
       All optional — you can skip this step
     </p>
 
@@ -1088,7 +1088,7 @@ function handleAddTag() {
         {currentStep === STEPS.length - 1 && (
           published ? (
             /* ── Success state ── */
-            <div style={{ textAlign: "center", padding: "40px 0" }}>
+            (<div style={{ textAlign: "center", padding: "40px 0" }}>
               <div style={{
                 width: 64, height: 64, borderRadius: "50%", background: "#22c55e",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -1125,14 +1125,13 @@ function handleAddTag() {
               >
                 Create another job post
               </button>
-            </div>
+            </div>)
           ) : (
             /* ── Review UI ── */
-            <div>
+            (<div>
               <h3 style={{ fontSize: 22, fontWeight: 700, color: "#111827", marginBottom: 16 }}>
                 Review &amp; Publish
               </h3>
-
               {/* Job preview card */}
               <div style={{
                 background: "#fff", border: "1px solid #E5E7EB",
@@ -1239,7 +1238,6 @@ function handleAddTag() {
                   This is how your job post will appear to candidates.
                 </p>
               </div>
-
               {/* Edit links */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 16px", marginBottom: 24 }}>
                 {[
@@ -1261,13 +1259,11 @@ function handleAddTag() {
                   </button>
                 ))}
               </div>
-
               {publishError && (
                 <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: "#fef2f2", color: "#b91c1c", fontSize: 13, border: "1px solid #fecaca" }}>
                   {publishError}
                 </div>
               )}
-
               {/* Primary actions */}
               <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
                <button
@@ -1294,7 +1290,7 @@ function handleAddTag() {
                   {isPublishing ? "Publishing..." : "🚀 Publish"}
                 </button>
               </div>
-            </div>
+            </div>)
           )
         )}
 
@@ -1362,7 +1358,6 @@ function handleAddTag() {
         )}
       </div> {/* closes Step content div */}
       </div> {/* closes content-container */}
-
-</main>
-);
+    </main>
+  );
 }  
