@@ -129,6 +129,8 @@
 
   .rec-main {
     gap: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .rec-top-row {
@@ -144,14 +146,10 @@
   }
 
   .rec-mid-grid {
-    display: flex;
-    flex-direction: column;
     gap: 16px;
   }
 
   .rec-right-col {
-    display: flex;
-    flex-direction: column;
     gap: 16px;
   }
 
@@ -250,17 +248,31 @@
   }
 }
 
+/* rec-mid-grid and rec-right-col: single-column by default, two-column on desktop */
 .rec-mid-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .rec-right-col {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .rec-mid-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+
+  .rec-right-col {
+    gap: 14px;
+  }
 }
 
 /* Panel cards */
@@ -269,6 +281,7 @@
   border: 1px solid #E5E7EB;
   border-radius: 14px;
   overflow: hidden;
+  min-width: 0;
 }
 
 .rec-panel-header {
