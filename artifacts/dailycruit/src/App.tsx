@@ -285,7 +285,8 @@ function SearchJobsPage({
         setIsLoading(false);
         setErrorMessage(null);
       },
-      () => {
+      (error) => {
+        console.error("subscribeToActiveJobs error:", error);
         setErrorMessage("We couldn't load jobs right now. Please try again.");
         setIsLoading(false);
       }

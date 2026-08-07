@@ -90,8 +90,9 @@ export default function HomePage({ onCreateJob, savedJobIds, onToggleSavedJob }:
         setIsLoading(false);
         setErrorMessage(null);
       },
-      () => {
+      (error) => {
         if (!mounted) return;
+        console.error("subscribeToActiveJobs error:", error);
         setErrorMessage("We couldn't load jobs right now. Please try again.");
         setIsLoading(false);
       }

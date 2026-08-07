@@ -3,9 +3,11 @@ import {
   doc,
   getDocs,
   onSnapshot,
+  query,
   serverTimestamp,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import type { Job } from "../models/job";
@@ -61,25 +63,24 @@ export function subscribeToActiveJobs(
   onNext: (jobs: Job[]) => void,
   onError?: (error: Error) => void
 ) {
-  return onSnapshot(
+  const activeJobsQuery = query(
     collection(db, JOBS_COLLECTION),
+    where("isActive", "==", true)
+  );
+
+  return onSnapshot(
+    activeJobsQuery,
     (snapshot) => {
       const jobs = snapshot.docs
         .map((docSnapshot) => {
           const data = docSnapshot.data() as Job;
-
           return {
             id: docSnapshot.id,
             ...data,
             postedDate: formatPostedDate(data.postedDate),
           };
         })
-        .filter((job) => job.isActive)
-        .sort((a, b) => {
-          const aTime = a.createdAt ?? 0;
-          const bTime = b.createdAt ?? 0;
-          return bTime - aTime;
-        });
+        .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
 
       onNext(jobs);
     },
@@ -111,7 +112,11 @@ export async function getRecruiterJobs(recruiterId: string): Promise<Job[]> {
 }
 
 export async function getActiveJobs(): Promise<Job[]> {
-  const snapshot = await getDocs(collection(db, JOBS_COLLECTION));
+  const activeJobsQuery = query(
+    collection(db, JOBS_COLLECTION),
+    where("isActive", "==", true)
+  );
+  const snapshot = await getDocs(activeJobsQuery);
 
   return snapshot.docs
     .map((docSnapshot) => {
@@ -123,14 +128,12 @@ export async function getActiveJobs(): Promise<Job[]> {
         postedDate: formatPostedDate(data.postedDate),
       };
     })
-    .filter((job) => job.isActive)
     .sort((a, b) => {
       const aTime = a.createdAt ?? 0;
       const bTime = b.createdAt ?? 0;
       return bTime - aTime;
     });
 }
-
 
 export async function updateJobStatus(jobId: string, status: "Active" | "Draft" | "Closed"): Promise<void> {
   const jobRef = doc(db, JOBS_COLLECTION, jobId);
