@@ -105,7 +105,7 @@ setApplications(applicationsWithProfiles);
   const totalViews = jobs.reduce((sum, j) => sum + (j.views ?? 0), 0);
 
   return (
-    <main className="main-content rec-main">
+    <main className="main-content rec-main recruiter-jobpost-page">
       <div className="content-container content-container--grid">
       {/* Top row: welcome + 3 metric cards */}
       <div className="rec-top-row">
@@ -554,8 +554,10 @@ export function JobPostsPage() {
         </div>)
       ) : (
         /* ── Dashboard table (desktop) + Mobile card list ── */
-        (<>
+        <div className="job-posts-page-wrapper">
           {/* Mobile card list — hidden on desktop via CSS */}
+          
+
           <div className="mobile-card-list">
             {jobs.map((job) => {
               const badgeClass =
@@ -720,10 +722,11 @@ export function JobPostsPage() {
     </button>
   ))}
   </div>
+  
               </div>
             ))}
           </div>
-        </>)
+          </div>
       )}
     </main>
   );

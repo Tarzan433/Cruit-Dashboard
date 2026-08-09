@@ -3,7 +3,7 @@ import { Building2 } from "lucide-react";
 import HomePage from "./pages/HomePage";
 import CompanyProfilePage from "./pages/CompanyProfilePage";
 import { subscribeToActiveJobs } from "./services/jobService";
-import { RecruiterHomePage, JobPostsPage } from "./pages/RecruiterHomePage";
+import { RecruiterHomePage, JobPostsPage } from "./pages/RecruiterHomePage&JobPostsPage";
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { profileImageService, validateImageFile, fileToDataUrl } from "./services/profileImageService";
 import LoginPage from "./pages/LoginPage";
@@ -420,6 +420,7 @@ function SearchJobsPage({
 
   return (
     <div className="search-page">
+       <div className="search-bar-card">
       {/* Search bar */}
       <div className="search-input-container">
         <span className="search-icon-left">
@@ -464,6 +465,7 @@ function SearchJobsPage({
             {tag.label}
           </button>
         ))}
+      </div>
       </div>
 
       {/* Content */}

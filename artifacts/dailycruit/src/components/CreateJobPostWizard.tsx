@@ -1,4 +1,4 @@
-// ─── CreateJobPostWizard.tsx ──────────────────────────────────────────────────
+// ─── marginBottom ──────────────────────────────────────────────────
 import { useState, useRef, useEffect } from "react";
 
 // The 6 steps shown in the progress bar

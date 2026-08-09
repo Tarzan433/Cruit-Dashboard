@@ -479,10 +479,16 @@
   display: none;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
+  /* mobile main content */
 
-  /* Hide desktop table on mobile */
-  .job-posts-table {
+   /* mobile job posts page wrapper */
+  .job-posts-page-wrapper {
+    padding-bottom: 70px;
+  }
+
+   /* Hide desktop table on mobile */
+   .job-posts-table {
     display: none !important;
   }
 
@@ -643,3 +649,6 @@
     border-color: #D1D5DB;
   }
 }
+
+
+  

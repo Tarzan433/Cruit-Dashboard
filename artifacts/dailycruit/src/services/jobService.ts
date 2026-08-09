@@ -91,7 +91,11 @@ export function subscribeToActiveJobs(
 }
 
 export async function getRecruiterJobs(recruiterId: string): Promise<Job[]> {
-  const snapshot = await getDocs(collection(db, JOBS_COLLECTION));
+  const q = query(
+    collection(db, JOBS_COLLECTION),
+    where("recruiterId", "==", recruiterId)
+  );
+  const snapshot = await getDocs(q);
 
   return snapshot.docs
     .map((docSnapshot) => {
@@ -103,13 +107,14 @@ export async function getRecruiterJobs(recruiterId: string): Promise<Job[]> {
         postedDate: formatPostedDate(data.postedDate),
       };
     })
-    .filter((job) => job.recruiterId === recruiterId)
     .sort((a, b) => {
       const aTime = a.createdAt ?? 0;
       const bTime = b.createdAt ?? 0;
       return bTime - aTime;
     });
 }
+
+
 
 export async function getActiveJobs(): Promise<Job[]> {
   const activeJobsQuery = query(

@@ -66,11 +66,12 @@ function FilterIcon() {
   );
 }
 
+// Bigger, softer illustration-style icon for empty states
 function SearchBigIcon() {
   return (
     <svg className="empty-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="35" cy="34" r="18" stroke="#D1D5DB" strokeWidth="3" />
-      <path d="M48 47L62 61" stroke="#D1D5DB" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="35" cy="34" r="18" stroke="#16A34A" strokeWidth="3.5" />
+      <path d="M48 47L62 61" stroke="#16A34A" strokeWidth="3.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -278,50 +279,52 @@ export function SearchJobsPage({ savedJobIds, onToggleSavedJob, query: controlle
   return (
     <div className="search-page">
       {showSearchInput && (
-        <div className="search-input-container">
-          <span className="search-icon-left">
-            <SearchIcon size={18} />
-          </span>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search by role, company or location..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <button
-            className="search-filter-btn"
-            title="Advanced filters"
-            onClick={() => setShowFilterModal(true)}
-          >
-            <FilterIcon />
-          </button>
+        <div className="search-bar-card">
+          <div className="search-input-container">
+            <span className="search-icon-left">
+              <SearchIcon size={18} />
+            </span>
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search by role, company or location..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <button
+              className="search-filter-btn"
+              title="Advanced filters"
+              onClick={() => setShowFilterModal(true)}
+            >
+              <FilterIcon />
+            </button>
+          </div>
+
+          <div className="filter-tags-row">
+            {FILTER_TAGS.map((tag) => (
+              <button
+                key={tag.id}
+                className={`filter-tag${activeFilter === tag.id ? " filter-tag-active" : ""}`}
+                onClick={() => setActiveFilter(tag.id)}
+              >
+                {tag.chip === "trending" && (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                    <polyline points="17 6 23 6 23 12" />
+                  </svg>
+                )}
+                {tag.chip === "clock" && (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                )}
+                {tag.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
-
-      <div className="filter-tags-row">
-        {FILTER_TAGS.map((tag) => (
-          <button
-            key={tag.id}
-            className={`filter-tag${activeFilter === tag.id ? " filter-tag-active" : ""}`}
-            onClick={() => setActiveFilter(tag.id)}
-          >
-            {tag.chip === "trending" && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                <polyline points="17 6 23 6 23 12" />
-              </svg>
-            )}
-            {tag.chip === "clock" && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            )}
-            {tag.label}
-          </button>
-        ))}
-      </div>
 
       {errorMessage && (
         <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 10, background: "#fef2f2", color: "#b91c1c", fontSize: 13, border: "1px solid #fecaca" }}>
@@ -335,13 +338,13 @@ export function SearchJobsPage({ savedJobIds, onToggleSavedJob, query: controlle
       )}
       {isLoading ? (
         <div className="empty-state search-empty">
-          <SearchBigIcon />
+          <div className="empty-icon-badge"><SearchBigIcon /></div>
           <h2 className="empty-title">Loading jobs…</h2>
-          <p className="empty-subtitle">We’re fetching the latest opportunities.</p>
+          <p className="empty-subtitle">We're fetching the latest opportunities.</p>
         </div>
       ) : !isSearching ? (
         <div className="empty-state search-empty">
-          <SearchBigIcon />
+          <div className="empty-icon-badge"><SearchBigIcon /></div>
           <h2 className="empty-title">Start searching</h2>
           <p className="empty-subtitle">
             <span className="empty-highlight">Type</span> at least 2 characters to find jobs
@@ -349,7 +352,7 @@ export function SearchJobsPage({ savedJobIds, onToggleSavedJob, query: controlle
         </div>
       ) : filteredJobs.length === 0 ? (
         <div className="empty-state search-empty">
-          <SearchBigIcon />
+          <div className="empty-icon-badge"><SearchBigIcon /></div>
           <h2 className="empty-title">No results found</h2>
           <p className="empty-subtitle">Try a different keyword or adjust your filters</p>
         </div>

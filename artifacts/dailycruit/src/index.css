@@ -425,22 +425,110 @@ body {
   background: #16A34A;
 }
 
-/* ─── Search page ─────────────────────────────────────────────────────────── */
-
-.search-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+/* ─── recruiter Search page ─────────────────────────────────────────────────────────── */
+/* --- default device view refinement --- */
 
 .search-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 60px;
+  padding: 0 0 20px;
+  box-sizing: border-box;
   width: 100%;
 }
 
+.search-bar-card {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 80px 16px 12px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.search-input-container {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.search-bar-card .filter-tags-row {
+  margin: 10px auto 0;
+  padding-top: 0;
+  max-width: 680px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.search-bar-card .filter-tags-row::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-tag {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.filter-tag-active {
+  background: #111827;
+  border-color: #111827;
+  color: #ffffff;
+}
+
+.empty-icon-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.search-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 42vh;
+  text-align: center;
+  padding: 56px 24px;
+}
+
+.search-empty .empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 6px;
+}
+
+.search-empty .empty-subtitle {
+  font-size: 13.5px;
+  color: #6b7280;
+  max-width: 260px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .search-bar-card {
+    padding: 85px 16px 16px;
+  }
+
+  .search-empty {
+    min-height: 45vh;
+    padding: 64px 24px;
+  }
+}
+
+  /* seeker home page search bar */
 /* Search input container (position:relative holds icons) */
 .home-search-shell {
   width: 100%;
@@ -511,7 +599,7 @@ body {
 }
 
 .home-search-expanded-panel .search-page {
-  padding-top: 0;
+  padding-top: 25px;
 }
 
 .search-input-container {
