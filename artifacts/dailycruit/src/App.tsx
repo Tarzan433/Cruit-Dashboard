@@ -479,23 +479,21 @@ function SearchJobsPage({
           {toastMessage}
         </div>
       )}
-      {isLoading ? (
+     {isLoading ? (
         <div className="empty-state search-empty">
-          <SearchBigIcon />
+          <div className="empty-icon-badge"><SearchBigIcon /></div>
           <h2 className="empty-title">Loading jobs…</h2>
-          <p className="empty-subtitle">We’re fetching the latest opportunities.</p>
+          <p className="empty-subtitle">We're fetching the latest opportunities.</p>
         </div>
       ) : !isSearching ? (
         <div className="empty-state search-empty">
-          <SearchBigIcon />
-          <h2 className="empty-title">Start searching</h2>
-          <p className="empty-subtitle">
-            <span className="empty-highlight">Type</span> at least 2 characters to find jobs
-          </p>
+          <div className="empty-icon-badge"><SearchBigIcon /></div>
+          <h2 className="empty-title">Find your next role</h2>
+          <p className="empty-subtitle">Search by title, company, or location to get started.</p>
         </div>
       ) : filteredJobs.length === 0 ? (
         <div className="empty-state search-empty">
-          <SearchBigIcon />
+          <div className="empty-icon-badge"><SearchBigIcon /></div>
           <h2 className="empty-title">No results found</h2>
           <p className="empty-subtitle">Try a different keyword or adjust your filters</p>
         </div>

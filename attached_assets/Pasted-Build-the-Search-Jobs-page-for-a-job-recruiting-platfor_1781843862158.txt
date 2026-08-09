@@ -53,7 +53,7 @@ Horizontal scrollable row of pill-shaped filter buttons:
 
 ## EMPTY STATE (centered below filters)
 - Large gray 🔍 search icon (outlined, not filled)
-- Bold heading: "Start searching"
+- Bold heading: "is searching"
 - Subtitle (gray): "Type at least 2 characters to find jobs"
 - No buttons needed here
 
