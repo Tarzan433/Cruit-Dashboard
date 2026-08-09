@@ -203,6 +203,11 @@ body {
 }
 
 @media (max-width: 767px) {
+  /* Navbar: reduce side padding so logo + icons fit at 320px without overflow */
+  .navbar {
+    padding: 0 12px;
+  }
+
   .top-nav-tabs {
     display: none;
   }
@@ -426,10 +431,12 @@ body {
 }
 
 /* ─── recruiter Search page ─────────────────────────────────────────────────────────── */
-/* --- default device view refinement --- */
+/* Mobile-first: base styles = mobile default. Desktop via @media (min-width: 768px).   */
+/* One canonical definition per class — no duplicates anywhere in the project.          */
 
 .search-page {
-  padding: 0 0 20px;
+  padding-top: 64px;      /* clears fixed 64px navbar */
+  padding-bottom: 88px;   /* clears fixed 72px bottom tab bar + breathing room */
   box-sizing: border-box;
   width: 100%;
 }
@@ -437,25 +444,30 @@ body {
 .search-bar-card {
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
-  padding: 80px 16px 12px;
+  padding: 16px 16px 12px;
   box-sizing: border-box;
   width: 100%;
 }
 
-.search-input-container {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+/* Scoped override: recruiter search input fills the card width on all viewports */
+.search-bar-card .search-input-container {
+  width: 100%;
   max-width: 680px;
-  margin: 0 auto;
+  margin: 0 auto 12px;
 }
 
+/* Filter chips — scrollable single row, left-aligned so scroll works correctly */
 .search-bar-card .filter-tags-row {
-  margin: 10px auto 0;
-  padding-top: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0 auto;
+  padding: 4px 0;
+  width: 100%;
   max-width: 680px;
   overflow-x: auto;
   overflow-y: hidden;
+  justify-content: flex-start;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
@@ -464,32 +476,24 @@ body {
   display: none;
 }
 
-.filter-tag {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  color: #4b5563;
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 12.5px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.filter-tag-active {
-  background: #111827;
-  border-color: #111827;
-  color: #ffffff;
+/* Side padding for job list below the full-bleed search bar card */
+.search-page .job-list {
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
 }
 
 .empty-icon-badge {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: #ecfdf5;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .search-empty {
@@ -497,9 +501,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 42vh;
+  min-height: 40vh;
   text-align: center;
-  padding: 56px 24px;
+  padding: 48px 24px 32px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .search-empty .empty-title {
@@ -512,14 +518,23 @@ body {
 .search-empty .empty-subtitle {
   font-size: 13.5px;
   color: #6b7280;
-  max-width: 260px;
+  max-width: 280px;
   margin: 0;
   line-height: 1.5;
 }
 
 @media (min-width: 768px) {
+  .search-page {
+    padding-bottom: 20px;  /* no bottom tab bar on desktop */
+  }
+
   .search-bar-card {
-    padding: 85px 16px 16px;
+    padding: 20px 24px 16px;
+  }
+
+  .search-page .job-list {
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .search-empty {
@@ -602,8 +617,12 @@ body {
   padding-top: 25px;
 }
 
+/* Single canonical definition — merged from former duplicate at L445 */
 .search-input-container {
   position: relative;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
   width: 560px;
   max-width: 92vw;
   margin-bottom: 18px;
@@ -667,15 +686,17 @@ body {
 }
 
 /* Filter chips — single row, scrollable, centered */
+/* Global filter-tags-row — used by seeker home expanded panel.
+   Recruiter search page overrides via .search-bar-card .filter-tags-row above. */
 .filter-tags-row {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
-  justify-content: center;
+  justify-content: flex-start; /* left-aligned so horizontal scroll works correctly */
   gap: 8px;
   margin-bottom: 32px;
-  width: 560px;
-  max-width: 92vw;
+  width: 100%;
+  max-width: 680px;
   scrollbar-width: none;
 }
 
@@ -718,16 +739,7 @@ body {
   color: #15803D;
 }
 
-/* Search empty state */
-.search-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  margin-top: 60px;
-  width: 100%;
-}
+/* .search-empty — canonical definition is in the recruiter Search page section above */
 
 .empty-highlight {
   color: #F97316;
