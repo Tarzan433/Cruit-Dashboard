@@ -550,24 +550,8 @@ body {
   }
 }
 
-<<<<<<< HEAD
 
 
-=======
-/* ─── recruiter Search page jobcards align center ----*/
-
-@media (min-width: 768px) {
-  .search-page .job-list {
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  .results-count {
-    max-width: 680px;
-    margin: 0 auto 12px;
-  }
-}
->>>>>>> de7911a3f907f12bf39fed04597f7ec12c2744ac
 
   /* seeker home page search bar */
 /* Search input container (position:relative holds icons) */

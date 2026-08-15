@@ -52,7 +52,6 @@ export function CreateJobPostWizard({ onBack, onPublish }: Props) {
 
   // Step 4 — Terms state
   const [salaryMin, setSalaryMin] = useState("");
-  const [salaryMax, setSalaryMax] = useState("");
   const [salaryType, setSalaryType] = useState("");
   const [commitment, setCommitment] = useState<string | null>(null);
   const [benefits, setBenefits] = useState<string[]>([]);
@@ -94,9 +93,9 @@ export function CreateJobPostWizard({ onBack, onPublish }: Props) {
       companyName: "Your Company",
       description: description || "An exciting opportunity posted on DailyCruit.",
       location: [city, country].filter(Boolean).join(", ") || workType,
-      salary: salaryMin || salaryMax
-        ? `€${salaryMin}${salaryMax ? `–€${salaryMax}` : ""}${salaryType ? ` / ${salaryType}` : ""}`
-        : "—",
+      salary: salaryMin
+  ? `€${salaryMin}${salaryType ? ` / ${salaryType}` : ""}`
+  : "—",
       commitment: commitment || "—",
       workMode: workType,
       skills: [...skills],
@@ -700,99 +699,73 @@ function handleAddTag() {
   <div>
     <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 20 }}>Job Terms</h3>
 
-    {/* Row 1: Salary range + Salary Type */}
+    {/* Row 1: Salary + Salary Type */}
     <div style={{ marginBottom: 20 }}>
-      <div className="wizard-salary-row" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr 1fr", gap: 8, alignItems: "end" }}>
-        {/* Salary Min */}
-        <div>
-          <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
-            SALARY
-          </label>
-          <div style={{ position: "relative" }}>
-            <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#9CA3AF", fontSize: 14, pointerEvents: "none" }}>€</span>
-            <input
-              type="number"
-              value={salaryMin}
-              onChange={(e) => setSalaryMin(e.target.value)}
-              placeholder="15"
-              style={{
-                width: "100%", height: 44, padding: "0 14px 0 28px", fontSize: 14,
-                border: "1.5px solid #E5E7EB", borderRadius: 10,
-                outline: "none", background: "#fff",
-                boxSizing: "border-box", fontFamily: "inherit",
-                transition: "border-color 0.15s",
-              }}
-              onFocus={(e) => e.target.style.borderColor = "#22c55e"}
-              onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
-            />
-          </div>
-        </div>
-
-        {/* TO divider */}
-        <div style={{ paddingBottom: 10, color: "#9CA3AF", fontSize: 13, fontWeight: 500, whiteSpace: "nowrap" }}>to</div>
-
-        {/* Salary Max */}
-        <div>
-          <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "transparent", textTransform: "uppercase", marginBottom: 6 }}>–</label>
-          <div style={{ position: "relative" }}>
-            <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#9CA3AF", fontSize: 14, pointerEvents: "none" }}>€</span>
-            <input
-              type="number"
-              value={salaryMax}
-              onChange={(e) => setSalaryMax(e.target.value)}
-              placeholder="30"
-              style={{
-                width: "100%", height: 44, padding: "0 14px 0 28px", fontSize: 14,
-                border: "1.5px solid #E5E7EB", borderRadius: 10,
-                outline: "none", background: "#fff",
-                boxSizing: "border-box", fontFamily: "inherit",
-                transition: "border-color 0.15s",
-              }}
-              onFocus={(e) => e.target.style.borderColor = "#22c55e"}
-              onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
-            />
-          </div>
-        </div>
-
-        {/* Salary Type */}
-        <div>
-          <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
-            SALARY TYPE <span style={{ color: "#ef4444" }}>*</span>
-          </label>
-          <div style={{ position: "relative" }}>
-            <select
-              value={salaryType}
-              onChange={(e) => setSalaryType(e.target.value)}
-              style={{
-                width: "100%", height: 44, padding: "0 36px 0 14px", fontSize: 14,
-                border: "1.5px solid #E5E7EB", borderRadius: 10,
-                outline: "none", background: "#fff",
-                boxSizing: "border-box", fontFamily: "inherit",
-                appearance: "none", cursor: "pointer",
-                color: salaryType ? "#111827" : "#9CA3AF",
-                transition: "border-color 0.15s",
-              }}
-              onFocus={(e) => e.target.style.borderColor = "#22c55e"}
-              onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
-            >
-              <option value="" disabled>Select...</option>
-              <option value="hourly">Hourly</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
-              <option value="fixed">Fixed</option>
-            </select>
-            <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </div>
-        </div>
+  <div className="wizard-salary-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, alignItems: "end" }}>
+    {/* Salary Amount */}
+    <div>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
+        SALARY
+      </label>
+      <div style={{ position: "relative" }}>
+        <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#9CA3AF", fontSize: 14, pointerEvents: "none" }}>€</span>
+        <input
+          type="number"
+          value={salaryMin}
+          onChange={(e) => setSalaryMin(e.target.value)}
+          placeholder="15"
+          style={{
+            width: "100%", height: 44, padding: "0 14px 0 28px", fontSize: 14,
+            border: "1.5px solid #E5E7EB", borderRadius: 10,
+            outline: "none", background: "#fff",
+            boxSizing: "border-box", fontFamily: "inherit",
+            transition: "border-color 0.15s",
+          }}
+          onFocus={(e) => e.target.style.borderColor = "#22c55e"}
+          onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
+        />
       </div>
-      {showErrors && !salaryType && (
-        <p style={{ color: "#ef4444", fontSize: 12, marginTop: 5 }}>Salary type is required</p>
-      )}
     </div>
+
+    {/* Salary Type */}
+    <div>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
+        SALARY TYPE <span style={{ color: "#ef4444" }}>*</span>
+      </label>
+      <div style={{ position: "relative" }}>
+        <select
+          value={salaryType}
+          onChange={(e) => setSalaryType(e.target.value)}
+          style={{
+            width: "100%", height: 44, padding: "0 36px 0 14px", fontSize: 14,
+            border: "1.5px solid #E5E7EB", borderRadius: 10,
+            outline: "none", background: "#fff",
+            boxSizing: "border-box", fontFamily: "inherit",
+            appearance: "none", cursor: "pointer",
+            color: salaryType ? "#111827" : "#9CA3AF",
+            transition: "border-color 0.15s",
+          }}
+          onFocus={(e) => e.target.style.borderColor = "#22c55e"}
+          onBlur={(e) => e.target.style.borderColor = "#E5E7EB"}
+        >
+          <option value="" disabled>Select...</option>
+          <option value="hourly">Hourly</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+          <option value="fixed">Fixed</option>
+        </select>
+        <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </div>
+    </div>
+  </div>
+  {showErrors && !salaryType && (
+    <p style={{ color: "#ef4444", fontSize: 12, marginTop: 5 }}>Salary type is required</p>
+  )}
+</div>
 
     {/* Commitment */}
     <div style={{ marginBottom: 20 }}>
@@ -1213,8 +1186,8 @@ function handleAddTag() {
                   {
                     icon: "💰",
                     label: "Salary",
-                    value: salaryMin || salaryMax
-                      ? `€${salaryMin}${salaryMax ? ` – €${salaryMax}` : ""}${salaryType ? ` / ${salaryType}` : ""}`
+                    value: salaryMin
+                      ? `€${salaryMin}${salaryType ? ` / ${salaryType}` : ""}`
                       : null,
                   },
                   {
