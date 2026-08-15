@@ -28,7 +28,7 @@ import {
   type Application,
 } from "./services/applicationService";
 import type { SavedJob } from "./models/savedJob";
-import NotificationPanel from "./components/notifications/NotificationPanel";
+import NotificationsModal from "./components/notifications/NotificationPanel";
 import {
   getFriendlySavedJobsError,
   subscribeToSavedJobs,
@@ -3025,7 +3025,10 @@ export default function App() {
 
 
       {showNotifications && (
-        <NotificationPanel onClose={() => setShowNotifications(false)} />
+        <NotificationsModal
+          onClose={() => setShowNotifications(false)}
+          accountType={accountType}
+        />
       )}
 
       {showModal && (

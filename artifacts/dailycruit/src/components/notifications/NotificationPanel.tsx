@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import NotificationCard from "./NotificationCard";
 import { mockNotifications, type AppNotification } from "./mockNotifications";
 
+type AccountType = "jobseeker" | "recruiter" | "gigsman";
 type FilterTab = "all" | "applications" | "messages";
 
 const FILTER_TABS: { id: FilterTab; label: string }[] = [
@@ -19,11 +20,30 @@ function BellOutlineIcon() {
   );
 }
 
-function matchesFilter(notification: AppNotification, tab: FilterTab): boolean {
-  if (tab === "all") return true;
-  if (tab === "applications") {
-    return notification.type === "batched_application" || notification.type === "status_change";
+function matchesMode(notification: AppNotification, accountType: AccountType): boolean {
+  if (accountType === "gigsman") return false;
+  if (accountType === "recruiter") return notification.audience === "recruiter";
+  return notification.audience === "jobseeker";
+}
+
+function matchesTab(
+  notification: AppNotification,
+  tab: FilterTab,
+  accountType: AccountType,
+): boolean {
+  if (accountType === "gigsman") return false;
+
+  if (tab === "all") {
+    if (accountType === "recruiter") return notification.type === "batched_application";
+    return notification.type === "status_change" || notification.type === "new_message";
   }
+
+  if (tab === "applications") {
+    if (accountType === "recruiter") return notification.type === "batched_application";
+    return notification.type === "status_change";
+  }
+
+  if (accountType === "recruiter") return false;
   return notification.type === "new_message";
 }
 
@@ -78,30 +98,59 @@ function groupNotifications(notifications: AppNotification[], now: Date) {
   return Array.from(groups.entries());
 }
 
-function getEmptyStateCopy(tab: FilterTab): { title: string; subtitle: string } {
-  if (tab === "applications") {
+function getEmptyStateCopy(
+  tab: FilterTab,
+  accountType: AccountType,
+): { title: string; subtitle: string } {
+  if (accountType === "gigsman") {
     return {
-      title: "No application updates yet",
-      subtitle: "New applicants and status changes will show up here.",
+      title: "No notifications yet",
+      subtitle: "Notifications for this account type will appear here.",
     };
   }
+
+  if (tab === "applications") {
+    if (accountType === "recruiter") {
+      return {
+        title: "No new applicants yet",
+        subtitle: "When people apply to your jobs, they'll show up here.",
+      };
+    }
+    return {
+      title: "No application updates yet",
+      subtitle: "Status changes on your applications will appear here.",
+    };
+  }
+
   if (tab === "messages") {
     return {
       title: "No messages yet",
       subtitle: "When someone sends you a message, it will appear here.",
     };
   }
+
+  if (accountType === "recruiter") {
+    return {
+      title: "No notifications yet",
+      subtitle: "New applicant batches will appear here.",
+    };
+  }
+
   return {
     title: "No notifications yet",
     subtitle: "Messages, application status and account updates will appear here.",
   };
 }
 
-type NotificationPanelProps = {
+type NotificationsModalProps = {
   onClose: () => void;
+  accountType: AccountType;
 };
 
-export default function NotificationPanel({ onClose }: NotificationPanelProps) {
+export default function NotificationsModal({
+  onClose,
+  accountType,
+}: NotificationsModalProps) {
   const [activeTab, setActiveTab] = useState<FilterTab>("all");
   const [notifications, setNotifications] = useState<AppNotification[]>(() =>
     [...mockNotifications].sort(
@@ -112,17 +161,27 @@ export default function NotificationPanel({ onClose }: NotificationPanelProps) {
 
   const now = useMemo(() => new Date(), []);
 
-  const hasUnread = notifications.some((n) => !n.read);
+  const modeNotifications = useMemo(
+    () => notifications.filter((n) => matchesMode(n, accountType)),
+    [notifications, accountType],
+  );
 
   const filteredNotifications = useMemo(
-    () => notifications.filter((n) => matchesFilter(n, activeTab)),
-    [notifications, activeTab],
+    () => modeNotifications.filter((n) => matchesTab(n, activeTab, accountType)),
+    [modeNotifications, activeTab, accountType],
   );
+
+  const unreadCount = filteredNotifications.filter((n) => !n.read).length;
+  const hasUnreadInMode = modeNotifications.some((n) => !n.read);
 
   const groupedNotifications = useMemo(
     () => groupNotifications(filteredNotifications, now),
     [filteredNotifications, now],
   );
+
+  useEffect(() => {
+    setActiveTab("all");
+  }, [accountType]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -133,8 +192,10 @@ export default function NotificationPanel({ onClose }: NotificationPanelProps) {
   }, [onClose]);
 
   const handleMarkAllRead = () => {
-    if (!hasUnread) return;
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    if (!hasUnreadInMode) return;
+    setNotifications((prev) =>
+      prev.map((n) => (matchesMode(n, accountType) ? { ...n, read: true } : n)),
+    );
   };
 
   const handleTabChange = (tab: FilterTab) => {
@@ -150,7 +211,7 @@ export default function NotificationPanel({ onClose }: NotificationPanelProps) {
     );
   };
 
-  const emptyCopy = getEmptyStateCopy(activeTab);
+  const emptyCopy = getEmptyStateCopy(activeTab, accountType);
 
   return (
     <div className="notif-overlay" onClick={onClose}>
@@ -162,15 +223,28 @@ export default function NotificationPanel({ onClose }: NotificationPanelProps) {
         aria-labelledby="notification-panel-title"
       >
         <header className="notification-panel-header">
-          <h2 id="notification-panel-title" className="notification-panel-title">
-            Notifications
-          </h2>
+          <div className="notif-header-left">
+            <span className="notif-header-bell" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            </span>
+            <div className="notif-header-text">
+              <h2 id="notification-panel-title" className="notification-panel-title">
+                Notifications
+              </h2>
+              <span className="notification-unread-count">
+                {unreadCount} unread
+              </span>
+            </div>
+          </div>
           <div className="notification-panel-header-actions">
             <button
               type="button"
-              className={`notification-mark-all${hasUnread ? "" : " notification-mark-all-disabled"}`}
+              className={`notification-mark-all${hasUnreadInMode ? "" : " notification-mark-all-disabled"}`}
               onClick={handleMarkAllRead}
-              disabled={!hasUnread}
+              disabled={!hasUnreadInMode}
             >
               Mark all read
             </button>

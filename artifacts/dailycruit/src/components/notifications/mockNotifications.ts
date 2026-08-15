@@ -1,9 +1,12 @@
 export type NotificationType = "batched_application" | "status_change" | "new_message";
 
+export type NotificationAudience = "jobseeker" | "recruiter";
+
 export type BaseNotification = {
   id: string;
   read: boolean;
   createdAt: Date;
+  audience: NotificationAudience;
 };
 
 export type BatchedApplicationNotification = BaseNotification & {
@@ -42,8 +45,10 @@ function atTime(base: Date, hours: number, minutes = 0): Date {
 }
 
 export const mockNotifications: AppNotification[] = [
+  // ── Recruiter notifications (batched_application only) ──
   {
-    id: "notif-1",
+    id: "rec-notif-1",
+    audience: "recruiter",
     type: "batched_application",
     read: false,
     createdAt: atTime(today, 9, 42),
@@ -57,7 +62,23 @@ export const mockNotifications: AppNotification[] = [
     ],
   },
   {
-    id: "notif-2",
+    id: "rec-notif-2",
+    audience: "recruiter",
+    type: "batched_application",
+    read: true,
+    createdAt: atTime(yesterday, 14, 10),
+    jobTitle: "Frontend Developer",
+    applicants: [
+      { name: "Daniel Okoye", initial: "D", avatarColor: "#0D9488" },
+      { name: "Rachel Kim", initial: "R", avatarColor: "#9333EA" },
+      { name: "Tomás Rivera", initial: "T", avatarColor: "#DC2626" },
+    ],
+  },
+
+  // ── Job seeker notifications (status_change + new_message only) ──
+  {
+    id: "seek-notif-1",
+    audience: "jobseeker",
     type: "status_change",
     read: false,
     createdAt: atTime(today, 11, 15),
@@ -66,7 +87,8 @@ export const mockNotifications: AppNotification[] = [
     jobTitle: "Frontend Engineer",
   },
   {
-    id: "notif-3",
+    id: "seek-notif-2",
+    audience: "jobseeker",
     type: "new_message",
     read: false,
     createdAt: atTime(today, 14, 30),
@@ -75,7 +97,8 @@ export const mockNotifications: AppNotification[] = [
     avatarColor: "#059669",
   },
   {
-    id: "notif-4",
+    id: "seek-notif-3",
+    audience: "jobseeker",
     type: "status_change",
     read: true,
     createdAt: atTime(today, 8, 5),
@@ -84,7 +107,8 @@ export const mockNotifications: AppNotification[] = [
     jobTitle: "Data Analyst",
   },
   {
-    id: "notif-5",
+    id: "seek-notif-4",
+    audience: "jobseeker",
     type: "new_message",
     read: true,
     createdAt: atTime(yesterday, 16, 48),
@@ -93,7 +117,8 @@ export const mockNotifications: AppNotification[] = [
     avatarColor: "#4F46E5",
   },
   {
-    id: "notif-6",
+    id: "seek-notif-5",
+    audience: "jobseeker",
     type: "status_change",
     read: true,
     createdAt: atTime(yesterday, 10, 20),
@@ -102,7 +127,8 @@ export const mockNotifications: AppNotification[] = [
     jobTitle: "Store Operations Manager",
   },
   {
-    id: "notif-7",
+    id: "seek-notif-6",
+    audience: "jobseeker",
     type: "new_message",
     read: false,
     createdAt: atTime(yesterday, 19, 12),

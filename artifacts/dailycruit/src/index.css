@@ -3000,6 +3000,7 @@ body {
   color: #16A34A;
 }
 
+
 /* --- Notifications --- */
 
 .notif-overlay {
@@ -3036,7 +3037,7 @@ body {
 
 .notification-panel-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
   padding: 16px;
@@ -3044,11 +3045,33 @@ body {
   flex-shrink: 0;
 }
 
+.notif-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.notif-header-bell {
+  color: #374151;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.notif-header-text {
+  min-width: 0;
+}
+
 .notification-panel-title {
   font-size: 16px;
   font-weight: 700;
   color: #111827;
-  margin: 0;
+  margin: 0 0 2px;
+}
+
+.notification-unread-count {
+  font-size: 13px;
+  color: #6B7280;
 }
 
 .notification-panel-header-actions {
