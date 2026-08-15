@@ -86,6 +86,12 @@
   border-left-color: #16A34A;
 }
 
+@media (max-width: 480px) {
+  .home-job-card {
+    border-left-width: 3px;
+  }
+}
+
 .home-job-card-inner {
   padding: 18px 20px;
   display: flex;

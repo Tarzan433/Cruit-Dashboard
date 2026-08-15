@@ -6,7 +6,7 @@ import { applyToJob, getFriendlyErrorMessage, hasAppliedToJob } from "../service
 import { JobCard, type JobCardData } from "../components/JobCard";
 import { JobDetailsDrawer } from "../components/JobDetailsDrawer";
 import { CompanyViewPanel } from "../components/CompanyViewPanel";
-import { SearchJobsPage } from "../components/SearchJobsPage";
+import { SearchJobsPage } from "../components/SeekerHomeSearchPanel";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
