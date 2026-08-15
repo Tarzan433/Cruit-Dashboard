@@ -550,8 +550,24 @@ body {
   }
 }
 
+<<<<<<< HEAD
 
 
+=======
+/* ─── recruiter Search page jobcards align center ----*/
+
+@media (min-width: 768px) {
+  .search-page .job-list {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .results-count {
+    max-width: 680px;
+    margin: 0 auto 12px;
+  }
+}
+>>>>>>> de7911a3f907f12bf39fed04597f7ec12c2744ac
 
   /* seeker home page search bar */
 /* Search input container (position:relative holds icons) */
@@ -3453,29 +3469,34 @@ body {
 }
 
 /* ── Wizard Shell ──────────────────────────────────────────────────────────── */
-/* Full-height viewport using dvh to handle mobile browser chrome expand/collapse */
+/* Mobile-first: Hug content height naturally, no forced 100dvh viewport stretch */
 .wizard-shell {
-  min-height: 100dvh;
-  background: #f1f3f7;
-  padding: 28px clamp(16px, 5vw, 32px);
+  min-height: auto;
+  background: #f8fafc;
+  padding: 16px 16px 32px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.wizard-card {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
-/* Mobile: extra bottom padding — clears the fixed action dock (≈56px) + fixed tab bar (72px) */
-@media (max-width: 767px) {
-  .wizard-shell {
-    padding-bottom: 160px;
-  }
-}
-
-/* ── Wizard Card (desktop elevated card wrapper) ────────────────────────────── */
 @media (min-width: 768px) {
+  .wizard-shell {
+    padding: 32px 24px 48px;
+    background: #f1f3f7;
+  }
+
   .wizard-card {
     background: #fff;
     border-radius: 16px;
     border: 1px solid #E5E7EB;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
-    padding: 32px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    padding: 28px 32px;
   }
 }
 

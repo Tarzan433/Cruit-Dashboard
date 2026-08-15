@@ -231,19 +231,19 @@ function handleAddTag() {
         style={{
           display: "flex", alignItems: "center", gap: 6,
           background: "none", border: "none", cursor: "pointer",
-          color: "#4B5563", fontSize: 14, fontWeight: 500, marginBottom: 20,
+          color: "#4B5563", fontSize: 14, fontWeight: 500, marginBottom: 16,
         }}
       >
         ← Job Posts
       </button>
       <div className="content-container wizard-card" onKeyDown={handleFormKeyDown}>
         {/* ── Page header ── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
           <div style={{
-            width: 44, height: 44, borderRadius: 12,
+            width: 40, height: 40, borderRadius: 10,
             background: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
           </svg>
         </div>
@@ -251,7 +251,7 @@ function handleAddTag() {
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 2 }}>
             YOU'RE CREATING
           </p>
-          <h2 style={{ fontSize: 20, fontWeight: 800, color: "#111827", margin: 0 }}>New Job Post</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#111827", margin: 0 }}>New Job Post</h2>
         </div>
       </div>
 
@@ -259,7 +259,7 @@ function handleAddTag() {
       <div
         ref={stepperScrollRef}
         className="wizard-stepper-scroll"
-        style={{ width: "100%", overflowX: "auto", marginBottom: 36 }}
+        style={{ width: "100%", overflowX: "auto", marginBottom: 24 }}
       >
         <div style={{ display: "flex", alignItems: "flex-start", gap: 0, minWidth: "max(100%, 360px)" }}>
         {STEPS.map((label, i) => {
@@ -316,26 +316,26 @@ function handleAddTag() {
       </div> {/* closes stepper scroll container */}
 
       {/* ── Step content ── */}
-      <div style={{ maxWidth: 560, width: "100%" }}>
+      <div style={{ width: "100%" }}>
 
         {/* STEP 1 — Type */}
         {currentStep === 0 && (
           <>
-            <h3 style={{ fontSize: 20, fontWeight: 800, color: "#111827", marginBottom: 6 }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 4 }}>
               What type of job post?
             </h3>
-            <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 20 }}>
+            <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 16 }}>
               Choose how candidates will find this job
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 28 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
               {/* Standard option */}
               <button
                 onClick={() => setSelectedType("standard")}
                 style={{
-                  border: selectedType === "standard" ? "2px solid #22c55e" : "2px solid #E5E7EB",
+                  border: selectedType === "standard" ? "2px solid #22c55e" : "1.5px solid #E5E7EB",
                   background: selectedType === "standard" ? "#f0fdf4" : "#fff",
-                  borderRadius: 12, padding: "18px 16px", textAlign: "left",
+                  borderRadius: 12, padding: "16px 14px", textAlign: "left",
                   cursor: "pointer", transition: "all 0.15s",
                 }}
               >
@@ -359,9 +359,9 @@ function handleAddTag() {
               <button
                 onClick={() => setSelectedType("mappin")}
                 style={{
-                  border: selectedType === "mappin" ? "2px solid #22c55e" : "2px solid #E5E7EB",
+                  border: selectedType === "mappin" ? "2px solid #22c55e" : "1.5px solid #E5E7EB",
                   background: selectedType === "mappin" ? "#f0fdf4" : "#fff",
-                  borderRadius: 12, padding: "18px 16px", textAlign: "left",
+                  borderRadius: 12, padding: "16px 14px", textAlign: "left",
                   cursor: "pointer", transition: "all 0.15s",
                 }}
               >
@@ -386,13 +386,13 @@ function handleAddTag() {
         {/* STEP 2 — Job Details */}
 {currentStep === 1 && (
   <div>
-    <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 24 }}>
+    <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 20 }}>
       Job Details
     </h3>
 
     {/* Job Title */}
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
         Job Title *
       </label>
       <input
@@ -417,7 +417,7 @@ function handleAddTag() {
 
     {/* Description */}
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
         Description *
       </label>
       <textarea
@@ -477,7 +477,7 @@ function handleAddTag() {
 
     {/* Tags */}
     <div style={{ marginBottom: 8 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
         Tags
       </label>
       <div style={{ display: "flex", gap: 8 }}>
@@ -532,15 +532,15 @@ function handleAddTag() {
   </div>
 )}
 
-{/* STEP 3 — Location */}
+        {/* STEP 3 — Location */}
 {currentStep === 2 && (
   <div>
-    <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 24 }}>
+    <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 20 }}>
       Location
     </h3>
 
     {/* Country + City row */}
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
       {/* Country */}
       <div>
         <label style={{
@@ -555,18 +555,16 @@ function handleAddTag() {
           placeholder="Italy"
           style={{
             width: "100%", height: 44, padding: "0 14px", fontSize: 14,
-            border: "1px solid #E5E7EB", borderRadius: 8,
+            border: "1.5px solid #E5E7EB", borderRadius: 10,
             outline: "none", background: "#fff",
             boxSizing: "border-box", fontFamily: "inherit",
-            transition: "border-color 0.15s, box-shadow 0.15s",
+            transition: "border-color 0.15s",
           }}
           onFocus={(e) => {
             e.target.style.borderColor = "#22c55e";
-            e.target.style.boxShadow = "0 0 0 3px rgba(34,197,94,0.12)";
           }}
           onBlur={(e) => {
             e.target.style.borderColor = "#E5E7EB";
-            e.target.style.boxShadow = "none";
           }}
         />
       </div>
@@ -587,18 +585,16 @@ function handleAddTag() {
           placeholder="Milan"
           style={{
             width: "100%", height: 44, padding: "0 14px", fontSize: 14,
-            border: "1px solid #E5E7EB", borderRadius: 8,
+            border: "1.5px solid #E5E7EB", borderRadius: 10,
             outline: "none", background: "#fff",
             boxSizing: "border-box", fontFamily: "inherit",
-            transition: "border-color 0.15s, box-shadow 0.15s",
+            transition: "border-color 0.15s",
           }}
           onFocus={(e) => {
             e.target.style.borderColor = "#22c55e";
-            e.target.style.boxShadow = "0 0 0 3px rgba(34,197,94,0.12)";
           }}
           onBlur={(e) => {
             e.target.style.borderColor = "#E5E7EB";
-            e.target.style.boxShadow = "none";
           }}
         />
         <p style={{ fontSize: 11, color: "#9CA3AF", marginTop: 5, margin: "5px 0 0" }}>
@@ -624,24 +620,22 @@ function handleAddTag() {
         placeholder="e.g. Lombardy"
         style={{
           width: "100%", height: 44, padding: "0 14px", fontSize: 14,
-          border: "1px solid #E5E7EB", borderRadius: 8,
+          border: "1.5px solid #E5E7EB", borderRadius: 10,
           outline: "none", background: "#fff",
           boxSizing: "border-box", fontFamily: "inherit",
-          transition: "border-color 0.15s, box-shadow 0.15s",
+          transition: "border-color 0.15s",
         }}
         onFocus={(e) => {
           e.target.style.borderColor = "#22c55e";
-          e.target.style.boxShadow = "0 0 0 3px rgba(34,197,94,0.12)";
         }}
         onBlur={(e) => {
           e.target.style.borderColor = "#E5E7EB";
-          e.target.style.boxShadow = "none";
         }}
       />
     </div>
 
     {/* Address */}
-    <div style={{ marginBottom: 24 }}>
+    <div style={{ marginBottom: 20 }}>
       <label style={{
         display: "block", fontSize: 11, fontWeight: 700,
         letterSpacing: "0.08em", color: "#6B7280",
@@ -654,18 +648,16 @@ function handleAddTag() {
         placeholder="Via Roma 1"
         style={{
           width: "100%", height: 44, padding: "0 14px", fontSize: 14,
-          border: "1px solid #E5E7EB", borderRadius: 8,
+          border: "1.5px solid #E5E7EB", borderRadius: 10,
           outline: "none", background: "#fff",
           boxSizing: "border-box", fontFamily: "inherit",
-          transition: "border-color 0.15s, box-shadow 0.15s",
+          transition: "border-color 0.15s",
         }}
         onFocus={(e) => {
           e.target.style.borderColor = "#22c55e";
-          e.target.style.boxShadow = "0 0 0 3px rgba(34,197,94,0.12)";
         }}
         onBlur={(e) => {
           e.target.style.borderColor = "#E5E7EB";
-          e.target.style.boxShadow = "none";
         }}
       />
     </div>
@@ -675,7 +667,7 @@ function handleAddTag() {
       <label style={{
         display: "block", fontSize: 11, fontWeight: 700,
         letterSpacing: "0.08em", color: "#6B7280",
-        textTransform: "uppercase", marginBottom: 10,
+        textTransform: "uppercase", marginBottom: 8,
       }}>Work Type</label>
       <div style={{ display: "flex", gap: 8 }}>
         {(["remote", "hybrid", "onsite"] as WorkType[]).map((wt) => {
@@ -706,7 +698,7 @@ function handleAddTag() {
 {/* STEP 4 — Terms */}
 {currentStep === 3 && (
   <div>
-    <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 20 }}>Job Terms</h3>
+    <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 20 }}>Job Terms</h3>
 
     {/* Row 1: Salary range + Salary Type */}
     <div style={{ marginBottom: 20 }}>
@@ -725,7 +717,7 @@ function handleAddTag() {
               placeholder="15"
               style={{
                 width: "100%", height: 44, padding: "0 14px 0 28px", fontSize: 14,
-                border: "1px solid #E5E7EB", borderRadius: 8,
+                border: "1.5px solid #E5E7EB", borderRadius: 10,
                 outline: "none", background: "#fff",
                 boxSizing: "border-box", fontFamily: "inherit",
                 transition: "border-color 0.15s",
@@ -751,7 +743,7 @@ function handleAddTag() {
               placeholder="30"
               style={{
                 width: "100%", height: 44, padding: "0 14px 0 28px", fontSize: 14,
-                border: "1px solid #E5E7EB", borderRadius: 8,
+                border: "1.5px solid #E5E7EB", borderRadius: 10,
                 outline: "none", background: "#fff",
                 boxSizing: "border-box", fontFamily: "inherit",
                 transition: "border-color 0.15s",
@@ -773,7 +765,7 @@ function handleAddTag() {
               onChange={(e) => setSalaryType(e.target.value)}
               style={{
                 width: "100%", height: 44, padding: "0 36px 0 14px", fontSize: 14,
-                border: "1px solid #E5E7EB", borderRadius: 8,
+                border: "1.5px solid #E5E7EB", borderRadius: 10,
                 outline: "none", background: "#fff",
                 boxSizing: "border-box", fontFamily: "inherit",
                 appearance: "none", cursor: "pointer",
@@ -804,7 +796,7 @@ function handleAddTag() {
 
     {/* Commitment */}
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 10 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
         COMMITMENT <span style={{ color: "#ef4444" }}>*</span>
       </label>
       <div style={{ display: "flex", gap: 8 }}>
@@ -835,7 +827,7 @@ function handleAddTag() {
 
     {/* Benefits */}
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 10 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
         BENEFITS
       </label>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -862,7 +854,7 @@ function handleAddTag() {
     </div>
 
     {/* Start Date + Contract Duration */}
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 8 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 8 }}>
       {/* Start Date */}
       <div>
         <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
@@ -875,7 +867,7 @@ function handleAddTag() {
           placeholder="e.g. Immediately or 2024-09-01"
           style={{
             width: "100%", height: 44, padding: "0 14px", fontSize: 14,
-            border: "1px solid #E5E7EB", borderRadius: 8,
+            border: "1.5px solid #E5E7EB", borderRadius: 10,
             outline: "none", background: "#fff",
             boxSizing: "border-box", fontFamily: "inherit",
             transition: "border-color 0.15s",
@@ -896,7 +888,7 @@ function handleAddTag() {
             onChange={(e) => setContractDuration(e.target.value)}
             style={{
               width: "100%", height: 44, padding: "0 36px 0 14px", fontSize: 14,
-              border: "1px solid #E5E7EB", borderRadius: 8,
+              border: "1.5px solid #E5E7EB", borderRadius: 10,
               outline: "none", background: "#fff",
               boxSizing: "border-box", fontFamily: "inherit",
               appearance: "none", cursor: "pointer",
@@ -925,16 +917,16 @@ function handleAddTag() {
 {/* STEP 5 — Requirements */}
 {currentStep === 4 && (
   <div>
-    <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 4 }}>Requirements</h3>
+    <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 4 }}>Requirements</h3>
     <p
-      style={{ fontSize: 13, color: "#9CA3AF", fontStyle: "italic", marginBottom: 24, marginTop: 0 }}
+      style={{ fontSize: 13, color: "#9CA3AF", fontStyle: "italic", marginBottom: 20, marginTop: 0 }}
       className="font-bold text-[color:var(--auth-input-focus-border)]">
       All optional — you can skip this step
     </p>
 
     {/* Skills */}
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
         SKILLS REQUIRED
       </label>
       <div style={{ display: "flex", gap: 8 }}>
@@ -952,7 +944,7 @@ function handleAddTag() {
           placeholder="e.g. React, Photoshop, Excel..."
           style={{
             flex: 1, height: 44, padding: "0 14px", fontSize: 14,
-            border: "1px solid #E5E7EB", borderRadius: 8,
+            border: "1.5px solid #E5E7EB", borderRadius: 10,
             outline: "none", background: "#fff", fontFamily: "inherit",
             transition: "border-color 0.15s", boxSizing: "border-box",
           }}
@@ -967,7 +959,7 @@ function handleAddTag() {
           }}
           style={{
             padding: "0 18px", height: 44, background: "#111827", color: "#fff",
-            border: "none", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer",
+            border: "none", borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: "pointer",
           }}
         >Add</button>
       </div>
@@ -990,7 +982,7 @@ function handleAddTag() {
 
     {/* Experience Level */}
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 10 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
         EXPERIENCE LEVEL
       </label>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -1016,7 +1008,7 @@ function handleAddTag() {
 
     {/* Education */}
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
         EDUCATION
       </label>
       <div style={{ position: "relative" }}>
@@ -1025,7 +1017,7 @@ function handleAddTag() {
           onChange={(e) => setEducation(e.target.value)}
           style={{
             width: "100%", height: 44, padding: "0 36px 0 14px", fontSize: 14,
-            border: "1px solid #E5E7EB", borderRadius: 8,
+            border: "1.5px solid #E5E7EB", borderRadius: 10,
             outline: "none", background: "#fff", fontFamily: "inherit",
             appearance: "none", cursor: "pointer",
             color: education ? "#111827" : "#9CA3AF",
@@ -1048,7 +1040,7 @@ function handleAddTag() {
 
     {/* Languages */}
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
         LANGUAGES
       </label>
       <div style={{ display: "flex", gap: 8 }}>
@@ -1066,7 +1058,7 @@ function handleAddTag() {
           placeholder="e.g. English, Spanish..."
           style={{
             flex: 1, height: 44, padding: "0 14px", fontSize: 14,
-            border: "1px solid #E5E7EB", borderRadius: 8,
+            border: "1.5px solid #E5E7EB", borderRadius: 10,
             outline: "none", background: "#fff", fontFamily: "inherit",
             transition: "border-color 0.15s", boxSizing: "border-box",
           }}
@@ -1081,7 +1073,7 @@ function handleAddTag() {
           }}
           style={{
             padding: "0 18px", height: 44, background: "#111827", color: "#fff",
-            border: "none", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer",
+            border: "none", borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: "pointer",
           }}
         >Add</button>
       </div>
@@ -1104,7 +1096,7 @@ function handleAddTag() {
 
     {/* Certifications */}
     <div style={{ marginBottom: 8 }}>
-      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", color: "#6B7280", textTransform: "uppercase", marginBottom: 6 }}>
         CERTIFICATIONS <span style={{ fontWeight: 500, textTransform: "none", color: "#9CA3AF", fontSize: 10 }}>(optional)</span>
       </label>
       <input
@@ -1114,7 +1106,7 @@ function handleAddTag() {
         placeholder="e.g. AWS Certified, PMP..."
         style={{
           width: "100%", height: 44, padding: "0 14px", fontSize: 14,
-          border: "1px solid #E5E7EB", borderRadius: 8,
+          border: "1.5px solid #E5E7EB", borderRadius: 10,
           outline: "none", background: "#fff", fontFamily: "inherit",
           transition: "border-color 0.15s", boxSizing: "border-box",
         }}
@@ -1135,10 +1127,10 @@ function handleAddTag() {
                 display: "flex", alignItems: "center", justifyContent: "center",
                 margin: "0 auto 20px", fontSize: 28, color: "#fff",
               }}>✓</div>
-              <h3 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 8 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
                 Job Post Published! 🎉
               </h3>
-              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 28 }}>
+              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 24 }}>
                 Your job is now live and visible to candidates.
               </p>
               <button
@@ -1170,7 +1162,7 @@ function handleAddTag() {
           ) : (
             /* ── Review UI ── */
             (<div>
-              <h3 style={{ fontSize: 22, fontWeight: 700, color: "#111827", marginBottom: 16 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 16 }}>
                 Review &amp; Publish
               </h3>
               {/* Job preview card */}
@@ -1305,6 +1297,32 @@ function handleAddTag() {
                   {publishError}
                 </div>
               )}
+              {/* Primary actions */}
+              <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+                <button
+                  onClick={handleSaveDraft}
+                  disabled={isPublishing}
+                  style={{
+                    flex: 1, padding: "13px 0", background: "#fff",
+                    color: "#374151", border: "1.5px solid #E5E7EB",
+                    borderRadius: 999, fontSize: 14, fontWeight: 700, cursor: "pointer",
+                  }}
+                >
+                  Save Draft
+                </button>
+                <button
+                  onClick={handlePublishNow}
+                  disabled={isPublishing}
+                  style={{
+                    flex: 2, padding: "13px 0", background: "#22c55e",
+                    color: "#fff", border: "none", borderRadius: 999,
+                    fontSize: 14, fontWeight: 700, cursor: "pointer",
+                    opacity: isPublishing ? 0.7 : 1,
+                  }}
+                >
+                  {isPublishing ? "Publishing..." : "🚀 Publish"}
+                </button>
+              </div>
             </div>)
           )
         )}
