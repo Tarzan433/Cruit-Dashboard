@@ -28,6 +28,7 @@ import {
   type Application,
 } from "./services/applicationService";
 import type { SavedJob } from "./models/savedJob";
+import NotificationPanel from "./components/notifications/NotificationPanel";
 import {
   getFriendlySavedJobsError,
   subscribeToSavedJobs,
@@ -147,51 +148,6 @@ function ClockIcon({ size = 13 }: { size?: number }) {
 }
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
-
-// ─── Notifications Modal ──────────────────────────────────────────────────────
-
-function NotificationsModal({ onClose }: { onClose: () => void }) {
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
-
-  return (
-    <div className="notif-overlay" onClick={onClose}>
-      <div className="notif-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="notif-header">
-          <div className="notif-header-left">
-            <span className="notif-header-bell">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              </svg>
-            </span>
-            <div className="notif-header-text">
-              <h3>Notifications</h3>
-              <span>0 unread</span>
-            </div>
-          </div>
-          <button className="notif-close" onClick={onClose} title="Close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Body */}
-        <div className="notif-body">
-          <span className="notif-bell-emoji">🔔</span>
-          <h4>No notifications yet</h4>
-          <p>Messages, application status and account updates will appear here.</p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── Generic Modal ────────────────────────────────────────────────────────────
 
@@ -3069,7 +3025,7 @@ export default function App() {
 
 
       {showNotifications && (
-        <NotificationsModal onClose={() => setShowNotifications(false)} />
+        <NotificationPanel onClose={() => setShowNotifications(false)} />
       )}
 
       {showModal && (

@@ -1,0 +1,113 @@
+export type NotificationType = "batched_application" | "status_change" | "new_message";
+
+export type BaseNotification = {
+  id: string;
+  read: boolean;
+  createdAt: Date;
+};
+
+export type BatchedApplicationNotification = BaseNotification & {
+  type: "batched_application";
+  applicants: { name: string; initial: string; avatarColor: string }[];
+  jobTitle: string;
+};
+
+export type StatusChangeNotification = BaseNotification & {
+  type: "status_change";
+  companyName: string;
+  status: "Shortlisted" | "Hired" | "Rejected";
+  jobTitle: string;
+};
+
+export type NewMessageNotification = BaseNotification & {
+  type: "new_message";
+  senderName: string;
+  senderInitial: string;
+  avatarColor: string;
+};
+
+export type AppNotification =
+  | BatchedApplicationNotification
+  | StatusChangeNotification
+  | NewMessageNotification;
+
+const today = new Date();
+const yesterday = new Date(today);
+yesterday.setDate(yesterday.getDate() - 1);
+
+function atTime(base: Date, hours: number, minutes = 0): Date {
+  const d = new Date(base);
+  d.setHours(hours, minutes, 0, 0);
+  return d;
+}
+
+export const mockNotifications: AppNotification[] = [
+  {
+    id: "notif-1",
+    type: "batched_application",
+    read: false,
+    createdAt: atTime(today, 9, 42),
+    jobTitle: "Senior Product Designer",
+    applicants: [
+      { name: "Amara Okafor", initial: "A", avatarColor: "#7C3AED" },
+      { name: "James Chen", initial: "J", avatarColor: "#2563EB" },
+      { name: "Sofia Martinez", initial: "S", avatarColor: "#DB2777" },
+      { name: "Leo Nakamura", initial: "L", avatarColor: "#0891B2" },
+      { name: "Priya Sharma", initial: "P", avatarColor: "#EA580C" },
+    ],
+  },
+  {
+    id: "notif-2",
+    type: "status_change",
+    read: false,
+    createdAt: atTime(today, 11, 15),
+    companyName: "Northwind Labs",
+    status: "Shortlisted",
+    jobTitle: "Frontend Engineer",
+  },
+  {
+    id: "notif-3",
+    type: "new_message",
+    read: false,
+    createdAt: atTime(today, 14, 30),
+    senderName: "Elena Vasquez",
+    senderInitial: "E",
+    avatarColor: "#059669",
+  },
+  {
+    id: "notif-4",
+    type: "status_change",
+    read: true,
+    createdAt: atTime(today, 8, 5),
+    companyName: "Brightpath Health",
+    status: "Rejected",
+    jobTitle: "Data Analyst",
+  },
+  {
+    id: "notif-5",
+    type: "new_message",
+    read: true,
+    createdAt: atTime(yesterday, 16, 48),
+    senderName: "Marcus Webb",
+    senderInitial: "M",
+    avatarColor: "#4F46E5",
+  },
+  {
+    id: "notif-6",
+    type: "status_change",
+    read: true,
+    createdAt: atTime(yesterday, 10, 20),
+    companyName: "Summit Retail Group",
+    status: "Hired",
+    jobTitle: "Store Operations Manager",
+  },
+  {
+    id: "notif-7",
+    type: "new_message",
+    read: false,
+    createdAt: atTime(yesterday, 19, 12),
+    senderName: "Hannah Okonkwo",
+    senderInitial: "H",
+    avatarColor: "#BE185D",
+  },
+];

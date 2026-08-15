@@ -107,10 +107,12 @@ export function JobCard({
             ) : null}
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <button
-              className="job-save-btn"
-              title="Chat"
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+  <span className="home-job-salary-badge">{job.salary}</span>
+              <button
+                className="job-save-btn"
+                title="Chat"
+
               onClick={async (event) => {
                 event.stopPropagation();
                 
@@ -168,6 +170,7 @@ export function JobCard({
             </button>
           </div>
         </div>
+    
 
         <div className="home-job-tags">
           {job.tags.map((tag) => (
@@ -180,7 +183,6 @@ export function JobCard({
         <div className="home-job-meta">
           <span className="home-meta-item">{job.location}</span>
           <span className="home-meta-item">{job.posted}</span>
-          <span className="home-meta-salary">{job.salary}</span>
         </div>
 
         {showApplyButton && onApply ? (
