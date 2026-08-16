@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "wouter";
 import { auth } from "../firebase/firebase";
 import {
   subscribeToConversations,
@@ -110,6 +111,7 @@ function getOtherParticipant(conv: Conversation, myUid: string) {
 // ─── Chat Page ────────────────────────────────────────────────────────────────
 
 function ChatPage({ onBack }: { onBack: () => void }) {
+  const [location] = useLocation();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -145,6 +147,17 @@ function ChatPage({ onBack }: { onBack: () => void }) {
 
     return unsubscribe;
   }, [currentUserId]);
+
+  // Auto-select conversation from ?conversationId= query param (deep-link from notifications).
+  // Falls back silently when the ID is not found (e.g. mock IDs against real Firestore data).
+  useEffect(() => {
+    if (isLoadingConversations || conversations.length === 0) return;
+    const params = new URLSearchParams(location.split("?")[1] ?? "");
+    const targetId = params.get("conversationId");
+    if (targetId && conversations.some((c) => c.id === targetId)) {
+      setSelectedId(targetId);
+    }
+  }, [isLoadingConversations, conversations, location]);
 
   // Subscribe to messages for the selected conversation
   useEffect(() => {

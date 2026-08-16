@@ -36,6 +36,11 @@ import {
 } from "./services/savedJobService";
 import { JobCard, type JobCardData } from "./components/JobCard";
 import { JobDetailsDrawer } from "./components/JobDetailsDrawer";
+import { CompanyViewPanel } from "./components/CompanyViewPanel";
+import { ApplicantViewPanel } from "./components/ApplicantViewPanel";
+import { MockApplicantsModal } from "./components/notifications/MockApplicantsModal";
+import type { BatchedApplicationNotification } from "./components/notifications/mockNotifications";
+import type { Company } from "./models/company";
 
 type NavPage = "home" | "search" | "applications" | "saved" | "jobposts" | "companyprofile" | "chat" | "profile" | "settings";
 type SavedJobTogglePayload = Parameters<typeof toggleSavedJob>[1];
@@ -2589,6 +2594,9 @@ export default function App() {
   const [authUserId, setAuthUserId] = useState<string | null>(null);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [showInitialAcctModal, setShowInitialAcctModal] = useState(false);
+  const [reviewingApplicantsJob, setReviewingApplicantsJob] = useState<BatchedApplicationNotification | null>(null);
+  const [selectedApplicantProfile, setSelectedApplicantProfile] = useState<ProfileData | null>(null);
+  const [selectedCompanyView, setSelectedCompanyView] = useState<{ companyId?: string; companyData?: Company } | null>(null);
 
   useEffect(() => {
     let unsubscribe: (() => void) = () => undefined;
@@ -3028,6 +3036,50 @@ export default function App() {
         <NotificationsModal
           onClose={() => setShowNotifications(false)}
           accountType={accountType}
+          onReviewApplicants={(notif) => setReviewingApplicantsJob(notif)}
+          onViewCompany={(notif) => setSelectedCompanyView({ companyId: notif.companyId, companyData: notif.companyData })}
+        />
+      )}
+
+      {reviewingApplicantsJob && (
+        <MockApplicantsModal
+          notification={reviewingApplicantsJob}
+          onClose={() => setReviewingApplicantsJob(null)}
+          onViewProfile={(applicant) => {
+            const profile: ProfileData = {
+              uid: `mock-applicant-${applicant.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}`,
+              fullName: applicant.name,
+              username: applicant.name.toLowerCase().replace(/[^a-z0-9]/g, "_"),
+              headline: applicant.headline || `${reviewingApplicantsJob.jobTitle} Candidate`,
+              location: applicant.location || "Remote",
+              email: applicant.email || `${applicant.name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
+              phoneNumber: applicant.phoneNumber || "+1 (555) 019-2834",
+              about: applicant.about || `Experienced professional with a strong background in ${reviewingApplicantsJob.jobTitle} projects.`,
+              skills: applicant.skills || ["Communication", "Problem Solving", "Collaboration"],
+              experience: applicant.experience || `Senior specialist with 5+ years of relevant industry experience.`,
+              education: applicant.education || "Bachelor's Degree in related field",
+              linkedin: applicant.linkedin,
+              github: applicant.github,
+              portfolio: applicant.portfolio,
+              role: "seeker",
+              activeMode: "jobseeker",
+            };
+            setSelectedApplicantProfile(profile);
+          }}
+        />
+      )}
+
+      <ApplicantViewPanel
+        open={Boolean(selectedApplicantProfile)}
+        applicant={selectedApplicantProfile}
+        onClose={() => setSelectedApplicantProfile(null)}
+      />
+
+      {selectedCompanyView && (
+        <CompanyViewPanel
+          companyId={selectedCompanyView.companyId || ""}
+          companyData={selectedCompanyView.companyData}
+          onClose={() => setSelectedCompanyView(null)}
         />
       )}
 

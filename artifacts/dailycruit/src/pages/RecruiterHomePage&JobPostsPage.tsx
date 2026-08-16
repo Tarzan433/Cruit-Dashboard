@@ -300,7 +300,7 @@ setApplications(applicationsWithProfiles);
         >
           View profile
         </button>
-      </div>
+        </div>
       </div>
     </li>
   ))}

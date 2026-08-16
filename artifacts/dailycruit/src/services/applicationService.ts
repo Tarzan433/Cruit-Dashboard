@@ -6,12 +6,14 @@ import {
   onSnapshot,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 import type { Application, ApplicationStatus } from "../models/application";
 
 export type { Application, ApplicationStatus } from "../models/application";
+export type RecruiterUpdatableStatus = "Shortlisted" | "Hired" | "Rejected";
 
 const APPLICATIONS_COLLECTION = "applications";
 
@@ -151,6 +153,35 @@ export async function getApplicationsForRecruiter(recruiterId: string): Promise<
   );
 
   return snapshot.docs.map((docSnapshot) => normalizeApplication(docSnapshot));
+}
+
+export async function updateApplicationStatus(
+  applicationId: string,
+  status: RecruiterUpdatableStatus
+): Promise<void> {
+  const userId = getCurrentUserId();
+  if (!userId) {
+    throw new Error("Please sign in before updating application status.");
+  }
+
+  if (!applicationId) {
+    throw new Error("Application ID is required.");
+  }
+
+  const validStatuses: RecruiterUpdatableStatus[] = ["Shortlisted", "Hired", "Rejected"];
+  if (!validStatuses.includes(status)) {
+    throw new Error(`Invalid status: ${status}. Allowed statuses are: ${validStatuses.join(", ")}`);
+  }
+
+  try {
+    const appRef = doc(db, APPLICATIONS_COLLECTION, applicationId);
+    await updateDoc(appRef, {
+      status,
+    });
+  } catch (error) {
+    console.error("Failed to update application status in Firestore:", error);
+    throw new Error(getFriendlyErrorMessage(error));
+  }
 }
 
 export { DEFAULT_STATUS, getFriendlyErrorMessage };

@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "wouter";
 import NotificationCard from "./NotificationCard";
-import { mockNotifications, type AppNotification } from "./mockNotifications";
+import {
+  mockNotifications,
+  type AppNotification,
+  type BatchedApplicationNotification,
+  type StatusChangeNotification,
+} from "./mockNotifications";
 
 type AccountType = "jobseeker" | "recruiter" | "gigsman";
 type FilterTab = "all" | "applications" | "messages";
@@ -145,12 +151,17 @@ function getEmptyStateCopy(
 type NotificationsModalProps = {
   onClose: () => void;
   accountType: AccountType;
+  onReviewApplicants?: (notification: BatchedApplicationNotification) => void;
+  onViewCompany?: (notification: StatusChangeNotification) => void;
 };
 
 export default function NotificationsModal({
   onClose,
   accountType,
+  onReviewApplicants,
+  onViewCompany,
 }: NotificationsModalProps) {
+  const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<FilterTab>("all");
   const [notifications, setNotifications] = useState<AppNotification[]>(() =>
     [...mockNotifications].sort(
@@ -211,7 +222,37 @@ export default function NotificationsModal({
     );
   };
 
+  /**
+   * Central action handler.
+   * Marks notification as read, closes the panel, and triggers the appropriate action.
+   */
+  const handleAction = (notification: AppNotification) => {
+    handleMarkRead(notification.id);
+    onClose();
+
+    if (notification.type === "batched_application") {
+      // Recruiter: open mock applicant list directly (without navigating to recruiter home)
+      if (onReviewApplicants) {
+        onReviewApplicants(notification);
+      }
+      return;
+    }
+
+    if (notification.type === "status_change") {
+      // Seeker: open existing CompanyViewPanel directly (without navigating to applications)
+      if (onViewCompany) {
+        onViewCompany(notification);
+      }
+      return;
+    }
+
+    // new_message — role-aware chat navigation.
+    const chatBase = accountType === "recruiter" ? "/recruiter/chat" : "/seeker/chat";
+    navigate(`${chatBase}?conversationId=${encodeURIComponent(notification.conversationId)}`);
+  };
+
   const emptyCopy = getEmptyStateCopy(activeTab, accountType);
+
 
   return (
     <div className="notif-overlay" onClick={onClose}>
@@ -299,7 +340,7 @@ export default function NotificationsModal({
                       key={notification.id}
                       notification={notification}
                       formattedTime={formatNotificationTime(notification.createdAt, now)}
-                      onAction={() => handleMarkRead(notification.id)}
+                      onAction={() => handleAction(notification)}
                     />
                   ))}
                 </div>

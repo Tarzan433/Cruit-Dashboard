@@ -26,11 +26,18 @@ import {
   UserCheck,
 } from "lucide-react";
 import type { ProfileData } from "../services/profile";
+import {
+  updateApplicationStatus,
+  type Application,
+  type RecruiterUpdatableStatus,
+} from "../services/applicationService";
 
 type ApplicantViewPanelProps = {
   open: boolean;
   onClose: () => void;
   applicant: ProfileData | null;
+  application?: Application | null;
+  onStatusChange?: (newStatus: RecruiterUpdatableStatus) => void;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -156,6 +163,7 @@ interface ActionButtonProps {
   label: string;
   variant: "default" | "primary" | "success" | "danger";
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 const actionVariants: Record<ActionButtonProps["variant"], string> = {
@@ -169,13 +177,18 @@ const actionVariants: Record<ActionButtonProps["variant"], string> = {
     "border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:border-red-300 active:bg-red-200/80",
 };
 
-function ActionButton({ icon: Icon, label, variant, onClick }: ActionButtonProps) {
+function ActionButton({ icon: Icon, label, variant, onClick, disabled }: ActionButtonProps) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-label={label}
-      className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-3 text-xs font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2 ${actionVariants[variant]}`}
+      className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-3 text-xs font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2 ${
+        disabled
+          ? "cursor-not-allowed opacity-50 border-zinc-200 bg-zinc-100 text-zinc-400"
+          : `hover:-translate-y-0.5 ${actionVariants[variant]}`
+      }`}
     >
       <Icon size={15} />
       <span className="hidden sm:inline">{label}</span>
@@ -191,11 +204,24 @@ export function ApplicantViewPanel({
   open,
   onClose,
   applicant,
+  application,
+  onStatusChange,
 }: ApplicantViewPanelProps) {
   const [location, navigate] = useLocation();
   const [mounted, setMounted] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState<string | null>(
+    application?.status ?? null
+  );
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [statusError, setStatusError] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = "applicant-panel-title";
+
+  // Sync current status when application prop changes
+  useEffect(() => {
+    setCurrentStatus(application?.status ?? null);
+    setStatusError(null);
+  }, [application?.status, application?.applicationId]);
 
   // Mount animation trigger (preserves original enter/exit transition behavior)
   useEffect(() => {
@@ -231,6 +257,40 @@ export function ApplicantViewPanel({
   }, [open, handleKeyDown]);
 
   if (!open || !applicant) return null;
+
+  const handleStatusUpdate = async (newStatus: RecruiterUpdatableStatus) => {
+    if (isUpdatingStatus) return;
+
+    // If there is no real Firestore application document (e.g. mock applicant from notification)
+    if (!application?.applicationId) {
+      setCurrentStatus(newStatus);
+      onStatusChange?.(newStatus);
+      return;
+    }
+
+    // Security check: ensure current user is the recruiter of this application
+    const currentUid = auth.currentUser?.uid;
+    if (application.recruiterId && currentUid && application.recruiterId !== currentUid) {
+      setStatusError("You are not authorized to update this application.");
+      return;
+    }
+
+    setIsUpdatingStatus(true);
+    setStatusError(null);
+
+    try {
+      await updateApplicationStatus(application.applicationId, newStatus);
+      setCurrentStatus(newStatus);
+      onStatusChange?.(newStatus);
+    } catch (err) {
+      console.error("Failed to update status", err);
+      setStatusError(
+        err instanceof Error ? err.message : "Failed to update application status."
+      );
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
 
   const handleMessage = async () => {
     const myUid = auth.currentUser?.uid;
@@ -326,7 +386,7 @@ export function ApplicantViewPanel({
                     </h2>
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      Available for Work
+                      {currentStatus ? `Status: ${currentStatus}` : "Available for Work"}
                     </span>
                   </div>
 
@@ -380,11 +440,40 @@ export function ApplicantViewPanel({
 
             {/* Quick actions */}
             <div className="mt-6 grid grid-cols-4 gap-2.5">
-              <ActionButton icon={MessageSquare} label="Message" variant="default" onClick={handleMessage} />
-              <ActionButton icon={Star} label="Shortlist" variant="success" />
-              <ActionButton icon={UserCheck} label="Hire" variant="default" />
-              <ActionButton icon={XCircle} label="Reject" variant="danger" />
+              <ActionButton
+                icon={MessageSquare}
+                label="Message"
+                variant="default"
+                disabled={isUpdatingStatus}
+                onClick={handleMessage}
+              />
+              <ActionButton
+                icon={Star}
+                label={currentStatus === "Shortlisted" ? "Shortlisted" : "Shortlist"}
+                variant={currentStatus === "Shortlisted" ? "success" : "default"}
+                disabled={isUpdatingStatus}
+                onClick={() => handleStatusUpdate("Shortlisted")}
+              />
+              <ActionButton
+                icon={UserCheck}
+                label={currentStatus === "Hired" ? "Hired" : "Hire"}
+                variant={currentStatus === "Hired" ? "success" : "default"}
+                disabled={isUpdatingStatus}
+                onClick={() => handleStatusUpdate("Hired")}
+              />
+              <ActionButton
+                icon={XCircle}
+                label={currentStatus === "Rejected" ? "Rejected" : "Reject"}
+                variant={currentStatus === "Rejected" ? "danger" : "default"}
+                disabled={isUpdatingStatus}
+                onClick={() => handleStatusUpdate("Rejected")}
+              />
             </div>
+            {statusError && (
+              <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-medium text-red-700">
+                {statusError}
+              </div>
+            )}
           </div>
         </header>
 
@@ -494,10 +583,34 @@ export function ApplicantViewPanel({
         {/* ---------------------------------------------------------------- */}
         <footer className="flex-shrink-0 border-t border-zinc-200 bg-white/95 px-7 py-4 backdrop-blur">
           <div className="grid grid-cols-4 gap-3">
-            <ActionButton icon={XCircle} label="Reject" variant="danger" />
-            <ActionButton icon={Star} label="Shortlist" variant="success" />
-            <ActionButton icon={UserCheck} label="Hire" variant="default" />
-            <ActionButton icon={MessageSquare} label="Message" variant="default" onClick={handleMessage} />
+            <ActionButton
+              icon={XCircle}
+              label={currentStatus === "Rejected" ? "Rejected" : "Reject"}
+              variant={currentStatus === "Rejected" ? "danger" : "default"}
+              disabled={isUpdatingStatus}
+              onClick={() => handleStatusUpdate("Rejected")}
+            />
+            <ActionButton
+              icon={Star}
+              label={currentStatus === "Shortlisted" ? "Shortlisted" : "Shortlist"}
+              variant={currentStatus === "Shortlisted" ? "success" : "default"}
+              disabled={isUpdatingStatus}
+              onClick={() => handleStatusUpdate("Shortlisted")}
+            />
+            <ActionButton
+              icon={UserCheck}
+              label={currentStatus === "Hired" ? "Hired" : "Hire"}
+              variant={currentStatus === "Hired" ? "success" : "default"}
+              disabled={isUpdatingStatus}
+              onClick={() => handleStatusUpdate("Hired")}
+            />
+            <ActionButton
+              icon={MessageSquare}
+              label="Message"
+              variant="default"
+              disabled={isUpdatingStatus}
+              onClick={handleMessage}
+            />
           </div>
         </footer>
       </div>

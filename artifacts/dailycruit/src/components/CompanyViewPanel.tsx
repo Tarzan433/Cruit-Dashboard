@@ -7,24 +7,38 @@ import type { Company } from "../models/company";
 import { CompanyAvatar } from "./ui/CompanyAvatar";
 
 interface CompanyViewPanelProps {
-  companyId: string;
+  companyId?: string;
+  companyData?: Company | null;
   onClose: () => void;
 }
 
-export function CompanyViewPanel({ companyId, onClose }: CompanyViewPanelProps) {
+export function CompanyViewPanel({ companyId, companyData, onClose }: CompanyViewPanelProps) {
   const [location, navigate] = useLocation();
-  const [company, setCompany] = useState<Company | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [company, setCompany] = useState<Company | null>(companyData ?? null);
+  const [loading, setLoading] = useState(!companyData && Boolean(companyId));
   const [error, setError] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (companyData) {
+      setCompany(companyData);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    if (!companyId) {
+      setLoading(false);
+      return;
+    }
+
+    const targetCompanyId = companyId;
     let active = true;
     async function fetchCompany() {
       setLoading(true);
       setError(null);
       try {
-        const companyRef = doc(db, "companies", companyId);
+        const companyRef = doc(db, "companies", targetCompanyId);
         const snapshot = await getDoc(companyRef);
         if (snapshot.exists()) {
           if (active) {
@@ -49,7 +63,7 @@ export function CompanyViewPanel({ companyId, onClose }: CompanyViewPanelProps) 
     return () => {
       active = false;
     };
-  }, [companyId]);
+  }, [companyId, companyData]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
