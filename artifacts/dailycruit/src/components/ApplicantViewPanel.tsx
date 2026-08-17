@@ -326,7 +326,7 @@ export function ApplicantViewPanel({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex justify-end bg-zinc-900/40 backdrop-blur-sm transition-opacity duration-300 ${
+      className={`fixed inset-0 z-[1100] flex justify-end bg-zinc-900/40 backdrop-blur-sm transition-opacity duration-300 ${
         mounted ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       onClick={onClose}
