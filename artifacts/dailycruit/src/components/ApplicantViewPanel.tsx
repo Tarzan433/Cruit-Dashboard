@@ -121,8 +121,7 @@ function LinkTile({ href, icon: Icon, label, displayUrl }: LinkTileProps) {
     return (
       <div
         aria-disabled="true"
-        className="flex flex-col justify-between rounded-xl border border-dashed border-zinc-200 bg-zinc-50/40 p-4 opacity-60"
-      >
+className="flex min-w-0 flex-row items-center gap-3 rounded-xl border border-dashed border-zinc-200 bg-zinc-50/40 p-3 opacity-60 sm:flex-col sm:items-stretch sm:justify-between sm:p-4"      >
         <div>
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-400">
             <Icon size={16} />
@@ -142,8 +141,7 @@ function LinkTile({ href, icon: Icon, label, displayUrl }: LinkTileProps) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2"
-    >
+className="flex min-w-0 flex-row items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2 sm:flex-col sm:items-stretch sm:justify-between sm:p-4"  >
       <div>
         <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 ring-1 ring-inset ring-emerald-600/10">
           <Icon size={16} />
@@ -184,14 +182,14 @@ function ActionButton({ icon: Icon, label, variant, onClick, disabled }: ActionB
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-3 text-xs font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2 ${
-        disabled
-          ? "cursor-not-allowed opacity-50 border-zinc-200 bg-zinc-100 text-zinc-400"
-          : `hover:-translate-y-0.5 ${actionVariants[variant]}`
-      }`}
+    className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl border px-2.5 py-2.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2 ${
+  disabled
+    ? "cursor-not-allowed border-zinc-200 bg-zinc-100 text-zinc-400 opacity-50"
+    : `hover:-translate-y-0.5 ${actionVariants[variant]}`
+}`}
     >
       <Icon size={15} />
-      <span className="hidden sm:inline">{label}</span>
+      <span className="inline truncate">{label}</span>
     </button>
   );
 }
@@ -353,16 +351,16 @@ export function ApplicantViewPanel({
             aria-hidden
             className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-200/30 blur-3xl"
           />
-          <div className="relative px-7 pt-6 pb-7">
+         <div className="relative px-4 pt-4 pb-5 sm:px-7 sm:pt-6 sm:pb-7">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex min-w-0 items-center gap-5">
+             <div className="flex min-w-0 items-center gap-3 sm:gap-5">
                 {/* Avatar */}
                 <div className="relative flex-shrink-0">
                   {applicant.photoURL ? (
                     <img
                       src={applicant.photoURL}
                       alt={applicant.fullName}
-                      className="h-20 w-20 rounded-full border-4 border-white object-cover shadow-lg ring-1 ring-zinc-200"
+                      className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border-4 border-white object-cover shadow-lg ring-1 ring-zinc-200"
                     />
                   ) : (
                     <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-emerald-400 to-emerald-600 text-2xl font-bold text-white shadow-lg ring-1 ring-zinc-200">
@@ -439,7 +437,7 @@ export function ApplicantViewPanel({
             </div>
 
             {/* Quick actions */}
-            <div className="mt-6 grid grid-cols-4 gap-2.5">
+            <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5">
               <ActionButton
                 icon={MessageSquare}
                 label="Message"
@@ -582,7 +580,7 @@ export function ApplicantViewPanel({
         {/*  STICKY BOTTOM ACTIONS                                            */}
         {/* ---------------------------------------------------------------- */}
         <footer className="flex-shrink-0 border-t border-zinc-200 bg-white/95 px-7 py-4 backdrop-blur">
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             <ActionButton
               icon={XCircle}
               label={currentStatus === "Rejected" ? "Rejected" : "Reject"}
